@@ -101,7 +101,6 @@ static void quota2_log(const struct net_device *in,
 
 	strlcpy(q->last_prefix, prefix, QUOTA2_SYSFS_WORK_MAX_SIZE);
 
-<<<<<<< HEAD
 	if (in)
 		strlcpy(q->last_iface, in->name, QUOTA2_SYSFS_WORK_MAX_SIZE);
 	else if (out)
