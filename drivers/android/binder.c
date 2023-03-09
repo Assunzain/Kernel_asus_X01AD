@@ -503,6 +503,9 @@ struct binder_priority {
  * @files                 files_struct for process
  *                        (protected by @files_lock)
  * @files_lock            mutex to protect @files
+ * @cred                  struct cred associated with the `struct file`
+ *                        in binder_open()
+ *                        (invariant after initialized)
  * @deferred_work_node:   element for binder_deferred_list
  *                        (protected by binder_deferred_lock)
  * @deferred_work:        bitmap of deferred work to perform
@@ -3404,7 +3407,6 @@ static void binder_transaction(struct binder_proc *proc,
 			struct binder_fd_object *fp = to_binder_fd_object(hdr);
 			int target_fd = binder_translate_fd(fp->fd, t, thread,
 							    in_reply_to);
-							    
 			if (target_fd < 0) {
 				return_error = BR_FAILED_REPLY;
 				return_error_param = target_fd;
@@ -4699,6 +4701,7 @@ static void binder_free_proc(struct binder_proc *proc)
 	BUG_ON(!list_empty(&proc->delivered_death));
 	binder_alloc_deferred_release(&proc->alloc);
 	put_task_struct(proc->tsk);
+	put_cred(proc->cred);
 	binder_stats_deleted(BINDER_STAT_PROC);
 	kfree(proc);
 }

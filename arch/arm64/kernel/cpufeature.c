@@ -829,6 +829,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
 	return !cpuid_feature_extract_unsigned_field(pfr0,
 						     ID_AA64PFR0_CSV3_SHIFT);
 }
+
 static void __nocfi
 kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
 {

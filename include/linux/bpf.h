@@ -258,7 +258,7 @@ struct bpf_prog_array {
 	struct bpf_prog *progs[0];
 };
 
-struct bpf_prog_array __rcu *bpf_prog_array_alloc(u32 prog_cnt, gfp_t flags);
+struct bpf_prog_array *bpf_prog_array_alloc(u32 prog_cnt, gfp_t flags);
 void bpf_prog_array_free(struct bpf_prog_array __rcu *progs);
 
 void bpf_prog_array_delete_safe(struct bpf_prog_array __rcu *progs,
@@ -392,7 +392,6 @@ static inline struct bpf_prog *bpf_prog_inc(struct bpf_prog *prog)
 {
 	return ERR_PTR(-EOPNOTSUPP);
 }
-<<<<<<< HEAD
 static inline int bpf_obj_get_user(const char __user *pathname)
 {
 	return -EOPNOTSUPP;
@@ -403,14 +402,12 @@ static inline struct bpf_prog *bpf_prog_get_type_path(const char *name,
 {
 	return ERR_PTR(-EOPNOTSUPP);
 }
-=======
 
 static inline bool unprivileged_ebpf_enabled(void)
 {
 	return false;
 }
 
->>>>>>> 45cb90b0670694e1ea1169f011700bcc53074790
 #endif /* CONFIG_BPF_SYSCALL */
 
 /* verifier prototypes for helper functions called from eBPF programs */

@@ -1013,6 +1013,9 @@ __ni_sys_trace:
 #ifdef CONFIG_RANDOMIZE_BASE
 	tramp_data_page		\dst
 	add	\dst, \dst, #:lo12:__entry_tramp_data_\var
+#ifndef CONFIG_ARCH_MSM8996
+	isb
+#endif
 	ldr	\dst, [\dst]
 #else
 	ldr	\dst, =\var
@@ -1053,6 +1056,7 @@ __ni_sys_trace:
 	bl	2f
 	b	.
 2:
+
     tramp_map_kernel	x30
 	isb
 	tramp_data_read_var	x30, vectors
