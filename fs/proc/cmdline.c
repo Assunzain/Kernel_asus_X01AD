@@ -44,14 +44,14 @@ static void patch_safetynet_flags(char *cmd)
 {
 	patch_flag(cmd, "androidboot.flash.locked=", "1");
 	patch_flag(cmd, "androidboot.verifiedbootstate=", "green");
+	patch_flag(cmd, "androidboot.veritymode=", "enforcing");
         patch_flag(cmd, "androidboot.selinux=",  "enforcing");
         patch_flag(cmd, "androidboot.vbmeta.device_state=",  "locked");
-
 }
 
 static int __init proc_cmdline_init(void)
 {
-    strcpy(new_command_line, saved_command_line);
+	strcpy(new_command_line, saved_command_line);
 
 	/*
 	 * Patch various flags from command line seen by userspace in order to
@@ -63,4 +63,3 @@ static int __init proc_cmdline_init(void)
 	return 0;
 }
 fs_initcall(proc_cmdline_init);
-
