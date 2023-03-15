@@ -1029,7 +1029,7 @@
 		#size-cells = <0>;
 
 		compatible = "qcom,gpu-pwrlevels";
-	    /* TURBO MAX */
+	    /* MAX FREQ */
 		qcom,gpu-pwrlevel@0 {
 			reg = <0>;
 			qcom,gpu-freq = <825000000>;
