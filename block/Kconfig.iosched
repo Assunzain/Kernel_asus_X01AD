@@ -12,6 +12,14 @@ config IOSCHED_NOOP
 	  that do their own scheduling and require only minimal assistance from
 	  the kernel.
 
+config IOSCHED_TRIPNDROID
+	tristate "TripNDroid IO Scheduler"
+	default y
+	---help---
+	  The TripNDroid IO Scheduler is based on noop, deadline and vr
+	  it uses deadlines to ensure some fairness. The scheduler is build
+	  to keep a minimum overhead. It is mainly build for mobile devices.
+
 config IOSCHED_DEADLINE
 	tristate "Deadline I/O scheduler"
 	default y
@@ -77,6 +85,9 @@ choice
         config DEFAULT_ANXIETY
 		bool "Anxiety" if IOSCHED_ANXIETY=y
 
+        config DEFAULT_TRIPNDROID
+		bool "TripNDroid" if IOSCHED_TRIPNDROID=y
+
 
 endchoice
 
@@ -87,6 +98,7 @@ config DEFAULT_IOSCHED
 	default "noop" if DEFAULT_NOOP
         default "zen" if DEFAULT_ZEN
         default "anxiety" if DEFAULT_ANXIETY
+        default "tripndroid" if DEFAULT_TRIPNDROID
 
 endmenu
 
