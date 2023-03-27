@@ -25,6 +25,10 @@
 #include "step-chg-jeita.h"
 #include "storm-watch.h"
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endi
+
 #define smblib_err(chg, fmt, ...)		\
 	pr_err("%s: %s: " fmt, chg->name,	\
 		__func__, ##__VA_ARGS__)	\
@@ -4968,6 +4972,15 @@ static void smblib_otg_oc_work(struct work_struct *work)
 		smblib_otg_oc_exit(chg, false);
 		goto unlock;
 	}
+
+          
+        #ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge > 0 && icl_ua == USBIN_500MA)
+	{
+		icl_ua = USBIN_900MA;
+	}
+          #endif
+
 
 	/*
 	 * The real time status should go low within 10ms. Poll every 1-2ms to
