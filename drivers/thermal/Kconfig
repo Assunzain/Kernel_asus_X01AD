@@ -473,7 +473,7 @@ config THERMAL_TSENS
 	  to set threshold temperature for both warm and cool and update
 	  thermal userspace client when a threshold is reached. Warm/Cool
 	  temperature thresholds can be set independently for each sensor.
-	  
+
 choice
 	prompt "MSM Thermal Monitor Types"
 	default THERMAL_MONITOR
@@ -487,8 +487,9 @@ config THERMAL_MONITOR
 	  absence of a system wide thermal monitoring entity or until such an
 	  entity starts running in the userspace. Monitors TSENS temperature
 	  and limits the max frequency of the cores.
-	  
-	  endchoice
+
+endchoice
+
 
 menu "Qualcomm thermal drivers"
 depends on (ARCH_QCOM && OF) || COMPILE_TEST
