@@ -488,7 +488,7 @@ config THERMAL_MONITOR
 	  entity starts running in the userspace. Monitors TSENS temperature
 	  and limits the max frequency of the cores.
 	  
-	  
+	  endchoice
 
 menu "Qualcomm thermal drivers"
 depends on (ARCH_QCOM && OF) || COMPILE_TEST
