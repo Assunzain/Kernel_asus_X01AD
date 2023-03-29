@@ -1,0 +1,21 @@
+menu "Custom Hotplug drivers"
+
+config CUSTOM_HOTPLUG
+
+	bool "Enable custom hotplug support"
+
+config MSM_HOTPLUG
+
+ 	bool "MSM hotplug by [Fluxi]"
+
+ 	depends on HOTPLUG_CPU
+
+ 	default n
+
+ 	help
+
+ 	  The MSM hotplug driver controls on-/offlining of additional cores based on current cpu load.
+
+ 
+
+endmenu
