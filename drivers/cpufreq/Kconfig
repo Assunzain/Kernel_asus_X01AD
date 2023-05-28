@@ -69,6 +69,13 @@ config CPU_FREQ_DEFAULT_GOV_PERFORMANCE
 	  Use the CPUFreq governor 'performance' as default. This sets
 	  the frequency statically to the highest frequency supported by
 	  the CPU.
+	  
+	
+config CPU_FREQ_DEFAULT_GOV_ALUCARD
+        bool "alucard"
+	select CPU_FREQ_GOV_ALUCARD
+  
+	  
 
 config CPU_FREQ_DEFAULT_GOV_POWERSAVE
 	bool "powersave"
@@ -111,6 +118,7 @@ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
 	  governor. If unsure have a look at the help section of the
 	  driver. Fallback governor will be the performance governor.
 
+
 config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "interactive"
 	select CPU_FREQ_GOV_INTERACTIVE
@@ -142,6 +150,10 @@ config CPU_FREQ_GOV_PERFORMANCE
 	  module will be called cpufreq_performance.
 
 	  If in doubt, say Y.
+
+config CPU_FREQ_GOV_ALUCARD
+        tristate "'alucard' cpufreq governor"
+	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_POWERSAVE
 	tristate "'powersave' governor"
