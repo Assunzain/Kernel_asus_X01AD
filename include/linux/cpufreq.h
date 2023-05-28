@@ -604,6 +604,9 @@ extern struct cpufreq_governor cpufreq_gov_zzmoove;
 #elif  defined(CPUFREQ_DEFAULT_GOVERNOR_BLU_SCHEDUTIL)
 extern struct cpufreq_governor cpufreq_gov_blu_schedutil;
 #define CPUFREQ_DEFAULT_GOVERNOR_BLU_SCHEDUTIL	&cpufreq_gov_blu_schedutil)
+#elif  defined(CPUFREQ_DEFAULT_GOVERNOR_SMARTASS2)
+extern struct cpufreq_governor cpufreq_gov_smartass2;
+#define CPUFREQ_DEFAULT_GOVERNOR_SMARTASS2  &cpufreq_gov_smartass2)
 #endif
 
 /*********************************************************************
