@@ -70,11 +70,11 @@ config CPU_FREQ_DEFAULT_GOV_PERFORMANCE
 	  the frequency statically to the highest frequency supported by
 	  the CPU.
 	  
-config CPU_FREQ_DEFAULT_GOV_PEGASUS
-	bool "pegasus"
-	select CPU_FREQ_GOV_PEGASUS
+config CPU_FREQ_DEFAULT_GOV_ZZMOOVE
+	bool "zzmoove"
+	select CPU_FREQ_GOV_ZZMOOVE
 	help
-	  Use the pegasus governor as default.
+	  Use the zzmoove governor as default.
 
 config CPU_FREQ_DEFAULT_GOV_POWERSAVE
 	bool "powersave"
@@ -151,9 +151,9 @@ config CPU_FREQ_GOV_PERFORMANCE
 	  If in doubt, say Y.
 
 
-config CPU_FREQ_GOV_PEGASUS
-	tristate "'pegasus' cpufreq governor"
-	depends on CPU_FREQ
+config CPU_FREQ_GOV_ZZMOOVE
+	tristate "'zzmoove' governor"
+	
 	help
 This cpufreq governor sets the frequency statically to the
 	  lowest available CPU frequency.
