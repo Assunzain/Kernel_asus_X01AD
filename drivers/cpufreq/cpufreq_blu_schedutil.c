@@ -18,8 +18,8 @@
 #include <linux/kthread.h>
 #include <linux/slab.h>
 #include <linux/sched/sysctl.h>
-#include <linux/sched/sched.h>
-#include <linux/sched/tune.h>
+#include <kernel/sched/sched.h>
+#include <kernel/sched/tune.h>
 
 /* Stub out fast switch routines present on mainline to reduce the backport
  * overhead. */
