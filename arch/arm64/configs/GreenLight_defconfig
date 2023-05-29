@@ -1,3 +1,5 @@
+# Automatically generated file; DO NOT EDIT.
+# Linux/arm64 4.9.337 Kernel Configuration
 CONFIG_PSI=y
 CONFIG_LOCALVERSION="-GreenLight.v2.2-OC-[EOL]-STABLE"
 CONFIG_BUILD_ARM64_DT_OVERLAY=y
