@@ -78,6 +78,7 @@ config CPU_FREQ_DEFAULT_GOV_ZZMOOVE
 
 config CPU_FREQ_DEFAULT_GOV_BLU_SCHEDUTIL
 	bool "blu_schedutil"
+ default y
 	select CPU_FREQ_GOV_BLU_SCHEDUTIL
 	select CPU_FREQ_GOV_PERFORMANCE
 	help
@@ -157,17 +158,6 @@ config FINGERPRINT_BOOST
 	default y
 	help
 	  Boosts available CPUs to max frequency on fingerprint sensor input.
-if X86
-source "drivers/cpufreq/Kconfig.x86"
-endif
-
-if ARM || ARM64
-source "drivers/cpufreq/Kconfig.arm"
-endif
-
-if PPC32 || PPC64
-source "drivers/cpufreq/Kconfig.powerpc"
-endif
 
 endchoice
 
