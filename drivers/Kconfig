@@ -186,6 +186,8 @@ source "drivers/phy/Kconfig"
 
 source "drivers/powercap/Kconfig"
 
+source "drivers/dts_eagle/Kconfig"
+
 source "drivers/mcb/Kconfig"
 
 source "drivers/perf/Kconfig"
