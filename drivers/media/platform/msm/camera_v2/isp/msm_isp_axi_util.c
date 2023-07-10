@@ -20,13 +20,10 @@
 
 #define HANDLE_TO_IDX(handle) (handle & 0xFF)
 #define ISP_SOF_DEBUG_COUNT 0
-<<<<<<< HEAD
 #define OTHER_VFE(vfe_id) (vfe_id == ISP_VFE0 ? ISP_VFE1 : ISP_VFE0)
-=======
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 #define OTHER_VFE(vfe_id) (vfe_id == ISP_VFE0 ? ISP_VFE1 : ISP_VFE0)
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 
 #ifdef CONFIG_MSM_AVTIMER
 static struct avtimer_fptr_t avtimer_func;
@@ -38,10 +35,7 @@ static void __msm_isp_axi_stream_update(
 			struct msm_vfe_axi_stream *stream_info,
 			struct msm_isp_timestamp *ts);
 
-<<<<<<< HEAD
-=======
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 static int msm_isp_process_done_buf(struct vfe_device *vfe_dev,
 	struct msm_vfe_axi_stream *stream_info, struct msm_isp_buffer *buf,
 	struct timeval *time_stamp, uint32_t frame_id);
@@ -49,11 +43,8 @@ static void msm_isp_free_pending_buffer(
 	struct vfe_device *vfe_dev,
 	struct msm_vfe_axi_stream *stream_info,
 	struct msm_isp_timestamp *ts);
-<<<<<<< HEAD
-=======
 #endif
 
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 static int msm_isp_update_stream_bandwidth(
 		struct msm_vfe_axi_stream *stream_info, int enable);
 
@@ -630,10 +621,9 @@ static int msm_isp_composite_irq(struct vfe_device *vfe_dev,
  *
  * Returns void
  */
-<<<<<<< HEAD
+
 static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info,
 		uint32_t drop_reconfig)
-=======
 
 #ifdef CONFIG_PATCH_GCAM_FREEZE
 static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info)
@@ -641,7 +631,7 @@ static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info)
 static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info,
 		uint32_t drop_reconfig)
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+
 {
 	if (stream_info->stream_type == BURST_STREAM) {
 		if (stream_info->runtime_num_burst_capture == 0 ||
@@ -701,19 +691,15 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 		case MSM_ISP_COMP_IRQ_REG_UPD:
 			stream_info->activated_framedrop_period =
 				stream_info->requested_framedrop_period;
-<<<<<<< HEAD
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			/* Free Pending Buffers which are backed-up due to
 			 * delay in RUP from userspace to Avoid pageFault
 			 */
 			msm_isp_free_pending_buffer(vfe_dev, stream_info, ts);
-<<<<<<< HEAD
 			__msm_isp_axi_stream_update(stream_info, ts);
 			break;
 		case MSM_ISP_COMP_IRQ_EPOCH:
-=======
 #endif
 			__msm_isp_axi_stream_update(stream_info, ts);
 			break;
@@ -722,7 +708,6 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 			if (stream_info->state == ACTIVE)
 				msm_isp_update_framedrop_reg(stream_info);
 #else
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			if (stream_info->state == ACTIVE) {
 				struct vfe_device *temp = NULL;
 				struct msm_vfe_common_dev_data *c_data;
@@ -739,10 +724,8 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 				msm_isp_update_framedrop_reg(stream_info,
 					drop_reconfig);
 			}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			break;
 		default:
 			WARN(1, "Invalid irq %d\n", irq);
@@ -1644,10 +1627,7 @@ static void msm_isp_axi_stream_enable_cfg(
 	}
 }
 
-<<<<<<< HEAD
-=======
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 static void msm_isp_free_pending_buffer(
 			struct vfe_device *vfe_dev,
 			struct msm_vfe_axi_stream *stream_info,
@@ -1681,10 +1661,7 @@ static void msm_isp_free_pending_buffer(
 		}
 	}
 }
-<<<<<<< HEAD
-=======
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 
 static void __msm_isp_axi_stream_update(
 			struct msm_vfe_axi_stream *stream_info,
@@ -2151,15 +2128,14 @@ static int msm_isp_cfg_ping_pong_address(
 
 	if (!buf) {
 		msm_isp_cfg_stream_scratch(stream_info, pingpong_status);
-<<<<<<< HEAD
+
 		if (stream_info->controllable_output)
 			return 1;
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 		if (stream_info->controllable_output)
 			return 1;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		return 0;
 	}
 
@@ -2575,13 +2551,12 @@ static void msm_isp_input_enable(struct vfe_device *vfe_dev,
 			continue;
 		/* activate the input since it is deactivated */
 		axi_data->src_info[i].frame_id = 0;
-<<<<<<< HEAD
 		vfe_dev->irq_sof_id = 0;
-=======
+		
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 		vfe_dev->irq_sof_id = 0;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+
 		if (axi_data->src_info[i].input_mux != EXTERNAL_READ)
 			axi_data->src_info[i].active = 1;
 		if (i >= VFE_RAW_0 && sync_frame_id_src) {
@@ -2845,20 +2820,18 @@ int msm_isp_axi_reset(struct vfe_device *vfe_dev,
 	struct msm_isp_timestamp timestamp;
 	struct msm_vfe_frame_request_queue *queue_req;
 	unsigned long flags;
-<<<<<<< HEAD
 	uint32_t pingpong_status;
 	int vfe_idx;
 	uint32_t pingpong_bit = 0;
 	uint32_t frame_id = 0;
 	struct timeval *time_stamp;
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 	uint32_t pingpong_status;
 	uint32_t pingpong_bit = 0;
 	uint32_t frame_id = 0;
 	struct timeval *time_stamp;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 
 	if (!reset_cmd) {
 		pr_err("%s: NULL pointer reset cmd %pK\n", __func__, reset_cmd);
@@ -2867,13 +2840,11 @@ int msm_isp_axi_reset(struct vfe_device *vfe_dev,
 	}
 
 	msm_isp_get_timestamp(&timestamp, vfe_dev);
-<<<<<<< HEAD
 	time_stamp = &timestamp.buf_time;
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 	time_stamp = &timestamp.buf_time;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 
 	for (i = 0; i < VFE_AXI_SRC_MAX; i++) {
 		stream_info = msm_isp_get_stream_common_data(
@@ -2896,10 +2867,8 @@ int msm_isp_axi_reset(struct vfe_device *vfe_dev,
 
 		/* set ping pong to scratch before flush */
 		spin_lock_irqsave(&stream_info->lock, flags);
-<<<<<<< HEAD
-=======
+		
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		frame_id = vfe_dev->axi_data.src_info[VFE_PIX_0].frame_id;
 		if (stream_info->controllable_output &&
 			stream_info->undelivered_request_cnt > 0) {
@@ -2922,10 +2891,8 @@ int msm_isp_axi_reset(struct vfe_device *vfe_dev,
 						frame_id);
 			}
 		}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		msm_isp_cfg_stream_scratch(stream_info,
 					VFE_PING_FLAG);
 		msm_isp_cfg_stream_scratch(stream_info,
@@ -2977,13 +2944,10 @@ int msm_isp_axi_reset(struct vfe_device *vfe_dev,
 			axi_data->src_info[SRC_TO_INTF(stream_info->
 				stream_src)].frame_id =
 				reset_cmd->frame_id;
-<<<<<<< HEAD
 			temp_vfe_dev->irq_sof_id = reset_cmd->frame_id;
-=======
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 			temp_vfe_dev->irq_sof_id = reset_cmd->frame_id;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		}
 		msm_isp_reset_burst_count_and_frame_drop(
 			vfe_dev, stream_info);
@@ -3256,20 +3220,17 @@ static void __msm_isp_stop_axi_streams(struct vfe_device *vfe_dev,
 		msm_isp_cfg_stream_scratch(stream_info, VFE_PING_FLAG);
 		msm_isp_cfg_stream_scratch(stream_info, VFE_PONG_FLAG);
 		stream_info->undelivered_request_cnt = 0;
-<<<<<<< HEAD
-=======
+		
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		if (stream_info->controllable_output &&
 			stream_info->pending_buf_info.is_buf_done_pending) {
 			msm_isp_free_pending_buffer(vfe_dev, stream_info,
 				&timestamp);
 			stream_info->pending_buf_info.is_buf_done_pending = 0;
 		}
-<<<<<<< HEAD
-=======
+			
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+		
 		for (k = 0; k < stream_info->num_isp; k++) {
 			vfe_dev = stream_info->vfe_dev[k];
 			if (stream_info->num_planes > 1)
@@ -3447,10 +3408,9 @@ static int msm_isp_start_axi_stream(struct vfe_device *vfe_dev_ioctl,
 		msm_isp_reset_framedrop(vfe_dev_ioctl, stream_info);
 		rc = msm_isp_init_stream_ping_pong_reg(stream_info);
 		if (rc < 0) {
-<<<<<<< HEAD
 			pr_err("%s: No buffer for stream%x\n", __func__,
 				stream_info->stream_id);
-=======
+
 #ifdef CONFIG_PATCH_GCAM_FREEZE
 			pr_err("%s: No buffer for stream%d\n", __func__,
 				HANDLE_TO_IDX(
@@ -3459,7 +3419,6 @@ static int msm_isp_start_axi_stream(struct vfe_device *vfe_dev_ioctl,
 			pr_err("%s: No buffer for stream%x\n", __func__,
 				stream_info->stream_id);
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			spin_unlock_irqrestore(&stream_info->lock, flags);
 			mutex_unlock(&vfe_dev_ioctl->buf_mgr->lock);
 			goto error;
@@ -3874,9 +3833,8 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			__func__, __LINE__, vfe_dev->pdev->id, frame_id,
 			stream_info->activated_framedrop_period,
 			stream_info->stream_id);
-<<<<<<< HEAD
 		vfe_dev->isp_page->drop_reconfig = 1;
-=======
+
 #ifdef CONFIG_PATCH_GCAM_FREEZE
 		rc = msm_isp_return_empty_buffer(vfe_dev, stream_info,
 			user_stream_id, frame_id, buf_index, frame_src);
@@ -3889,7 +3847,7 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 #else
 		vfe_dev->isp_page->drop_reconfig = 1;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+
 		return 0;
 	}
 
@@ -3959,8 +3917,7 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 		if (rc) {
 			spin_unlock_irqrestore(&stream_info->lock, flags);
 			stream_info->undelivered_request_cnt--;
-<<<<<<< HEAD
-=======
+
 #ifdef CONFIG_PATCH_GCAM_FREEZE
 			pr_err_ratelimited("%s:%d fail to cfg HAL buffer\n",
 				__func__, __LINE__);
@@ -3968,7 +3925,6 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			list_del(&queue_req->list);
 			stream_info->request_q_cnt--;
 #else
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			queue_req = list_first_entry_or_null(
 				&stream_info->request_q,
 				struct msm_vfe_frame_request_queue, list);
@@ -3979,10 +3935,9 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			}
 			pr_err_ratelimited("%s:%d fail to cfg HAL buffer stream %x\n",
 				__func__, __LINE__, stream_info->stream_id);
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+			
 			return rc;
 		}
 
@@ -4007,7 +3962,9 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			 * is still pending. So, config pong buffer
 			 * now.
 			 */
-			rc = msm_isp_cfg_ping_pong_address(stream_info,
+			rc = msm_isp_cfg_ping_pong_addres
+				
+				s(stream_info,
 				VFE_PONG_FLAG, NULL);
 		} else {
 			rc = msm_isp_cfg_ping_pong_address(
@@ -4017,10 +3974,8 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			stream_info->undelivered_request_cnt--;
 			spin_unlock_irqrestore(&stream_info->lock,
 						flags);
-<<<<<<< HEAD
-=======
+
 #ifdef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			queue_req = list_first_entry_or_null(
 				&stream_info->request_q,
 				struct msm_vfe_frame_request_queue, list);
@@ -4029,10 +3984,9 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 				list_del(&queue_req->list);
 				stream_info->request_q_cnt--;
 			}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+			
 			pr_err_ratelimited("%s:%d fail to cfg HAL buffer\n",
 				__func__, __LINE__);
 			return rc;
@@ -4527,15 +4481,14 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 	struct timeval *time_stamp;
 	uint32_t frame_id, buf_index = -1;
 	int vfe_idx;
-<<<<<<< HEAD
 	struct vfe_device *temp_dev;
 	int other_vfe_id;
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
 	struct vfe_device *temp_dev;
 	int other_vfe_id;
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+
 
 	if (!ts) {
 		pr_err("%s: Error! Invalid argument\n", __func__);
@@ -4633,10 +4586,8 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 			ISP_DBG("%s: Error configuring ping_pong\n",
 				__func__);
 	} else if (done_buf && (done_buf->is_drop_reconfig != 1)) {
-<<<<<<< HEAD
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		int32_t frame_id_diff;
 		/* irq_sof should be always >= tasklet SOF id
 		 * For dual camera usecase irq_sof could be behind
@@ -4657,10 +4608,9 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 				ISP_EVENT_PING_PONG_MISMATCH);
 			return;
 		}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+		
 		msm_isp_cfg_stream_scratch(stream_info, pingpong_status);
 	}
 	if (!done_buf) {
@@ -4669,10 +4619,8 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 				stream_info->bufq_handle[
 				VFE_BUF_QUEUE_DEFAULT] & 0xFF]++;
 			vfe_dev->error_info.framedrop_flag = 1;
-<<<<<<< HEAD
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 			if (vfe_dev->is_split) {
 				other_vfe_id = OTHER_VFE(vfe_dev->pdev->id);
 				temp_dev =
@@ -4683,10 +4631,8 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 				VFE_BUF_QUEUE_DEFAULT] & 0xFF]++;
 				temp_dev->error_info.framedrop_flag = 1;
 			}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 
 		}
 		spin_unlock_irqrestore(&stream_info->lock, flags);
@@ -4730,24 +4676,21 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 	 * then dont issue buf-done for current buffer
 	 */
 		done_buf->is_drop_reconfig = 0;
-<<<<<<< HEAD
-=======
+
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		if (!stream_info->buf[pingpong_bit]) {
 			/* samebuffer is not re-programeed so write scratch */
 			msm_isp_cfg_stream_scratch(stream_info,
 				pingpong_status);
 		}
-<<<<<<< HEAD
+
 		spin_unlock_irqrestore(&stream_info->lock, flags);
 	} else {
-=======
+
 #endif
 		spin_unlock_irqrestore(&stream_info->lock, flags);
 	} else {
 #ifndef CONFIG_PATCH_GCAM_FREEZE
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		/* If there is no regupdate from userspace then dont
 		 * free buffer immediately, delegate it to RegUpdateAck
 		 */
@@ -4758,24 +4701,22 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 			stream_info->pending_buf_info.buf = done_buf;
 			stream_info->pending_buf_info.frame_id = frame_id;
 		}
-<<<<<<< HEAD
+
 		spin_unlock_irqrestore(&stream_info->lock, flags);
-=======
+
 #endif
 		spin_unlock_irqrestore(&stream_info->lock, flags);
 #ifdef CONFIG_PATCH_GCAM_FREEZE
 		msm_isp_process_done_buf(vfe_dev, stream_info,
 			done_buf, time_stamp, frame_id);
 #else
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
 		if (stream_info->pending_buf_info.is_buf_done_pending != 1) {
 			msm_isp_process_done_buf(vfe_dev, stream_info,
 				done_buf, time_stamp, frame_id);
 		}
-<<<<<<< HEAD
-=======
+
 #endif
->>>>>>> 957ad0b5bb03 (driver/camera: fix gcam freeze)
+
 	}
 }
 
