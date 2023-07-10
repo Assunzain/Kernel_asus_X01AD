@@ -479,10 +479,6 @@ struct msm_vfe_axi_stream {
 	int lpm_mode;
 	struct msm_isp_pending_buf_info pending_buf_info;
 
-#ifndef CONFIG_PATCH_GCAM_FREEZE
-	struct msm_isp_pending_buf_info pending_buf_info;
-#endif
-
 };
 
 struct msm_vfe_axi_composite_info {
