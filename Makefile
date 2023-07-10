@@ -798,7 +798,12 @@ KBUILD_CFLAGS += $(call cc-option, -Wno-sometimes-uninitialized)
 KBUILD_CFLAGS += -Wno-asm-operand-widths
 KBUILD_CFLAGS += -Wno-initializer-overrides
 KBUILD_CFLAGS += -fno-builtin
-
+KBUILD_CFLAGS += $(call cc-disable-warning, frame-larger-than)
+KBUILD_CFLAGS += $(call cc-disable-warning, return-type)
+KBUILD_CFLAGS += $(call cc-disable-warning, excess-initializers)
+KBUILD_CFLAGS += $(call cc-disable-warning, implicit-function-declaration)
+KBUILD_CFLAGS += $(call cc-disable-warning, undefined-internal)
+KBUILD_CFLAGS += $(call cc-disable-warning, unused-function)
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
 KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
