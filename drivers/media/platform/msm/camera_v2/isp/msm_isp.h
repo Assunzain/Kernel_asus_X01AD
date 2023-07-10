@@ -773,14 +773,6 @@ struct msm_vfe_common_subdev {
 	struct msm_vfe_common_dev_data *common_data;
 };
 
-#ifndef CONFIG_PATCH_GCAM_FREEZE
-struct msm_isp_pending_buf_info {
-	uint32_t is_buf_done_pending;
-	struct msm_isp_buffer *buf;
-	uint32_t frame_id;
-};
-#endif
-
 
 struct vfe_device {
 	/* Driver private data */
@@ -871,10 +863,7 @@ struct vfe_device {
 	/* irq info */
 	uint32_t irq_sof_id;
 
-#ifndef CONFIG_PATCH_GCAM_FREEZE
-	/* irq info */
-	uint32_t irq_sof_id;
-#endif
+
 };
 
 struct vfe_parent_device {
