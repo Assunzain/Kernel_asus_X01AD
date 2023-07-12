@@ -64,7 +64,11 @@ static bool add_typeattribute(struct policydb *db, const char *type,
 // rules
 #define strip_av(effect, invert) ((effect == AVTAB_AUDITDENY) == !invert)
 
+<<<<<<< HEAD:drivers/staging/kernelsu/selinux/sepolicy.c
 #define hash_for_each(node_ptr, n_slot, cur)                                   \
+=======
+#define ksu_hash_for_each(node_ptr, n_slot, cur)                               \
+>>>>>>> a3d8b6d1d19e (ksu: sync and update):KernelSU/kernel/selinux/sepolicy.c
 	int i;                                                                 \
 	for (i = 0; i < n_slot; ++i)                                           \
 		for (cur = node_ptr[i]; cur; cur = cur->next)
@@ -72,10 +76,18 @@ static bool add_typeattribute(struct policydb *db, const char *type,
 // htable is a struct instead of pointer above 5.8.0:
 // https://elixir.bootlin.com/linux/v5.8-rc1/source/security/selinux/ss/symtab.h
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+<<<<<<< HEAD:drivers/staging/kernelsu/selinux/sepolicy.c
 #define hashtab_for_each(htab, cur) hash_for_each (htab.htable, htab.size, cur)
 #else
 #define hashtab_for_each(htab, cur)                                            \
 	hash_for_each (htab->htable, htab->size, cur)
+=======
+#define ksu_hashtab_for_each(htab, cur)                                        \
+	ksu_hash_for_each(htab.htable, htab.size, cur)
+#else
+#define ksu_hashtab_for_each(htab, cur)                                        \
+	ksu_hash_for_each(htab->htable, htab->size, cur)
+>>>>>>> a3d8b6d1d19e (ksu: sync and update):KernelSU/kernel/selinux/sepolicy.c
 #endif
 
 // symtab_search is introduced on 5.9.0:
@@ -86,8 +98,12 @@ static bool add_typeattribute(struct policydb *db, const char *type,
 #endif
 
 #define avtab_for_each(avtab, cur)                                             \
+<<<<<<< HEAD:drivers/staging/kernelsu/selinux/sepolicy.c
 	hash_for_each (avtab.htable, avtab.nslot, cur)                         \
 		;
+=======
+	ksu_hash_for_each(avtab.htable, avtab.nslot, cur);
+>>>>>>> a3d8b6d1d19e (ksu: sync and update):KernelSU/kernel/selinux/sepolicy.c
 
 static struct avtab_node *get_avtab_node(struct policydb *db,
 					 struct avtab_key *key,
@@ -679,10 +695,63 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 	int i;
 	for (i = 0; i < db->p_roles.nprim; ++i) {
 		ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1,
-				0);
+				1);
 	}
 
 	return true;
+<<<<<<< HEAD:drivers/staging/kernelsu/selinux/sepolicy.c
+=======
+#elif defined(CONFIG_IS_HW_HISI)
+	/*
+   * Huawei use type_attr_map and type_val_to_struct.
+   * And use ebitmap not flex_array.
+   */
+	size_t new_size = sizeof(struct ebitmap) * db->p_types.nprim;
+	struct ebitmap *new_type_attr_map =
+		(krealloc(db->type_attr_map, new_size, GFP_ATOMIC));
+
+	struct type_datum **new_type_val_to_struct =
+		krealloc(db->type_val_to_struct,
+			 sizeof(*db->type_val_to_struct) * db->p_types.nprim,
+			 GFP_ATOMIC);
+
+	if (!new_type_attr_map) {
+		pr_err("add_type: alloc type_attr_map failed\n");
+		return false;
+	}
+
+	if (!new_type_val_to_struct) {
+		pr_err("add_type: alloc type_val_to_struct failed\n");
+		return false;
+	}
+
+	char **new_val_to_name_types =
+		krealloc(db->sym_val_to_name[SYM_TYPES],
+			 sizeof(char *) * db->symtab[SYM_TYPES].nprim,
+			 GFP_KERNEL);
+	if (!new_val_to_name_types) {
+		pr_err("add_type: alloc val_to_name failed\n");
+		return false;
+	}
+
+	db->type_attr_map = new_type_attr_map;
+	ebitmap_init(&db->type_attr_map[value - 1], HISI_SELINUX_EBITMAP_RO);
+	ebitmap_set_bit(&db->type_attr_map[value - 1], value - 1, 1);
+
+	db->type_val_to_struct = new_type_val_to_struct;
+	db->type_val_to_struct[value - 1] = type;
+
+	db->sym_val_to_name[SYM_TYPES] = new_val_to_name_types;
+	db->sym_val_to_name[SYM_TYPES][value - 1] = key;
+
+	int i;
+	for (i = 0; i < db->p_roles.nprim; ++i) {
+		ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1,
+				1);
+	}
+
+	return true;
+>>>>>>> a3d8b6d1d19e (ksu: sync and update):KernelSU/kernel/selinux/sepolicy.c
 #else
 	// flex_array is not extensible, we need to create a new bigger one instead
 	struct flex_array *new_type_attr_map_array = flex_array_alloc(sizeof(struct ebitmap),
@@ -784,7 +853,7 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 	int i;
 	for (i = 0; i < db->p_roles.nprim; ++i) {
 		ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1,
-				0);
+				1);
 	}
 	return true;
 #endif

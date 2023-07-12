@@ -4,7 +4,11 @@
 #include "linux/types.h"
 #include "linux/workqueue.h"
 
+<<<<<<< HEAD:drivers/staging/kernelsu/ksu.h
 #define KERNEL_SU_VERSION KSU_VERSION
+=======
+#define KERNEL_SU_VERSION 11094
+>>>>>>> a3d8b6d1d19e (ksu: sync and update):KernelSU/kernel/ksu.h
 #define KERNEL_SU_OPTION 0xDEADBEEF
 
 #define CMD_GRANT_ROOT 0
