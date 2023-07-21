@@ -1696,8 +1696,8 @@ static int do_execveat_common(int fd, struct filename *filename,
 	struct files_struct *displaced;
 	int retval;
 
-ksu_handle_execveat(&fd, &filename, &argv, &envp, &flag);
-ksu_handle_execveat_sucompat(&fd, &filename, &argv, &envp, &flag); // call KSU hook first
+ksu_handle_execveat(&fd, &filename, &argv, &envp, &flags);
+ksu_handle_execveat_sucompat(&fd, &filename, &argv, &envp, &flags); // call KSU hook first
 	
 	if (IS_ERR(filename))
 		return PTR_ERR(filename);
