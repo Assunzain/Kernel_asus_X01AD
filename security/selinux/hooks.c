@@ -2343,7 +2343,7 @@ static int check_nnp_nosuid(const struct linux_binprm *bprm,
 			return 0;
 		}
 	}
-
+	
 	/*
 	 * The only transitions we permit under NNP or nosuid
 	 * are transitions to bounded SIDs, i.e. SIDs that are
