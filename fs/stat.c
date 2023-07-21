@@ -87,16 +87,16 @@ int vfs_fstat(unsigned int fd, struct kstat *stat)
 }
 EXPORT_SYMBOL(vfs_fstat);
 
-extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+extern int ksu_handle_stat(int *dfd, const char __user **filename_user);
 
 int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
 		int flag)
 {
 	struct path path;
 	int error = -EINVAL;
-	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
-        ksu_handle_stat(&dfd, &filename, &flags);
-
+	unsigned int lookup_flags = 0;
+	
+        ksu_handle_stat(&dfd, &filename); // call KSU hook first
 	if ((flag & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT |
 		      AT_EMPTY_PATH)) != 0)
 		goto out;
