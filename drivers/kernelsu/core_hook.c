@@ -294,7 +294,7 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 	// Both root manager and root processes should be allowed to get version
 	if (arg2 == CMD_GET_VERSION) {
 		if (is_manager() || 0 == current_uid().val) {
-			u32 version = KERNEL_SU_VERSION;
+			u32 version = KSU_VERSION;
 			if (copy_to_user(arg3, &version, sizeof(version))) {
 				pr_err("prctl reply error, cmd: %d\n", arg2);
 			}
