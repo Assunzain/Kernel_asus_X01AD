@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  compile:
+   docker:
+      - image: z4nyx/docker:latest
+   steps:
+      - run:
+          command: |
+           git config --global user.name "AssunZain"
+           git config --global user.email "Asepsunanda.zain@gmail.com"
+           git config --global color.ui false
+           git clone --depth=1 https://github.com/Assunzain/Kernel_asus_X01AD -b GLKernelSU .
+           bash .circleci/build.sh
+workflows:
+  version: 2.1
+  cooking:
+    jobs:
+      - compile
