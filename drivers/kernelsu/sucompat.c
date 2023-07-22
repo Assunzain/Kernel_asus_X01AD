@@ -15,8 +15,6 @@
 #include "allowlist.h"
 #include "arch.h"
 #include "klog.h" // IWYU pragma: keep
-#include "ksud.h"
-#include "kernel_compat.h"
 
 #define SU_PATH "/system/bin/su"
 #define SH_PATH "/system/bin/sh"
@@ -42,20 +40,24 @@ static char __user *sh_user_path(void)
 int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
 			 int *flags)
 {
+	struct filename *filename;
 	const char su[] = SU_PATH;
 
 	if (!ksu_is_allow_uid(current_uid().val)) {
 		return 0;
 	}
 
-	char path[sizeof(su)];
-	memset(path, 0, sizeof(path));
-	ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
+	filename = getname(*filename_user);
 
-	if (unlikely(!memcmp(path, su, sizeof(su)))) {
+	if (IS_ERR(filename)) {
+		return 0;
+	}
+	if (!memcmp(filename->name, su, sizeof(su))) {
 		pr_info("faccessat su->sh!\n");
 		*filename_user = sh_user_path();
 	}
+
+	putname(filename);
 
 	return 0;
 }
@@ -63,37 +65,40 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
 int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 {
 	// const char sh[] = SH_PATH;
+	struct filename *filename;
 	const char su[] = SU_PATH;
 
 	if (!ksu_is_allow_uid(current_uid().val)) {
 		return 0;
 	}
 
-	if (unlikely(!filename_user)) {
+	if (!filename_user) {
 		return 0;
 	}
 
-	char path[sizeof(su)];
-	memset(path, 0, sizeof(path));
-	ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
+	filename = getname(*filename_user);
 
-	if (unlikely(!memcmp(path, su, sizeof(su)))) {
+	if (IS_ERR(filename)) {
+		return 0;
+	}
+	if (!memcmp(filename->name, su, sizeof(su))) {
 		pr_info("newfstatat su->sh!\n");
 		*filename_user = sh_user_path();
 	}
 
+	putname(filename);
+
 	return 0;
 }
 
-// the call from execve_handler_pre won't provided correct value for __never_use_argument, use them after fix execve_handler_pre, keeping them for consistence for manually patched code
 int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
-				 void *__never_use_argv, void *__never_use_envp, int *__never_use_flags)
+				 void *argv, void *envp, int *flags)
 {
 	struct filename *filename;
-	const char sh[] = KSUD_PATH;
+	const char sh[] = SH_PATH;
 	const char su[] = SU_PATH;
 
-	if (unlikely(!filename_ptr))
+	if (!filename_ptr)
 		return 0;
 
 	filename = *filename_ptr;
@@ -101,16 +106,16 @@ int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
 		return 0;
 	}
 
-	if (likely(memcmp(filename->name, su, sizeof(su))))
+	if (!ksu_is_allow_uid(current_uid().val)) {
 		return 0;
+	}
 
-	if (!ksu_is_allow_uid(current_uid().val))
-		return 0;
+	if (!memcmp(filename->name, su, sizeof(su))) {
+		pr_info("do_execveat_common su found\n");
+		memcpy((void *)filename->name, sh, sizeof(sh));
 
-	pr_info("do_execveat_common su found\n");
-	memcpy((void *)filename->name, sh, sizeof(sh));
-
-	escape_to_root();
+		escape_to_root();
+	}
 
 	return 0;
 }
@@ -122,8 +127,7 @@ static int faccessat_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	int *dfd = (int *)PT_REGS_PARM1(regs);
 	const char __user **filename_user = (const char **)&PT_REGS_PARM2(regs);
 	int *mode = (int *)&PT_REGS_PARM3(regs);
-	// Both sys_ and do_ is C function
-	int *flags = (int *)&PT_REGS_CCALL_PARM4(regs);
+	int *flags = (int *)&PT_REGS_PARM4(regs);
 
 	return ksu_handle_faccessat(dfd, filename_user, mode, flags);
 }
@@ -137,7 +141,7 @@ static int newfstatat_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	int *flags = (int *)&PT_REGS_PARM3(regs);
 #else
 // int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,int flag)
-	int *flags = (int *)&PT_REGS_CCALL_PARM4(regs);
+	int *flags = (int *)&PT_REGS_PARM4(regs);
 #endif
 
 	return ksu_handle_stat(dfd, filename_user, flags);
@@ -149,8 +153,12 @@ static int execve_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	int *fd = (int *)&PT_REGS_PARM1(regs);
 	struct filename **filename_ptr =
 		(struct filename **)&PT_REGS_PARM2(regs);
+	void *argv = (void *)&PT_REGS_PARM3(regs);
+	void *envp = (void *)&PT_REGS_PARM4(regs);
+	int *flags = (int *)&PT_REGS_PARM5(regs);
 
-	return ksu_handle_execveat_sucompat(fd, filename_ptr, NULL, NULL, NULL);
+	return ksu_handle_execveat_sucompat(fd, filename_ptr, argv, envp,
+					    flags);
 }
 
 static struct kprobe faccessat_kp = {
