@@ -15,7 +15,7 @@ export KBUILD_BUILD_HOST=GLkernel
 export KBUILD_BUILD_USER=AssunZain
 # sticker plox
 
-# Send info plox channel
+# Send info plox  channel
 function sendinfo() {
     curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
         -d chat_id="$chat_id" \
