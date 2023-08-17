@@ -601,7 +601,10 @@ typedef struct WLAN_WAPI_KEY *pWLAN_WAPI_KEY;
 #define WPA_GET_LE16(a) ((u16) (((a)[1] << 8) | (a)[0]))
 #define WPA_GET_BE24(a) ((u32) ( (a[0] << 16) | (a[1] << 8) | a[2]))
 #define WLAN_EID_WAPI 68
+<<<<<<< HEAD
 #define WLAN_ELEMID_RSNXE 244
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #define WAPI_PSK_AKM_SUITE  0x02721400
 #define WAPI_CERT_AKM_SUITE 0x01721400
 
@@ -1573,10 +1576,13 @@ struct hdd_cache_channels {
 	struct hdd_cache_channel_info *channel_info;
 };
 
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
 #define WLAN_WAIT_TIME_SW_PTA 1000
 #endif
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 struct hdd_context_s
 {
    /** Global VOS context  */
@@ -1796,8 +1802,11 @@ struct hdd_context_s
 
     v_BOOL_t btCoexModeSet;
     v_BOOL_t isPnoEnable;
+<<<<<<< HEAD
     bool     is_sco_enabled;
     bool     is_bt_enabled;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     macAddrSpoof_t spoofMacAddr;
     /* flag to decide if driver need to scan DFS channels or not */
     v_BOOL_t  disable_dfs_flag;
@@ -1870,9 +1879,12 @@ struct hdd_context_s
     struct hdd_cache_channels *original_channels;
     struct mutex cache_channel_lock;
     bool force_rsne_override;
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
     struct completion sw_pta_comp;
 #endif
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 };
 
 /* Use to notify the TDLS or BTCOEX is mode enable */
@@ -2445,6 +2457,7 @@ static inline void hdd_fill_last_rx(hdd_adapter_t *adapter)
 }
 #else
 void hdd_fill_last_rx(hdd_adapter_t *adapter);
+<<<<<<< HEAD
 static inline int wcnss_update_bt_profile(void)
 {
 	return 0;
@@ -2485,5 +2498,7 @@ static inline bool hdd_is_sw_pta_enabled(hdd_context_t *hdd_ctx)
 {
 	return 0;
 }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #endif
 #endif    // end #if !defined( WLAN_HDD_MAIN_H )

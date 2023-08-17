@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (C) 2020 XiaoMi, Inc.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -812,6 +815,7 @@ fail:
    return vosStatus;
 }
 
+<<<<<<< HEAD
 /* Added by WB20195992 for get mac. -begin */
 VOS_STATUS get_mac_buf(char *pfileName,v_VOID_t *pCtx, char* mac, int len)
 {
@@ -837,6 +841,8 @@ VOS_STATUS get_mac_buf(char *pfileName,v_VOID_t *pCtx, char* mac, int len)
 }
 /* Added by WB20195992 for get mac. -end */
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /**------------------------------------------------------------------------
   \brief vos_nv_parseV2bin() - Parse NV2 binary
          Parse NV2 BIN, and assign contents to common NV structure.
@@ -1188,9 +1194,12 @@ VOS_STATUS vos_nv_open(void)
     v_U32_t dataOffset;
     sHalNv *pnvData = NULL;
     hdd_context_t *pHddCtx = NULL;
+<<<<<<< HEAD
     /* Added by WB20195992 for read mac. -begin */
     char mac_buf[24];
     /* Added by WB20195992 for read mac. -end */
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     /*Get the global context */
     pVosContext = vos_get_global_context(VOS_MODULE_ID_SYS, NULL);
@@ -1404,6 +1413,7 @@ VOS_STATUS vos_nv_open(void)
         ((VosContextType*)(pVosContext))->nvVersion = E_NV_V2;
     }
 
+<<<<<<< HEAD
     /* Added by WB20195992 for read mac. -begin */
     status = get_mac_buf("wlan/prima/wlan_mac.bin", ((VosContextType*)(pVosContext))->pHDDContext, mac_buf, sizeof(mac_buf));
     //added return status
@@ -1416,6 +1426,8 @@ VOS_STATUS vos_nv_open(void)
     }
     /* Added by WB20195992 for read mac. -end */
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     if (NULL != pnvData)
     {
        vos_mem_free(pnvData);
@@ -3041,7 +3053,11 @@ v_U8_t vos_freq_to_chan(v_U32_t freq)
 }
 
 /* function to tell about if Default country is Non-Zero */
+<<<<<<< HEAD
 v_BOOL_t vos_is_nv_country_non_zero(void)
+=======
+v_BOOL_t vos_is_nv_country_non_zero()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     v_BOOL_t  status = VOS_FALSE;
     if (!(pnvEFSTable->halnv.tables.defaultCountryTable.countryCode[0] == '0' &&

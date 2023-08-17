@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -142,7 +145,10 @@
 #define WDA_BA_MAX_RETRY_THRESHOLD 10
 #define WDA_BA_RETRY_TIME 300000   /* Time is in msec, equal to 5 mins */
 
+<<<<<<< HEAD
 #define ADDBA_MAX_DELAY_COUNT 5
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /* extern declarations */
 extern void vos_WDAComplete_cback(v_PVOID_t pVosContext);
 extern wpt_uint8 WDI_GetActiveSessionsCount (void *pWDICtx, wpt_macAddr macBSSID, wpt_boolean skipBSSID);
@@ -547,8 +553,11 @@ VOS_STATUS WDA_open(v_PVOID_t pVosContext, v_PVOID_t devHandle,
 
    wda_register_debug_callback();
 
+<<<<<<< HEAD
    init_completion(&wdaContext->addBa_responce_delay);
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    return status;
 
 error:
@@ -7851,7 +7860,10 @@ VOS_STATUS WDA_ProcessAddBASessionReq(tWDA_CbContext *pWDA,
                           sizeof(WDI_AddBASessionReqParamsType)) ;
    tWDA_ReqParams *pWdaParams ;
    WLANTL_STAStateType tlSTAState = 0;
+<<<<<<< HEAD
    static uint8_t AddBaMax_Delay_Count = 0;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
    VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_INFO,
                                           "------> %s " ,__func__);
@@ -7904,6 +7916,7 @@ VOS_STATUS WDA_ProcessAddBASessionReq(tWDA_CbContext *pWDA,
    /* In TDLS case, there is a possibility that TL hasn't registered peer yet, but
       the peer thinks that we already setup TDLS link, and send us ADDBA request packet
    */
+<<<<<<< HEAD
 
    if((VOS_STATUS_SUCCESS != WDA_TL_GET_STA_STATE(pWDA->pVosContext, pAddBAReqParams->staIdx, &tlSTAState)) ||
        ((WLANTL_STA_CONNECTED != tlSTAState) && (WLANTL_STA_AUTHENTICATED != tlSTAState)))
@@ -7943,6 +7956,23 @@ VOS_STATUS WDA_ProcessAddBASessionReq(tWDA_CbContext *pWDA,
 
            return CONVERT_WDI2VOS_STATUS(status) ;
        }
+=======
+   if((VOS_STATUS_SUCCESS != WDA_TL_GET_STA_STATE(pWDA->pVosContext, pAddBAReqParams->staIdx, &tlSTAState)) ||
+    ((WLANTL_STA_CONNECTED != tlSTAState) && (WLANTL_STA_AUTHENTICATED != tlSTAState)))
+   {
+       VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_WARN,
+        "Peer staIdx %d hasn't established yet(%d). Send ADD BA failure to PE.", pAddBAReqParams->staIdx, tlSTAState );
+       status = WDI_STATUS_E_NOT_ALLOWED;
+       pAddBAReqParams->status =
+             CONVERT_WDI2SIR_STATUS(status) ;
+       WDA_SendMsg(pWDA, WDA_ADDBA_RSP, (void *)pAddBAReqParams , 0) ;
+       /*Reset the WDA state to READY */
+       pWDA->wdaState = WDA_READY_STATE;
+       vos_mem_free(pWdaParams->wdaWdiApiMsgParam) ;
+       vos_mem_free(pWdaParams);
+
+       return CONVERT_WDI2VOS_STATUS(status) ;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    }
 
    status = WDI_AddBASessionReq(wdiAddBASessionReqParam, 
@@ -18421,8 +18451,11 @@ void WDA_lowLevelIndCallback(WDI_LowLevelIndType *wdiLowLevelInd,
             pPrefNetworkFoundInd->frameLength = 0;
          }
          pPrefNetworkFoundInd ->rssi = wdiLowLevelInd->wdiIndicationData.wdiPrefNetworkFoundInd.rssi; 
+<<<<<<< HEAD
          pPrefNetworkFoundInd->freq =
                     wdiLowLevelInd->wdiIndicationData.wdiPrefNetworkFoundInd.freq;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
          /* VOS message wrapper */
          vosMsg.type = eWNI_SME_PREF_NETWORK_FOUND_IND;
          vosMsg.bodyptr = (void *) pPrefNetworkFoundInd;
@@ -21813,7 +21846,11 @@ void WDA_TransportChannelDebug
     NONE
 
 ===========================================================================*/
+<<<<<<< HEAD
 void WDA_TransportKickDxe(void)
+=======
+void WDA_TransportKickDxe()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    WDI_TransportKickDxe();
    return;

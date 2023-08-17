@@ -72,7 +72,11 @@ void tlTraceDump(void *pMac, tpvosTraceRecord pRecord, v_U16_t recIndex)
                        pRecord->data));
 }
 
+<<<<<<< HEAD
 void tlTraceInit(void)
+=======
+void tlTraceInit()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    vosTraceRegister(VOS_MODULE_ID_TL, (tpvosTraceCb)&tlTraceDump);
 }

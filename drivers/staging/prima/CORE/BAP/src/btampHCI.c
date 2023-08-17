@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2012-2013, 2021 The Linux Foundation. All rights reserved.
+=======
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -2873,6 +2877,7 @@ static v_U32_t UnpackTlvCore( void *   pCtx,
         else { 
             id = *pBufRemaining; 
         }
+<<<<<<< HEAD
 	if ( sType > nBufRemaining )
 	{
             FRAMES_LOG0( pCtx, FRLOGE, FRFL( "This frame reports "
@@ -2904,6 +2909,13 @@ static v_U32_t UnpackTlvCore( void *   pCtx,
 	    goto MandatoryCheck;
 	}
 	pBufRemaining += sLen;
+=======
+        pBufRemaining += sType;
+        nBufRemaining -= sType;
+        // & length,
+        framesntohs(pCtx, &len, pBufRemaining, 1);
+        pBufRemaining += sLen;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         nBufRemaining -= sLen;
 
         if ( pTlv && pTlv->pec )

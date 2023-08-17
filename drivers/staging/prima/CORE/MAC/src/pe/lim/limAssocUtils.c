@@ -1785,11 +1785,19 @@ limPopulateOwnRateSet(tpAniSirGlobal pMac,
 {
     tSirMacRateSet          tempRateSet;
     tSirMacRateSet          tempRateSet2;
+<<<<<<< HEAD
     tANI_U32                i,j,val,min;
     tANI_U32 phyMode = 0;
     tANI_U32 selfStaDot11Mode=0;
     tANI_U8 aRateIndex = 0;
     tANI_U8 bRateIndex = 0;
+=======
+    tANI_U32                i,j,val,min,isArate;
+    tANI_U32 phyMode = 0;
+    tANI_U32 selfStaDot11Mode=0;
+
+    isArate = 0;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     wlan_cfgGetInt(pMac, WNI_CFG_DOT11_MODE, &selfStaDot11Mode);
     limGetPhyMode(pMac, &phyMode, psessionEntry);
@@ -1822,12 +1830,19 @@ limPopulateOwnRateSet(tpAniSirGlobal pMac,
     else
          tempRateSet2.numRates = 0;
 
+<<<<<<< HEAD
     if ((tempRateSet.numRates + tempRateSet2.numRates) >
         SIR_MAC_MAX_NUMBER_OF_RATES)
     {
         //we are in big trouble
         limLog(pMac, LOGP, FL("more than %d rates in CFG"),
                SIR_MAC_MAX_NUMBER_OF_RATES);
+=======
+    if ((tempRateSet.numRates + tempRateSet2.numRates) > 12)
+    {
+        //we are in big trouble
+        limLog(pMac, LOGP, FL("more than 12 rates in CFG"));
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         //panic
         goto error;
     }
@@ -1841,6 +1856,7 @@ limPopulateOwnRateSet(tpAniSirGlobal pMac,
      * Sort rates in tempRateSet (they are likely to be already sorted)
      * put the result in pSupportedRates
      */
+<<<<<<< HEAD
     vos_mem_set((tANI_U8 *) pRates, sizeof(tSirSupportedRates), 0);
     for (i = 0; i < tempRateSet.numRates; i++) {
         min = 0;
@@ -1888,6 +1904,55 @@ limPopulateOwnRateSet(tpAniSirGlobal pMac,
                    tempRateSet.rate[min]);
         }
         tempRateSet.rate[min] = 0xff;
+=======
+    {
+        tANI_U8 aRateIndex = 0;
+        tANI_U8 bRateIndex = 0;
+
+        vos_mem_set((tANI_U8 *) pRates, sizeof(tSirSupportedRates), 0);
+        for(i = 0;i < tempRateSet.numRates; i++)
+        {
+            min = 0;
+            val = 0xff;
+            isArate = 0;
+            for(j = 0; (j < tempRateSet.numRates) && (j < SIR_MAC_RATESET_EID_MAX); j++)
+            {
+                if ((tANI_U32) (tempRateSet.rate[j] & 0x7f) < val)
+                {
+                     val = tempRateSet.rate[j] & 0x7f;
+                     min = j;
+                }
+            }
+
+            if (sirIsArate(tempRateSet.rate[min] & 0x7f))
+                isArate = 1;
+
+    /*
+    * HAL needs to know whether the rate is basic rate or not, as it needs to 
+    * update the response rate table accordingly. e.g. if one of the 11a rates is
+    * basic rate, then that rate can be used for sending control frames.
+    * HAL updates the response rate table whenever basic rate set is changed.
+    */
+            if (basicOnly)
+            {
+                if (tempRateSet.rate[min] & 0x80)
+                {
+                    if (isArate)
+                        pRates->llaRates[aRateIndex++] = tempRateSet.rate[min];
+                    else
+                        pRates->llbRates[bRateIndex++] = tempRateSet.rate[min];
+                }
+            }
+            else
+            {
+                if (isArate)
+                    pRates->llaRates[aRateIndex++] = tempRateSet.rate[min];
+                else
+                    pRates->llbRates[bRateIndex++] = tempRateSet.rate[min];
+            }
+            tempRateSet.rate[min] = 0xff;
+        }
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     }
 
@@ -1952,9 +2017,14 @@ limPopulatePeerRateSet(tpAniSirGlobal pMac,
 {
     tSirMacRateSet          tempRateSet;
     tSirMacRateSet          tempRateSet2;
+<<<<<<< HEAD
     tANI_U32                     i,j,val,min;
     tANI_U8 aRateIndex = 0;
     tANI_U8 bRateIndex = 0;
+=======
+    tANI_U32                     i,j,val,min,isArate;
+    isArate = 0;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     /* copy operational rate set from psessionEntry */
     if ( psessionEntry->rateSet.numRates <= SIR_MAC_RATESET_EID_MAX )
@@ -1971,7 +2041,10 @@ limPopulatePeerRateSet(tpAniSirGlobal pMac,
     }
     if ((psessionEntry->dot11mode == WNI_CFG_DOT11_MODE_11G) ||
         (psessionEntry->dot11mode == WNI_CFG_DOT11_MODE_11A) ||
+<<<<<<< HEAD
         (psessionEntry->dot11mode == WNI_CFG_DOT11_MODE_11B) ||
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         (psessionEntry->dot11mode == WNI_CFG_DOT11_MODE_11N))
     {
 
@@ -1996,6 +2069,10 @@ limPopulatePeerRateSet(tpAniSirGlobal pMac,
         goto error;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     //copy all rates in tempRateSet, there are 12 rates max
     for (i = 0;i < tempRateSet2.numRates; i++)
       tempRateSet.rate[i + tempRateSet.numRates] = tempRateSet2.rate[i];
@@ -2004,6 +2081,7 @@ limPopulatePeerRateSet(tpAniSirGlobal pMac,
      * Sort rates in tempRateSet (they are likely to be already sorted)
      * put the result in pSupportedRates
      */
+<<<<<<< HEAD
     vos_mem_set((tANI_U8 *) pRates, sizeof(tSirSupportedRates), 0);
     for (i = 0; i < tempRateSet.numRates; i++) {
         min = 0;
@@ -2053,6 +2131,55 @@ limPopulatePeerRateSet(tpAniSirGlobal pMac,
         tempRateSet.rate[min] = 0xff;
     }
 
+=======
+    {
+        tANI_U8 aRateIndex = 0;
+        tANI_U8 bRateIndex = 0;
+        vos_mem_set((tANI_U8 *) pRates, sizeof(tSirSupportedRates), 0);
+        for(i = 0;i < tempRateSet.numRates; i++)
+        {
+            min = 0;
+            val = 0xff;
+            isArate = 0;
+            for(j = 0; (j < tempRateSet.numRates) && (j < SIR_MAC_RATESET_EID_MAX); j++)
+            {
+                if ((tANI_U32) (tempRateSet.rate[j] & 0x7f) < val)
+                {
+                     val = tempRateSet.rate[j] & 0x7f;
+                     min = j;
+                }
+            }
+            if (sirIsArate(tempRateSet.rate[min] & 0x7f))
+                isArate = 1;
+    /*
+    * HAL needs to know whether the rate is basic rate or not, as it needs to
+    * update the response rate table accordingly. e.g. if one of the 11a rates is
+    * basic rate, then that rate can be used for sending control frames.
+    * HAL updates the response rate table whenever basic rate set is changed.
+    */
+            if (basicOnly)
+            {
+                if (tempRateSet.rate[min] & 0x80)
+                {
+                    if (isArate)
+                        pRates->llaRates[aRateIndex++] = tempRateSet.rate[min];
+                    else
+                        pRates->llbRates[bRateIndex++] = tempRateSet.rate[min];
+                }
+            }
+            else
+            {
+                if (isArate)
+                    pRates->llaRates[aRateIndex++] = tempRateSet.rate[min];
+                else
+                    pRates->llbRates[bRateIndex++] = tempRateSet.rate[min];
+            }
+            tempRateSet.rate[min] = 0xff;
+        }
+    }
+
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     if (IS_DOT11_MODE_HT(psessionEntry->dot11mode))
     {
         val = SIZE_OF_SUPPORTED_MCS_SET;
@@ -2180,11 +2307,17 @@ limPopulateMatchingRateSet(tpAniSirGlobal pMac,
     else
         tempRateSet2.numRates = 0;
 
+<<<<<<< HEAD
     if ((tempRateSet.numRates + tempRateSet2.numRates) >
         SIR_MAC_MAX_NUMBER_OF_RATES)
     {
         PELOGE(limLog(pMac, LOGE, FL("more than %d rates in CFG"),
                SIR_MAC_MAX_NUMBER_OF_RATES);)
+=======
+    if ((tempRateSet.numRates + tempRateSet2.numRates) > 12)
+    {
+        PELOGE(limLog(pMac, LOGE, FL("more than 12 rates in CFG"));)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         goto error;
     }
 
@@ -2194,9 +2327,13 @@ limPopulateMatchingRateSet(tpAniSirGlobal pMac,
      * - sort and the rates into the pSta->rate array
      */
 
+<<<<<<< HEAD
     /* Copy all rates in tempRateSet,
      * there are SIR_MAC_MAX_NUMBER_OF_RATES rates max
      */
+=======
+    // Copy all rates in tempRateSet, there are 12 rates max
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     for(i = 0; i < tempRateSet2.numRates; i++)
         tempRateSet.rate[i + tempRateSet.numRates] =
                                            tempRateSet2.rate[i];
@@ -2240,6 +2377,7 @@ limPopulateMatchingRateSet(tpAniSirGlobal pMac,
 
     if (pExtRateSet->numRates)
     {
+<<<<<<< HEAD
       if((tempRateSet.numRates + pExtRateSet->numRates) >
          SIR_MAC_MAX_NUMBER_OF_RATES )
       {
@@ -2248,6 +2386,15 @@ limPopulateMatchingRateSet(tpAniSirGlobal pMac,
             tempRateSet.numRates + pExtRateSet->numRates, SIR_MAC_MAX_NUMBER_OF_RATES );
 
         if( tempRateSet.numRates < SIR_MAC_MAX_NUMBER_OF_RATES )
+=======
+      if((tempRateSet.numRates + pExtRateSet->numRates) > 12 )
+      {
+        limLog( pMac, LOG1,
+            "Sum of SUPPORTED and EXTENDED Rate Set (%1d) exceeds 12!",
+            tempRateSet.numRates + pExtRateSet->numRates );
+
+        if( tempRateSet.numRates < 12 )
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
          int found = 0;
          int tail = tempRateSet.numRates;
@@ -2270,7 +2417,11 @@ limPopulateMatchingRateSet(tpAniSirGlobal pMac,
               tempRateSet.rate[tempRateSet.numRates++] =
                 pExtRateSet->rate[i];
 
+<<<<<<< HEAD
               if( tempRateSet.numRates >= SIR_MAC_MAX_NUMBER_OF_RATES )
+=======
+              if( tempRateSet.numRates >= 12 )
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 break;
             }
           }
@@ -3055,8 +3206,12 @@ limAddStaSelf(tpAniSirGlobal pMac,tANI_U16 staIdx, tANI_U8 updateSta, tpPESessio
         {
             pAddStaParams->greenFieldCapable = limGetHTCapability( pMac, eHT_GREENFIELD, psessionEntry);
             pAddStaParams->txChannelWidthSet =
+<<<<<<< HEAD
                   pMac->roam.configParam.channelBondingMode5GHz |
                   pMac->roam.configParam.channelBondingMode24GHz;
+=======
+                  pMac->roam.configParam.channelBondingMode5GHz;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
             // pAddStaParams->txChannelWidthSet = limGetHTCapability( pMac, eHT_SUPPORTED_CHANNEL_WIDTH_SET, psessionEntry);
             pAddStaParams->mimoPS             = limGetHTCapability( pMac, eHT_MIMO_POWER_SAVE, psessionEntry );
             pAddStaParams->rifsMode           = limGetHTCapability( pMac, eHT_RIFS_MODE, psessionEntry );

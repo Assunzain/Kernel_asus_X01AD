@@ -83,9 +83,12 @@
 #define NEIGHBOR_ROAM_DEBUG(x...)
 #endif
 
+<<<<<<< HEAD
 /* Start the Timer for 5000 ms */
 #define NEIGHBOR_PERIODIC_SCAN_PERIOD 5000
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 static void csrNeighborRoamResetChannelInfo(tpCsrNeighborRoamChannelInfo rChInfo);
 static void csrNeighborRoamResetCfgListChanScanControlInfo(tpAniSirGlobal pMac);
 static void csrNeighborRoamResetPreauthControlInfo(tpAniSirGlobal pMac);
@@ -100,10 +103,13 @@ VOS_STATUS csrNeighborRoamNeighborLookupDOWNCallback (v_PVOID_t pAdapter, v_U8_t
 void csrNeighborRoamRRMNeighborReportResult(void *context, VOS_STATUS vosStatus);
 eHalStatus csrRoamCopyConnectedProfile(tpAniSirGlobal pMac, tANI_U32 sessionId, tCsrRoamProfile *pDstProfile );
 
+<<<<<<< HEAD
 static eHalStatus csrNeighborRoamPeriodicScanRequestCallback(tHalHandle halHandle,
                                                              void *pContext,
                                                              tANI_U32 scanId,
                                                              eCsrScanStatus status);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef WLAN_FEATURE_VOWIFI_11R
 static eHalStatus csrNeighborRoamIssuePreauthReq(tpAniSirGlobal pMac);
 VOS_STATUS csrNeighborRoamIssueNeighborRptRequest(tpAniSirGlobal pMac);
@@ -1815,6 +1821,7 @@ static tANI_BOOLEAN csrNeighborRoamProcessScanResults(tpAniSirGlobal pMac,
     return roamNow;
 }
 
+<<<<<<< HEAD
 eHalStatus csrNeighborRoamPerformPeriodicScan(tpAniSirGlobal pMac, tANI_U32 sessionId)
 {
     eHalStatus    status = eHAL_STATUS_SUCCESS;
@@ -1886,6 +1893,8 @@ eHalStatus csrNeighborRoamPerformPeriodicScan(tpAniSirGlobal pMac, tANI_U32 sess
     return status;
 }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /* ---------------------------------------------------------------------------
 
     \fn csrNeighborRoamHandleEmptyScanResult
@@ -1945,7 +1954,10 @@ static VOS_STATUS csrNeighborRoamHandleEmptyScanResult(tpAniSirGlobal pMac)
     VOS_STATUS  vosStatus = VOS_STATUS_SUCCESS;
     tpCsrNeighborRoamControlInfo    pNeighborRoamInfo = &pMac->roam.neighborRoamInfo;
     eHalStatus __maybe_unused status = eHAL_STATUS_SUCCESS;
+<<<<<<< HEAD
     tANI_U32 sessionId = pNeighborRoamInfo->csrSessionId;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef FEATURE_WLAN_LFR
     tANI_BOOLEAN performPeriodicScan =
         (pNeighborRoamInfo->cfgParams.emptyScanRefreshPeriod) ? TRUE : FALSE;
@@ -2030,6 +2042,7 @@ static VOS_STATUS csrNeighborRoamHandleEmptyScanResult(tpAniSirGlobal pMac)
                    FL("Couldn't re-register csrNeighborRoamNeighborLookupDOWNCallback"
                       " with TL: Status = %d"), status);
         }
+<<<<<<< HEAD
         if (pNeighborRoamInfo->isPeriodicScanEnabled)
         {
             status = csrNeighborRoamPerformPeriodicScan(pMac, sessionId);
@@ -2040,6 +2053,8 @@ static VOS_STATUS csrNeighborRoamHandleEmptyScanResult(tpAniSirGlobal pMac)
             }
             CSR_NEIGHBOR_ROAM_STATE_TRANSITION(eCSR_NEIGHBOR_ROAM_STATE_CFG_CHAN_LIST_SCAN);
         }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef FEATURE_WLAN_LFR
         pNeighborRoamInfo->lookupDOWNRssi = 0;
     }
@@ -2218,6 +2233,7 @@ static eHalStatus csrNeighborRoamProcessScanComplete (tpAniSirGlobal pMac)
                         
 //                        vos_timer_stop(&pNeighborRoamInfo->neighborScanTimer);
                     }
+<<<<<<< HEAD
                     if (pNeighborRoamInfo->isPeriodicScanEnabled)
                     {
                          smsLog(pMac, LOG1, FL("Periodic Scan stop"));
@@ -2235,6 +2251,8 @@ static eHalStatus csrNeighborRoamProcessScanComplete (tpAniSirGlobal pMac)
                          /* Valid APs are found after scan. Now we can initiate pre-authentication */
                          CSR_NEIGHBOR_ROAM_STATE_TRANSITION(eCSR_NEIGHBOR_ROAM_STATE_REPORT_SCAN)
                      }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 }
                 else
                 {
@@ -2388,6 +2406,7 @@ static eHalStatus csrNeighborRoamProcessScanComplete (tpAniSirGlobal pMac)
     return eHAL_STATUS_SUCCESS;
 }
 
+<<<<<<< HEAD
 static eHalStatus csrNeighborRoamPeriodicScanRequestCallback(tHalHandle halHandle,
                                  void *pContext, tANI_U32 scanId, eCsrScanStatus status)
 {
@@ -2435,6 +2454,9 @@ static eHalStatus csrNeighborRoamPeriodicScanRequestCallback(tHalHandle halHandl
 
     return hstatus;
 }
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /* ---------------------------------------------------------------------------
 
     \fn csrNeighborRoamScanRequestCallback
@@ -3081,6 +3103,7 @@ eHalStatus csrNeighborRoamPerformContiguousBgScan(tpAniSirGlobal pMac, tANI_U32 
 
 /* ---------------------------------------------------------------------------
 
+<<<<<<< HEAD
      \fn csrNeighborRoamPeriodicScanTimerCallback
 
      \brief  This function is the periodic scan timer callback function. It invokes
@@ -3113,6 +3136,8 @@ void csrNeighborRoamPeriodicScanTimerCallback(void *pv)
 }
 /* ---------------------------------------------------------------------------
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     \fn csrNeighborRoamNeighborScanTimerCallback
 
     \brief  This function is the neighbor scan timer callback function. It invokes 
@@ -4369,7 +4394,11 @@ VOS_STATUS  csrNeighborRoamNeighborLookupUpEvent(tpAniSirGlobal pMac)
     /* Reset all the neighbor roam info control variables. Free all the allocated memory. It is like we are just associated now */
     csrNeighborRoamResetConnectedStateControlInfo(pMac);
 
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     NEIGHBOR_ROAM_DEBUG(pMac, LOG2, FL("Registering DOWN event neighbor lookup callback with TL. RSSI = %d,"), pNeighborRoamInfo->currentNeighborLookupThreshold * (-1));
     /* Register Neighbor Lookup threshold callback with TL for DOWN event now */
     vosStatus = WLANTL_RegRSSIIndicationCB(pMac->roam.gVosContext, (v_S7_t)pNeighborRoamInfo->currentNeighborLookupThreshold * (-1),
@@ -4439,11 +4468,14 @@ VOS_STATUS  csrNeighborRoamNeighborLookupDownEvent(tpAniSirGlobal pMac)
             {
                
                 NEIGHBOR_ROAM_DEBUG(pMac, LOGE, FL("11R Association:Neighbor Lookup Down event received in CONNECTED state"));
+<<<<<<< HEAD
 
                 if (pMac->roam.configParam.isPeriodicRoamScanEnabled)
                 {
                     pNeighborRoamInfo->isPeriodicScanEnabled = TRUE;
                 }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 vosStatus = csrNeighborRoamIssueNeighborRptRequest(pMac);
                 if (VOS_STATUS_SUCCESS != vosStatus)
                 {
@@ -4524,6 +4556,7 @@ VOS_STATUS csrNeighborRoamNeighborLookupUPCallback (v_PVOID_t pAdapter, v_U8_t r
        return VOS_STATUS_SUCCESS;
     }
 
+<<<<<<< HEAD
     /* Stop Periodic Scan */
     if (pNeighborRoamInfo->isPeriodicScanEnabled)
     {
@@ -4541,6 +4574,8 @@ VOS_STATUS csrNeighborRoamNeighborLookupUPCallback (v_PVOID_t pAdapter, v_U8_t r
         pNeighborRoamInfo->isPeriodicScanEnabled = FALSE;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     VOS_ASSERT(WLANTL_HO_THRESHOLD_UP == rssiNotification);
     vosStatus = csrNeighborRoamNeighborLookupUpEvent(pMac);
     return vosStatus;
@@ -4581,6 +4616,7 @@ VOS_STATUS csrNeighborRoamNeighborLookupDOWNCallback (v_PVOID_t pAdapter, v_U8_t
        return VOS_STATUS_SUCCESS;
     }
 
+<<<<<<< HEAD
     /* Stop Periodic Scan */
     if (pNeighborRoamInfo->isPeriodicScanEnabled)
     {
@@ -4598,6 +4634,8 @@ VOS_STATUS csrNeighborRoamNeighborLookupDOWNCallback (v_PVOID_t pAdapter, v_U8_t
         pNeighborRoamInfo->isPeriodicScanEnabled = FALSE;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     VOS_ASSERT(WLANTL_HO_THRESHOLD_DOWN == rssiNotification);
     vosStatus = csrNeighborRoamNeighborLookupDownEvent(pMac);
 
@@ -5198,6 +5236,7 @@ eHalStatus csrNeighborRoamInit(tpAniSirGlobal pMac)
         return eHAL_STATUS_RESOURCES;
     }
 
+<<<<<<< HEAD
     status = vos_timer_init(&pNeighborRoamInfo->neighborPeriodicScanTimer, VOS_TIMER_TYPE_SW,
                             csrNeighborRoamPeriodicScanTimerCallback, (void *)pMac);
 
@@ -5207,6 +5246,8 @@ eHalStatus csrNeighborRoamInit(tpAniSirGlobal pMac)
         return eHAL_STATUS_RESOURCES;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     status = csrLLOpen(pMac->hHdd, &pNeighborRoamInfo->roamableAPList);
     if (eHAL_STATUS_SUCCESS != status)
     {
@@ -5285,7 +5326,10 @@ void csrNeighborRoamClose(tpAniSirGlobal pMac)
     vos_timer_destroy(&pNeighborRoamInfo->neighborResultsRefreshTimer);
     vos_timer_destroy(&pNeighborRoamInfo->emptyScanRefreshTimer);
     vos_timer_destroy(&pNeighborRoamInfo->forcedInitialRoamTo5GHTimer);
+<<<<<<< HEAD
     vos_timer_destroy(&pNeighborRoamInfo->neighborPeriodicScanTimer);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     /* Should free up the nodes in the list before closing the double Linked list */
     csrNeighborRoamFreeRoamableBSSList(pMac, &pNeighborRoamInfo->roamableAPList);
@@ -5712,7 +5756,11 @@ eHalStatus csrNeighborRoamCandidateFoundIndHdlr(tpAniSirGlobal pMac, void* pMsg)
         csrScanFlushSelectiveSsid(pMac, pSession->connectedProfile.SSID.ssId,
                                   pSession->connectedProfile.SSID.length);
         /* Once it gets the candidates found indication from PE, will issue a scan
+<<<<<<< HEAD
          - req to PE with ï¿½freshScanï¿½ in scanreq structure set as follows:
+=======
+         - req to PE with “freshScan” in scanreq structure set as follows:
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
          0x42 - Return & purge LFR scan results
         */
         status = csrScanRequestLfrResult(pMac, pNeighborRoamInfo->csrSessionId,

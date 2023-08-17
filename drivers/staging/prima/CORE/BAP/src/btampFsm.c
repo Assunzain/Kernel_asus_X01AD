@@ -98,7 +98,10 @@
 
 // Pick up the DOT11 Frames compiler
 // I just need these one "opaque" type definition in order to use the "frames" code
+<<<<<<< HEAD
 typedef struct sAniSirGlobal *tpAniSirGlobal;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #include "dot11f.h"
 
 #if 0
@@ -1722,7 +1725,11 @@ btampFsm
     {
 
       case DISCONNECTED:
+<<<<<<< HEAD
         if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_CREATE))
+=======
+        if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_CREATE)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from DISCONNECTED to S1 (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "DISCONNECTED", "S1");
@@ -1745,7 +1752,11 @@ btampFsm
            /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,S1);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_ACCEPT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_ACCEPT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from DISCONNECTED to S1 (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "DISCONNECTED", "S1");
@@ -1791,7 +1802,11 @@ btampFsm
               btampfsmChangeToState(instanceVar, S1);
           }
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from S1 to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "S1", "DISCONNECTED");
@@ -1804,7 +1819,11 @@ btampFsm
           /*Signal the disconnect */
           signalHCIPhysLinkCompEvent( btampContext, WLANBAP_ERROR_HOST_TIMEOUT);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from S1 to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "S1", "DISCONNECTED");
@@ -1875,7 +1894,11 @@ btampFsm
           signalHCIChanSelEvent(btampContext);
         
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from STARTING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "STARTING", "DISCONNECTING");
@@ -1905,7 +1928,11 @@ btampFsm
                 WLANBAP_STATUS_SUCCESS,
                 WLANBAP_ERROR_TERM_BY_LOCAL_HOST);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_CHANNEL_SELECTION_FAILED))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_CHANNEL_SELECTION_FAILED)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from STARTING to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "STARTING", "DISCONNECTED");
@@ -1932,7 +1959,11 @@ btampFsm
             gotoConnecting(btampContext);
           
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from STARTING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "STARTING", "DISCONNECTING");
@@ -1952,7 +1983,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,DISCONNECTING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_START_FAILS))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_START_FAILS)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from STARTING to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "STARTING", "DISCONNECTED");
@@ -1998,7 +2033,11 @@ btampFsm
                   (tCsrRoamInfo *)bapEvent->params);
 
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from CONNECTING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "CONNECTING", "DISCONNECTING");
@@ -2098,7 +2137,11 @@ btampFsm
           btampfsmChangeToState(instanceVar,CONNECTED);
 #endif
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_CONNECT_FAILED))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_CONNECT_FAILED)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from CONNECTING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "CONNECTING", "DISCONNECTING");
@@ -2120,7 +2163,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,DISCONNECTING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from CONNECTING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "CONNECTING", "DISCONNECTING");
@@ -2192,7 +2239,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,KEYING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from AUTHENTICATING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s ConnectAcceptTimeout", __func__, "AUTHENTICATING", "DISCONNECTING");
@@ -2212,7 +2263,11 @@ btampFsm
                   eCSR_DISCONNECT_REASON_UNSPECIFIED);
          
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from AUTHENTICATING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s Physicallink Disconnect", __func__, "AUTHENTICATING", "DISCONNECTING");
@@ -2239,7 +2294,11 @@ btampFsm
                 WLANBAP_STATUS_SUCCESS,
                 WLANBAP_ERROR_TERM_BY_LOCAL_HOST);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_RSN_FAILURE))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_RSN_FAILURE)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from AUTHENTICATING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s RSN Failure", __func__, "AUTHENTICATING", "DISCONNECTING");
@@ -2268,7 +2327,11 @@ btampFsm
       break;
 
       case CONNECTED:
+<<<<<<< HEAD
         if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from CONNECTED to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "CONNECTED", "DISCONNECTING");
@@ -2290,7 +2353,11 @@ btampFsm
                   btampContext->sessionId, 
                   eCSR_DISCONNECT_REASON_UNSPECIFIED);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_INDICATES_MEDIA_DISCONNECTION))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_INDICATES_MEDIA_DISCONNECTION)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
 
           /*Transition from CONNECTED to DISCONNECTING (both without substates)*/
@@ -2440,7 +2507,11 @@ btampFsm
       break;
 
       case KEYING:
+<<<<<<< HEAD
         if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from KEYING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "KEYING", "DISCONNECTING");
@@ -2460,7 +2531,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,DISCONNECTING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from KEYING to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "KEYING", "DISCONNECTING");
@@ -2489,7 +2564,11 @@ btampFsm
                 WLANBAP_STATUS_SUCCESS,
                 WLANBAP_ERROR_TERM_BY_LOCAL_HOST);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_KEY_SET_SUCCESS))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_KEY_SET_SUCCESS)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from KEYING to CONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "KEYING", "CONNECTED");
@@ -2508,7 +2587,11 @@ btampFsm
       break;
 
       case SCANNING:
+<<<<<<< HEAD
         if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_SCAN_COMPLETE))
+=======
+        if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_MAC_SCAN_COMPLETE)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from SCANNING to STARTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "SCANNING", "STARTING");
@@ -2524,7 +2607,11 @@ btampFsm
               btampfsmChangeToState(instanceVar, SCANNING);
           }
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from SCANNING to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "SCANNING", "DISCONNECTED");
@@ -2536,7 +2623,11 @@ btampFsm
 
           signalHCIPhysLinkCompEvent( btampContext, WLANBAP_ERROR_HOST_TIMEOUT);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from SCANNING to DISCONNECTED (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "SCANNING", "DISCONNECTED");
@@ -2571,7 +2662,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,AUTHENTICATING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_TIMER_CONNECT_ACCEPT_TIMEOUT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from VALIDATED to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "VALIDATED", "DISCONNECTING");
@@ -2591,7 +2686,11 @@ btampFsm
           /*Advance outer statevar */
           btampfsmChangeToState(instanceVar,DISCONNECTING);
         }
+<<<<<<< HEAD
         else if((msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT))
+=======
+        else if(msg==(BTAMPFSM_EVENT_T)eWLAN_BAP_HCI_PHYSICAL_LINK_DISCONNECT)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
           /*Transition from VALIDATED to DISCONNECTING (both without substates)*/
           VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "In %s, from state %s => %s", __func__, "VALIDATED", "DISCONNECTING");

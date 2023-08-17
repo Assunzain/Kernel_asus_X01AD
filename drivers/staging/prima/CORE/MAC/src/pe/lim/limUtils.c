@@ -7173,6 +7173,7 @@ limPrepareFor11hChannelSwitch(tpAniSirGlobal pMac, tpPESession psessionEntry)
     else
     {
         PELOGE(limLog(pMac, LOGE, FL("Not in scan state, start channel switch timer"));)
+<<<<<<< HEAD
 
         /* Stop roam scan during CAC period in DFS channels */
         if(limIsconnectedOnDFSChannel(
@@ -7186,6 +7187,8 @@ limPrepareFor11hChannelSwitch(tpAniSirGlobal pMac, tpPESession psessionEntry)
         psessionEntry->gLimSpecMgmt.dfs_channel_csa = true;
         }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         /** We are safe to switch channel at this point */
         limStopTxAndSwitchChannel(pMac, psessionEntry->peSessionId);
     }

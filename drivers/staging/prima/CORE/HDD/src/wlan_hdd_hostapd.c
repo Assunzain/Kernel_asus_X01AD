@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2018, 2020 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (c) 2021 Qualcomm Innovation Center, Inc. All rights reserved.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -299,6 +302,11 @@ int __hdd_hostapd_stop (struct net_device *dev)
  clear_bit(DEVICE_IFACE_OPENED, &adapter->event_flags);
  adapter->dev->wireless_handlers = NULL;
 
+<<<<<<< HEAD
+=======
+   if (!hdd_is_cli_iface_up(hdd_ctx))
+       sme_ScanFlushResult(hdd_ctx->hHal, 0);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
    EXIT();
    return 0;
@@ -5555,6 +5563,7 @@ VOS_STATUS hdd_init_ap_mode( hdd_adapter_t *pAdapter, bool re_init)
                                 ini_cfg->apEndChannelNum,
                                 ini_cfg->apOperatingBand);
     }
+<<<<<<< HEAD
 
     status = hdd_sta_id_hash_attach(pAdapter);
     if (VOS_STATUS_SUCCESS != status)
@@ -5564,6 +5573,8 @@ VOS_STATUS hdd_init_ap_mode( hdd_adapter_t *pAdapter, bool re_init)
 	    goto error_wmm_init;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    /* Action frame registered in one adapter which will
     * applicable to all interfaces
     */
