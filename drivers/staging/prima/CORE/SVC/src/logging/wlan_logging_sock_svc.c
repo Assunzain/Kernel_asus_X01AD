@@ -594,7 +594,11 @@ int wlan_pkt_stats_to_user(void *perPktStat)
 	return 0;
 }
 
+<<<<<<< HEAD
 void wlan_disable_and_flush_pkt_stats(void)
+=======
+void wlan_disable_and_flush_pkt_stats()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
 	unsigned long flags;
 	int ret = 0;
@@ -1936,7 +1940,11 @@ void wlan_process_done_indication(uint8 type, uint32 reason_code)
 
 	if ((type == WLAN_FW_LOGS) && reason_code &&
 				 vos_isFatalEventEnabled() &&
+<<<<<<< HEAD
 				 vos_is_wlan_logging_enabled() && reason_code != 4105)
+=======
+				 vos_is_wlan_logging_enabled())
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	{
 		if(wlan_is_log_report_in_progress() == TRUE)
 		{
@@ -1995,7 +2003,11 @@ void wlan_process_done_indication(uint8 type, uint32 reason_code)
  * wlan_flush_host_logs_for_fatal() -flush host logs and send
  * fatal event to upper layer.
  */
+<<<<<<< HEAD
 void wlan_flush_host_logs_for_fatal(void)
+=======
+void wlan_flush_host_logs_for_fatal()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
 	unsigned long flags;
 
@@ -2061,7 +2073,11 @@ void wlan_set_fwr_mem_dump_state(enum FW_MEM_DUMP_STATE fw_mem_dump_state)
 	spin_unlock_irqrestore(&gwlan_logging.fw_mem_dump_ctx.fw_mem_dump_lock, flags);
 }
 /*check for new request validity and free memory if present from previous request */
+<<<<<<< HEAD
 bool wlan_fwr_mem_dump_test_and_set_write_allowed_bit(void){
+=======
+bool wlan_fwr_mem_dump_test_and_set_write_allowed_bit(){
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	unsigned long flags;
 	bool ret = false;
 	bool write_done = false;
@@ -2084,7 +2100,11 @@ bool wlan_fwr_mem_dump_test_and_set_write_allowed_bit(void){
 	return ret;
 }
 
+<<<<<<< HEAD
 bool wlan_fwr_mem_dump_test_and_set_read_allowed_bit(void){
+=======
+bool wlan_fwr_mem_dump_test_and_set_read_allowed_bit(){
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	unsigned long flags;
 	bool ret=false;
 	spin_lock_irqsave(&gwlan_logging.fw_mem_dump_ctx.fw_mem_dump_lock, flags);

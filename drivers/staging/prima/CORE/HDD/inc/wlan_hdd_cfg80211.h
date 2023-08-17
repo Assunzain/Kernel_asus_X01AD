@@ -1309,11 +1309,14 @@ enum qca_wlan_vendor_attr_extscan_results
      * to indicate number of results.
      */
 
+<<<<<<< HEAD
     /* u8 value representing the time slicing duty cycle percentage.
      * Possible values are 0-100.
      */
     QCA_WLAN_VENDOR_ATTR_LL_STATS_IFACE_INFO_TS_DUTY_CYCLE = 87,
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     /* keep last */
     QCA_WLAN_VENDOR_ATTR_EXTSCAN_RESULTS_AFTER_LAST,
     QCA_WLAN_VENDOR_ATTR_EXTSCAN_RESULTS_MAX =
@@ -2124,6 +2127,7 @@ void wlan_hdd_cfg80211_scan_randomization_init(struct wiphy *wiphy)
 }
 #endif
 
+<<<<<<< HEAD
 #define JOINT_MULTI_BAND_RSNA 0x01
 #define PEER_KEY_ENABLED 0x02
 #define AMSDU_CAPABLE 0x04
@@ -2147,6 +2151,8 @@ void
 wlan_hdd_mask_unsupported_rsn_caps(tANI_U8 *pBuf, tANI_S16 ielen);
 
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
 #define nla_parse(a, b, c, d, e) nla_parse(a, b, c, d, e, NULL)
 #define cfg80211_sched_scan_results(a) cfg80211_sched_scan_results(a, 0)

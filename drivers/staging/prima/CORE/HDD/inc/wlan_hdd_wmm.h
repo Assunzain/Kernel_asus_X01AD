@@ -264,6 +264,7 @@ v_U16_t hdd_wmm_select_queue(struct net_device * dev, struct sk_buff *skb);
   @return         : Qdisc queue index
   ===========================================================================*/
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 uint16_t hdd_hostapd_select_queue(struct net_device *dev, struct sk_buff *skb,
 				  struct net_device *sb_dev,
@@ -281,6 +282,16 @@ uint16_t hdd_hostapd_select_queue(struct net_device *dev, struct sk_buff *skb,
 #else
 uint16_t hdd_hostapd_select_queue(struct net_device *dev, struct sk_buff *skb);
 #endif
+=======
+v_U16_t hdd_hostapd_select_queue(struct net_device * dev, struct sk_buff *skb
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
+                                 , void *accel_priv
+#endif
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+                                 , select_queue_fallback_t fallbac
+#endif
+);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 
 /**============================================================================

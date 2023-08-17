@@ -1,8 +1,11 @@
 
 /*
  * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
  *
@@ -6451,8 +6454,11 @@ typedef PACKED_PRE struct PACKED_POST {
   //The MPDU frame length of a beacon or probe rsp. data is the start of the frame
   tANI_U16    frameLength;
 
+<<<<<<< HEAD
   tANI_U32  freq;
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tPrefNetwFoundParams, * tpPrefNetwFoundParams;
 
 /*
@@ -9779,6 +9785,7 @@ typedef PACKED_PRE struct PACKED_POST
 
 #ifdef FEATURE_WLAN_SW_PTA
 /**
+<<<<<<< HEAD
  * hal_sw_pta_req - SW PTA coex params request
  * @bt_enabled: BT status
  * @bt_adv: BT advertisement status
@@ -9792,6 +9799,32 @@ typedef PACKED_PRE struct PACKED_POST {
 	uint8_t ble_enabled;
 	uint8_t bt_a2dp;
 	uint8_t bt_sco;
+=======
+ * enum hal_sw_pta_param_type - Type of sw pta coex param
+ * @WDI_SCO_STATUS: Enable/Disable SCO
+ * @WDI_NUD_STATUS: Enable/Disable NUD
+ * @WDI_BT_STATUS: Enable/Disable BT
+ */
+/* Copied from sirApi.h to avoid compile error */
+enum hal_sw_pta_param_type {
+	HAL_SW_PTA_SCO_STATUS = 0,
+	HAL_SW_PTA_NUD_STATUS = 1,
+	HAL_SW_PTA_BT_STATUS = 2,
+	HAL_SW_PTA_MAX = WLAN_HAL_MAX_ENUM_SIZE
+};
+
+#define HAL_SW_PTA_COEX_PARAMS_MAX_LEN 32
+/**
+ * hal_sw_pta_req - SW PTA coex params request
+ * @param_type: sw pta coex param type
+ * @length: sw pta coex params value length
+ * @value: sw pta coex params value
+ */
+typedef PACKED_PRE struct PACKED_POST {
+	enum hal_sw_pta_param_type param_type;
+	uint8_t length;
+	uint8_t value[HAL_SW_PTA_COEX_PARAMS_MAX_LEN];
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tHalSwPTAReq, *tpHalSwPTAReq;
 #endif
 #endif /* _WLAN_HAL_MSG_H_ */

@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2017, 2019-2020 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -4110,8 +4113,11 @@ typedef struct
   /* Length of the beacon or probe response
    * corresponding to the candidate found by PNO */
   tANI_U32      frameLength;
+<<<<<<< HEAD
   /* Freq of the network */
   tANI_U32      freq;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   /* Index to memory location where the contents of
    * beacon or probe response frame will be copied */
   tANI_U8       data[1];
@@ -5299,7 +5305,10 @@ typedef PACKED_PRE struct PACKED_POST
     tANI_U8                  apCountryStr[WNI_CFG_COUNTRY_CODE_LEN];
     // country string for this association
     tANI_U8                  countryStr[WNI_CFG_COUNTRY_CODE_LEN];
+<<<<<<< HEAD
     tANI_U8                  time_slice_duty_cycle;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tSirWifiInterfaceInfo, *tpSirWifiInterfaceInfo;
 
 /* channel information */
@@ -6522,6 +6531,7 @@ enum sir_sw_pta_param_type {
 #define SW_PTA_COEX_PARAMS_MAX_LEN 32
 /**
  * struct sir_sw_pta_req - sw pta coex params request
+<<<<<<< HEAD
  * @bt_enabled: BT status
  * @bt_adv: BT advertisement status
  * @ble_enabled: BLE status
@@ -6534,6 +6544,16 @@ struct sir_sw_pta_req {
 	bool ble_enabled;
 	bool bt_a2dp;
 	bool bt_sco;
+=======
+ * @param_type: sw pta coex param type
+ * @length: sw pta coex params value length
+ * @value: sw pta coex params value
+ */
+struct sir_sw_pta_req {
+	enum sir_sw_pta_param_type param_type;
+	uint8_t length;
+	uint8_t value[SW_PTA_COEX_PARAMS_MAX_LEN];
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 };
 #endif
 #endif /* __SIR_API_H */

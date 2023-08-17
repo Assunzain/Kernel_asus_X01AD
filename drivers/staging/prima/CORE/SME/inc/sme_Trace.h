@@ -149,9 +149,12 @@ enum {
     TRACE_CODE_SME_RX_HDD_SEND_MGMT_TX,
     TRACE_CODE_SME_TX_HDD_CAP_TSF_REQ,
     TRACE_CODE_SME_TX_HDD_GET_TSF_REQ,
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
     TRACE_CODE_SME_TX_HDD_TEARDOWN_LINK_WITH_AP,
 #endif
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     TRACE_CODE_SME_DEL_STA_BA_SESSION_REQ,
     /* New trace commands to be added before this comment not at the end */
     /* Trace codes for SME commands */

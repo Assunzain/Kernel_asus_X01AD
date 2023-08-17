@@ -3979,8 +3979,12 @@ v_BOOL_t vos_check_monitor_state(void)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
 struct wcnss_driver_ops driver_ops = {
 	.name = "WLAN_CTRL",
+<<<<<<< HEAD
 	.driver_state = WCTS_driver_state_process,
 	.bt_profile_state = WCTS_bt_profile_state_process
+=======
+	.driver_state = WCTS_driver_state_process
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 };
 
 VOS_STATUS vos_smd_open(const char *szname, WCTS_ControlBlockType* wcts_cb)
@@ -4003,6 +4007,7 @@ void wlan_unregister_driver(void )
 {
 	wcnss_unregister_driver(&driver_ops);
 }
+<<<<<<< HEAD
 
 #ifdef FEATURE_WLAN_SW_PTA
 int vos_process_bt_profile(bool bt_enabled, bool bt_adv,
@@ -4041,6 +4046,8 @@ int vos_process_bt_profile(bool bt_enabled, bool bt_adv,
 	return ret;
 }
 #endif
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #else
 VOS_STATUS vos_smd_open(const char *szname, WCTS_ControlBlockType* wcts_cb)
 {

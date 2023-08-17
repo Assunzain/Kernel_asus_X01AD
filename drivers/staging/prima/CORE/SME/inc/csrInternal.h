@@ -720,7 +720,10 @@ typedef struct tagCsrConfig
     tANI_BOOLEAN agg_btc_sco_enabled;
     tANI_U8 num_ba_buff_btc_sco;
     tANI_U8 num_ba_buff;
+<<<<<<< HEAD
     bool isPeriodicRoamScanEnabled;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 }tCsrConfig;
 
 typedef struct tagCsrChannelPowerInfo

@@ -673,10 +673,17 @@ limCheckMgmtRegisteredFrames(tpAniSirGlobal pMac, tANI_U8 *pBd,
         pLimMgmtRegistration = pNext;
         pNext = NULL;
     }
+<<<<<<< HEAD
 
     if (match)
     {
 	limLog( pMac, LOG1,
+=======
+   
+    if (match)
+    {
+        limLog( pMac, LOG1, 
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 FL("rcvd frame match with registered frame params"));
 
         /* Indicate this to SME */
@@ -1937,6 +1944,7 @@ limProcessMessages(tpAniSirGlobal pMac, tpSirMsgQ  limMsg)
             vos_mem_free(limMsg->bodyptr);
             limMsg->bodyptr = NULL;
             break;
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
         case eWNI_SME_TEARDOWN_LINK_WITH_AP:
         {
@@ -1949,6 +1957,8 @@ limProcessMessages(tpAniSirGlobal pMac, tpSirMsgQ  limMsg)
             limMsg->bodyptr = NULL;
         }
 #endif
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 #ifdef WLAN_FEATURE_RMC
         case eWNI_SME_ENABLE_RMC_REQ:

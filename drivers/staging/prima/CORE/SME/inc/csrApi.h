@@ -975,7 +975,10 @@ typedef struct tagCsrRoamProfile
     bool force_24ghz_in_ht20;
     tCsrBssid bssid_hint;
     bool force_rsne_override;
+<<<<<<< HEAD
     bool require_h2e;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 }tCsrRoamProfile;
 
 
@@ -1268,8 +1271,11 @@ typedef struct tagCsrConfigParam
     tANI_U8 num_ba_buff_btc_sco;
     tANI_U8 num_ba_buff;
     bool force_scc_with_ecsa;
+<<<<<<< HEAD
     bool isPeriodicRoamScanEnabled;
     bool require_h2e;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 }tCsrConfigParam;
 
 //Tush

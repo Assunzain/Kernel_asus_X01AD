@@ -196,7 +196,11 @@
 #define CFG_ENABLE_SUSPEND_NAME                "gEnableSuspend"
 #define CFG_ENABLE_SUSPEND_MIN                 ( 0 ) //No support for suspend
 #define CFG_ENABLE_SUSPEND_MAX                 ( 3 ) //Map to Deep Sleep
+<<<<<<< HEAD
 #define CFG_ENABLE_SUSPEND_DEFAULT             ( 3 ) //Map to Standby
+=======
+#define CFG_ENABLE_SUSPEND_DEFAULT             ( 1 ) //Map to Standby
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 //Driver start/stop command mappings
 #define CFG_ENABLE_ENABLE_DRIVER_STOP_NAME     "gEnableDriverStop"
@@ -242,7 +246,11 @@
 #define CFG_DEFER_SCAN_TIME_INTERVAL            "gDeferScanTimeInterval"
 #define CFG_DEFER_SCAN_TIME_INTERVAL_MIN        ( 0 )
 #define CFG_DEFER_SCAN_TIME_INTERVAL_MAX        ( 65535 )
+<<<<<<< HEAD
 #define CFG_DEFER_SCAN_TIME_INTERVAL_DEFAULT    ( 1400  )
+=======
+#define CFG_DEFER_SCAN_TIME_INTERVAL_DEFAULT    ( 2000  )
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 //BMPS = BeaconModePowerSave
 #define CFG_ENABLE_BMPS_NAME                   "gEnableBmps"
@@ -2110,11 +2118,14 @@ static __inline tANI_U32 defHddRateToDefCfgRate( tANI_U32 defRateIndex )
 #define CFG_ENABLE_RX_STBC_MAX                   ( 1 )
 #define CFG_ENABLE_RX_STBC_DEFAULT               ( 1 )
 
+<<<<<<< HEAD
 #define CFG_ENABLE_TX_STBC                       "gEnableTXSTBC"
 #define CFG_ENABLE_TX_STBC_MIN                   ( 0 )
 #define CFG_ENABLE_TX_STBC_MAX                   ( 1 )
 #define CFG_ENABLE_TX_STBC_DEFAULT               ( 1 )
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /* 
  * Enable/Disable vsta based on MAX Assoc limit 
  * defined in WCNSS_qcom_cfg.ini.
@@ -3233,7 +3244,11 @@ This feature requires the dependent cfg.ini "gRoamPrefer5GHz" set to 1 */
 #define CFG_ENABLE_POWERSAVE_OFFLOAD_NAME       "gEnablePowerSaveOffload"
 #define CFG_ENABLE_POWERSAVE_OFFLOAD_MIN        (1)
 #define CFG_ENABLE_POWERSAVE_OFFLOAD_MAX        (2)
+<<<<<<< HEAD
 #define CFG_ENABLE_POWERSAVE_OFFLOAD_DEFAULT    (2)
+=======
+#define CFG_ENABLE_POWERSAVE_OFFLOAD_DEFAULT    (1)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 /*
  * <ini>
@@ -3327,12 +3342,15 @@ This feature requires the dependent cfg.ini "gRoamPrefer5GHz" set to 1 */
 #define CFG_SW_PTA_ENABLE_MIN          (0)
 #define CFG_SW_PTA_ENABLE_MAX          (1)
 
+<<<<<<< HEAD
 /* Enable/disable periodic scan no candidate found */
 #define CFG_PERIODIC_ROAM_SCAN_ENABLED         "gPeriodicRoamScanEnabled"
 #define CFG_PERIODIC_ROAM_SCAN_ENABLED_MIN     (0)
 #define CFG_PERIODIC_ROAM_SCAN_ENABLED_MAX     (1)
 #define CFG_PERIODIC_ROAM_SCAN_ENABLED_DEFAULT (0)
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /*--------------------------------------------------------------------------- 
   Type declarations
   -------------------------------------------------------------------------*/ 
@@ -3706,7 +3724,10 @@ typedef struct
    v_U16_t                     configMccParam;
    v_U32_t                     numBuffAdvert;
    v_BOOL_t                    enableRxSTBC;
+<<<<<<< HEAD
    v_BOOL_t                    enableTxSTBC;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef FEATURE_WLAN_TDLS       
    v_BOOL_t                    fEnableTDLSSupport;
    v_BOOL_t                    fEnableTDLSImplicitTrigger;
@@ -3960,14 +3981,20 @@ typedef struct
 #ifdef FEATURE_WLAN_SW_PTA
    bool                        is_sw_pta_enabled;
 #endif
+<<<<<<< HEAD
    bool                        isPeriodicRoamScanEnabled;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } hdd_config_t;
 
 /*--------------------------------------------------------------------------- 
   Function declarations and documenation
   -------------------------------------------------------------------------*/ 
 VOS_STATUS hdd_parse_config_ini(hdd_context_t *pHddCtx);
+<<<<<<< HEAD
 VOS_STATUS hdd_update_mac_config(hdd_context_t *pHddCtx);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 VOS_STATUS hdd_set_sme_config( hdd_context_t *pHddCtx );
 v_BOOL_t hdd_update_config_dat ( hdd_context_t *pHddCtx );
 VOS_STATUS hdd_cfg_get_config(hdd_context_t *pHddCtx, char *pBuf, int buflen);

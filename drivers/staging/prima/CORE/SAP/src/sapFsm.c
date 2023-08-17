@@ -854,11 +854,14 @@ sapSignalHDDevent
             event->HTCaps = pCsrRoamInfo->ht_caps;
             event->VHTCaps = pCsrRoamInfo->vht_caps;
 
+<<<<<<< HEAD
             if (pCsrRoamInfo->fReassocReq) {
                 event->iesLen -= VOS_MAC_ADDR_SIZE;
                 event->ies += VOS_MAC_ADDR_SIZE;
             }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
             //TODO: Need to fill sapAuthType
             //event->SapAuthType = pCsrRoamInfo->pProfile->negotiatedAuthType;
             break;
@@ -1527,8 +1530,11 @@ sapconvertToCsrProfile(tsap_Config_t *pconfig_params, eCsrRoamBssType bssType, t
     profile->MFPRequired = pconfig_params->mfpRequired ? 1 : 0;
 #endif
 
+<<<<<<< HEAD
     profile->require_h2e = pconfig_params->require_h2e;
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     return eSAP_STATUS_SUCCESS; /* Success.  */
 }
 

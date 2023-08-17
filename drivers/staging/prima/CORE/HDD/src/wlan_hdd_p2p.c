@@ -645,7 +645,11 @@ static int wlan_hdd_p2p_start_remain_on_channel(
             return -EINVAL;
         }
 
+<<<<<<< HEAD
 	if( REMAIN_ON_CHANNEL_REQUEST == request_type)
+=======
+        if( REMAIN_ON_CHANNEL_REQUEST == request_type)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
             if( eHAL_STATUS_SUCCESS != sme_RegisterMgmtFrame(
                         WLAN_HDD_GET_HAL_CTX(pAdapter),
@@ -654,7 +658,11 @@ static int wlan_hdd_p2p_start_remain_on_channel(
             {
                 hddLog(VOS_TRACE_LEVEL_ERROR,    "sme_RegisterMgmtFrame returned fail");
             }
+<<<<<<< HEAD
 	}
+=======
+        }
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     }
     else if (WLAN_HDD_P2P_GO == pAdapter->device_mode)
@@ -834,8 +842,12 @@ static int wlan_hdd_request_remain_on_channel( struct wiphy *wiphy,
 
                 mutex_unlock(&pHddCtx->roc_lock);
 
+<<<<<<< HEAD
                 queue_delayed_work(system_freezable_power_efficient_wq,
                         &pAdapter->roc_work,
+=======
+                schedule_delayed_work(&pAdapter->roc_work,
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                         msecs_to_jiffies(pHddCtx->cfg_ini->gP2PListenDeferInterval));
                 hddLog(VOS_TRACE_LEVEL_INFO, "Defer interval is %hu, pAdapter %pK",
                         pHddCtx->cfg_ini->gP2PListenDeferInterval, pAdapter);
@@ -2825,6 +2837,10 @@ void __hdd_indicate_mgmt_frame(hdd_adapter_t *pAdapter,
          }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     if (NULL == pAdapter->dev)
     {
         hddLog( LOGE, FL("pAdapter->dev is NULL"));

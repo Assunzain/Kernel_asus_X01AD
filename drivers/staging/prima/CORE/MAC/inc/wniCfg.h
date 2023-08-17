@@ -1199,7 +1199,11 @@ enum {
 
 #define WNI_CFG_VHT_TXSTBC_STAMIN    0
 #define WNI_CFG_VHT_TXSTBC_STAMAX    1
+<<<<<<< HEAD
 #define WNI_CFG_VHT_TXSTBC_STADEF    1
+=======
+#define WNI_CFG_VHT_TXSTBC_STADEF    0
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 #define WNI_CFG_VHT_RXSTBC_STAMIN    0
 #define WNI_CFG_VHT_RXSTBC_STAMAX    1

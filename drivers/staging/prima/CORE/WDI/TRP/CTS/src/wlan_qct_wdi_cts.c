@@ -585,6 +585,7 @@ int WCTS_driver_state_process(void *priv, enum wcnss_driver_state state)
 	wpalPostCtrlMsg(WDI_GET_PAL_CTX(), pal_msg);
 	return 0;
 }
+<<<<<<< HEAD
 
 int WCTS_bt_profile_state_process(void *priv, struct bt_profile_state *state)
 {
@@ -600,6 +601,8 @@ int WCTS_bt_profile_state_process(void *priv, struct bt_profile_state *state)
 
 	return ret;
 }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #else
 void
 WCTS_NotifyCallback

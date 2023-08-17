@@ -77,6 +77,7 @@ typedef struct vos_lock_s
 typedef spinlock_t vos_spin_lock_t;
 
 #if defined(WLAN_OPEN_SOURCE)
+<<<<<<< HEAD
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)
 /**
@@ -88,6 +89,10 @@ typedef struct vos_wake_lock {
 	struct wakeup_source lock;
 	struct wakeup_source *priv;
 } vos_wake_lock_t;
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)
+typedef struct wakeup_source vos_wake_lock_t;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #else
 typedef struct wake_lock vos_wake_lock_t;
 #endif
