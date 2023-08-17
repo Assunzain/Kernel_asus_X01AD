@@ -299,7 +299,11 @@ static int ptt_sock_rx_nlink_msg (struct sk_buff * skb)
    type = wnl->nlh.nlmsg_type;
 
    if (wnl->nlh.nlmsg_len < (sizeof(struct nlmsghdr) +
+<<<<<<< HEAD
        sizeof(int) + sizeof(tAniHdr) + be16_to_cpu(wnl->wmsg.length)))
+=======
+       sizeof(int) + sizeof(tAniHdr) + wnl->wmsg.length))
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	   return -EINVAL;
 
    switch (type) {

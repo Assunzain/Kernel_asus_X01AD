@@ -384,11 +384,14 @@ static void __schBeaconProcessForSession( tpAniSirGlobal      pMac,
         }
 
         if (psessionEntry->gLimSpecMgmt.dfs_channel_csa) {
+<<<<<<< HEAD
 #ifdef WLAN_FEATURE_ROAM_SCAN_OFFLOAD
             if (pMac->roam.configParam.isRoamOffloadScanEnabled) {
                csrRoamOffloadScan(pMac, ROAM_SCAN_OFFLOAD_START, REASON_CONNECT);
             }
 #endif
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
            limFrameTransmissionControl(pMac, eLIM_TX_ALL, eLIM_RESUME_TX);
            psessionEntry->gLimSpecMgmt.dfs_channel_csa = false;
         }

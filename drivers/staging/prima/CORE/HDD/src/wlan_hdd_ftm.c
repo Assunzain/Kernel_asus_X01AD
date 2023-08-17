@@ -5572,7 +5572,11 @@ static int __iw_ftm_set_var_ints_getnone(struct net_device *dev, struct iw_reque
     hdd_adapter_t *pAdapter;
     hdd_context_t *pHddCtx;
     int sub_cmd = wrqu->data.flags;
+<<<<<<< HEAD
     int *value = (int*)extra;
+=======
+    int *value = (int*)wrqu->data.pointer;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     int ret = 0;
     VOS_STATUS status;
 

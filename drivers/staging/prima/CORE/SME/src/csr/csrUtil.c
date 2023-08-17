@@ -6236,9 +6236,12 @@ void csrAddRateBitmap(tANI_U8 rate, tANI_U16 *pRateBitmap)
         case SIR_MAC_RATE_54:
             rateBitmap |= SIR_MAC_RATE_54_BITMAP;
             break;
+<<<<<<< HEAD
         case SIR_MAC_RATE_SAE_H2E:
             rateBitmap |= SIR_MAC_RATE_SAE_H2E_BITMAP;
             break;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     }
     *pRateBitmap = rateBitmap;
 }
@@ -6287,9 +6290,12 @@ tANI_BOOLEAN csrIsRateAlreadyPresent(tANI_U8 rate, tANI_U16 rateBitmap)
         case SIR_MAC_RATE_54:
             rateBitmap &= SIR_MAC_RATE_54_BITMAP;
             break;
+<<<<<<< HEAD
         case SIR_MAC_RATE_SAE_H2E:
             rateBitmap &= SIR_MAC_RATE_SAE_H2E_BITMAP;
             break;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     }
     return !!rateBitmap;
 }
@@ -6351,9 +6357,12 @@ tANI_U16 csrRatesMacPropToDot11( tANI_U16 Rate )
         case SIR_MAC_RATE_54:
             ConvertedRate = 108;
             break;
+<<<<<<< HEAD
         case SIR_MAC_RATE_SAE_H2E:
             ConvertedRate = 246;
             break;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
         case SIR_MAC_RATE_72:
             ConvertedRate = 144;
@@ -7010,11 +7019,14 @@ eHalStatus csrSetModifyProfileFields(tpAniSirGlobal pMac, tANI_U32 sessionId,
 {
    tCsrRoamSession *pSession = CSR_GET_SESSION( pMac, sessionId );
 
+<<<<<<< HEAD
    if (!pSession) {
       smsLog(pMac, LOGE, FL("Session_id invalid %d"), sessionId);
       return eHAL_STATUS_FAILURE;
    }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    vos_mem_copy(&pSession->connectedProfile.modifyProfileFields,
                  pModifyProfileFields,
                  sizeof(tCsrRoamModifyProfileFields));

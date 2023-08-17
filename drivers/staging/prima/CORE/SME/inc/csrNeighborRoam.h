@@ -180,8 +180,11 @@ typedef struct sCsrNeighborRoamControlInfo
     vos_timer_t                 neighborScanTimer;
     vos_timer_t                 neighborResultsRefreshTimer;
     vos_timer_t                 emptyScanRefreshTimer;
+<<<<<<< HEAD
     vos_timer_t                 neighborPeriodicScanTimer;
     tANI_U16                    neighborPeriodicScanTimerPeriod;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     tCsrNeighborRoamChannelInfo roamChannelInfo;
     tANI_U8                     currentNeighborLookupThreshold;
     tANI_BOOLEAN                scanRspPending;
@@ -223,10 +226,14 @@ typedef struct sCsrNeighborRoamControlInfo
 #ifdef WLAN_FEATURE_LFR_MBB
      bool is_pre_auth_reassoc_mbb_timer_started;
 #endif
+<<<<<<< HEAD
      bool                       isPeriodicScanRunning;
      bool                       isPeriodicTimerRunning;
      bool                       isPeriodicScanEnabled;
      v_U32_t                    scanId;
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tCsrNeighborRoamControlInfo, *tpCsrNeighborRoamControlInfo;
 
 

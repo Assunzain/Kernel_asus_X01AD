@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2012-2013, 2015-2021 The Linux Foundation. All rights reserved.
+=======
+ * Copyright (c) 2012-2013, 2015-2017 The Linux Foundation. All rights reserved.
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -110,8 +114,14 @@ static void tryAllowingSleep( VOS_TIMER_TYPE type )
 
   --------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static void vos_linux_timer_callback(vos_timer_t *timer)
 {
+=======
+static void vos_linux_timer_callback (unsigned long data)
+{
+   vos_timer_t *timer = ( vos_timer_t *)data; 
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    vos_msg_t msg;
    VOS_STATUS vStatus;
    unsigned long flags;
@@ -376,6 +386,7 @@ void vos_timer_exit()
 }
 #endif
   
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 static void vos_timer_shim(struct timer_list *vos_timer)
 {
@@ -417,6 +428,8 @@ static void vos_timer_setup(vos_timer_t *timer, bool deferrable)
 }
 #endif
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /*--------------------------------------------------------------------------
   
   \brief vos_timer_init() - Initialize a vOSS timer.
@@ -526,7 +539,16 @@ static inline VOS_STATUS __vos_timer_init_debug(vos_timer_t *timer,
     * with arguments passed or with default values
     */
    spin_lock_init(&timer->platformInfo.spinlock);
+<<<<<<< HEAD
    vos_timer_setup(timer, deferrable);
+=======
+   if(deferrable)
+     init_timer_deferrable(&(timer->platformInfo.Timer));
+   else
+     init_timer(&(timer->platformInfo.Timer));
+   timer->platformInfo.Timer.function = vos_linux_timer_callback;
+   timer->platformInfo.Timer.data = (unsigned long)timer;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    timer->callback = callback;
    timer->userData = userData;
    timer->type = timerType;
@@ -578,7 +600,16 @@ static inline VOS_STATUS __vos_timer_init(vos_timer_t *timer,
     * with arguments passed or with default values
     */
    spin_lock_init(&timer->platformInfo.spinlock);
+<<<<<<< HEAD
    vos_timer_setup(timer, deferrable);
+=======
+   if(deferrable)
+     init_timer_deferrable(&(timer->platformInfo.Timer));
+   else
+     init_timer(&(timer->platformInfo.Timer));
+   timer->platformInfo.Timer.function = vos_linux_timer_callback;
+   timer->platformInfo.Timer.data = (unsigned long)timer;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    timer->callback = callback;
    timer->userData = userData;
    timer->type = timerType;
@@ -1048,7 +1079,11 @@ void vos_wdthread_init_timer_work(void *callbackptr)
  * Flush watchdog thread timer work structure.
  * return - void
  */
+<<<<<<< HEAD
 void vos_wdthread_flush_timer_work(void)
+=======
+void vos_wdthread_flush_timer_work()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    pVosContextType context;
 

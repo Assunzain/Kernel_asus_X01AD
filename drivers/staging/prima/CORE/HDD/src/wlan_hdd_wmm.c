@@ -1718,8 +1718,11 @@ VOS_STATUS hdd_wmm_init ( hdd_adapter_t *pAdapter )
    hddWmmDscpToUpMap[24] = SME_QOS_WMM_UP_EE;
    hddWmmDscpToUpMap[32] = SME_QOS_WMM_UP_CL;
    hddWmmDscpToUpMap[40] = SME_QOS_WMM_UP_VI;
+<<<<<<< HEAD
 /* Special case for Expedited Forwarding (DSCP 46) in default mapping */
    hddWmmDscpToUpMap[46] = SME_QOS_WMM_UP_VO;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    hddWmmDscpToUpMap[48] = SME_QOS_WMM_UP_VO;
    hddWmmDscpToUpMap[56] = SME_QOS_WMM_UP_NC;
    return VOS_STATUS_SUCCESS;
@@ -2193,7 +2196,11 @@ v_VOID_t hdd_wmm_classify_pkt ( hdd_adapter_t* pAdapter,
 }
 
 /**============================================================================
+<<<<<<< HEAD
   @brief __hdd_hostapd_select_queue() - Function which will classify the packet
+=======
+  @brief hdd_hostapd_select_quueue() - Function which will classify the packet
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
          according to linux qdisc expectation.
 
 
@@ -2202,8 +2209,19 @@ v_VOID_t hdd_wmm_classify_pkt ( hdd_adapter_t* pAdapter,
 
   @return         : Qdisc queue index
   ===========================================================================*/
+<<<<<<< HEAD
 uint16_t __hdd_hostapd_select_queue(struct net_device *dev,
 				    struct sk_buff *skb)
+=======
+v_U16_t hdd_hostapd_select_queue(struct net_device * dev, struct sk_buff *skb
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
+                                 , void *accel_priv
+#endif
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+                                 , select_queue_fallback_t fallbac
+#endif
+)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    WLANTL_ACEnumType ac;
    sme_QosWmmUpType up = SME_QOS_WMM_UP_BE;
@@ -2279,6 +2297,7 @@ done:
    return queueIndex;
 }
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 uint16_t hdd_hostapd_select_queue(struct net_device *dev, struct sk_buff *skb,
 				  struct net_device *sb_dev,
@@ -2307,6 +2326,8 @@ uint16_t hdd_hostapd_select_queue(struct net_device *dev, struct sk_buff *skb)
 }
 #endif
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /**============================================================================
   @brief hdd_wmm_select_quueue() - Function which will classify the packet
          according to linux qdisc expectation.

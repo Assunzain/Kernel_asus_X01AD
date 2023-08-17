@@ -99,6 +99,13 @@ when           who        what, where, why
 // How do I get SAP context from voss context? 
 #define VOS_GET_SAP_CB(ctx) vos_get_context( VOS_MODULE_ID_SAP, ctx) 
 
+<<<<<<< HEAD
+=======
+#ifdef VOS_GET_HAL_CB
+#undef VOS_GET_HAL_CB
+#endif
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #define VOS_GET_HAL_CB(ctx) vos_get_context( VOS_MODULE_ID_PE, ctx) 
 //MAC Address length
 #define ANI_EAPOL_KEY_RSN_NONCE_SIZE      32

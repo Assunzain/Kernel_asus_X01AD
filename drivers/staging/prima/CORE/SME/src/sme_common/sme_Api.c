@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -9014,9 +9017,14 @@ eHalStatus sme_PreferredNetworkFoundInd (tHalHandle hHal, void* pMsg)
                               pPrefNetworkFoundInd->ssId.length);
          vos_mem_copy(dumpSsId, pPrefNetworkFoundInd->ssId.ssId, ssIdLength);
          dumpSsId[ssIdLength] = 0;
+<<<<<<< HEAD
          smsLog(pMac, LOG1, FL(" SSID=%s frame length %d Freq %d"),
                 dumpSsId, pPrefNetworkFoundInd->frameLength,
                 pPrefNetworkFoundInd->freq);
+=======
+         smsLog(pMac, LOG1, FL(" SSID=%s frame length %d"),
+             dumpSsId, pPrefNetworkFoundInd->frameLength);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
          /* Flush scan results, So as to avoid indication/updation of
           * stale entries, which may not have aged out during APPS collapse
@@ -15510,6 +15518,7 @@ static eHalStatus sme_prepare_mgmt_tx(tHalHandle hal, uint8_t session_id,
     return status;
 }
 
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
 eHalStatus sme_teardown_link_with_ap(tpAniSirGlobal mac, uint8_t session_id)
 {
@@ -15544,6 +15553,8 @@ eHalStatus sme_teardown_link_with_ap(tpAniSirGlobal mac, uint8_t session_id)
 }
 #endif
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 eHalStatus sme_send_mgmt_tx(tHalHandle hal, uint8_t session_id,
                             const uint8_t *buf, uint32_t len)
 {
@@ -15683,14 +15694,27 @@ eHalStatus sme_update_olpc_mode(tHalHandle hHal, bool enable)
 #ifdef FEATURE_WLAN_SW_PTA
 eHalStatus sme_sw_pta_req(tHalHandle hal,
 			  void (*resp_callback)(uint8_t resp_status),
+<<<<<<< HEAD
 			  uint8_t session_id, bool bt_enabled, bool bt_adv,
 			  bool ble_enabled, bool bt_a2dp, bool bt_sco)
+=======
+			  uint8_t session_id, enum sir_sw_pta_param_type type,
+			  uint8_t length, uint8_t *value)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
 	tpAniSirGlobal mac = PMAC_STRUCT(hal);
 	struct sir_sw_pta_req *sw_pta_req;
 	eHalStatus status;
 	tSmeCmd *sme_cmd;
 
+<<<<<<< HEAD
+=======
+	if (length > SW_PTA_COEX_PARAMS_MAX_LEN) {
+		smsLog(mac, LOGE, FL("Invalid length"));
+		return eHAL_STATUS_FAILURE;
+	}
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	sme_cmd = csrGetCommandBuffer(mac);
 	if (!sme_cmd) {
 		smsLog(mac, LOGE, FL("Failed to get buffer for sw pta req"));
@@ -15704,11 +15728,17 @@ eHalStatus sme_sw_pta_req(tHalHandle hal,
 		return eHAL_STATUS_RESOURCES;
 	}
 
+<<<<<<< HEAD
 	sw_pta_req->bt_enabled = bt_enabled;
 	sw_pta_req->bt_adv = bt_adv;
 	sw_pta_req->ble_enabled = ble_enabled;
 	sw_pta_req->bt_a2dp = bt_a2dp;
 	sw_pta_req->bt_sco = bt_sco;
+=======
+	sw_pta_req->param_type = type;
+	sw_pta_req->length = length;
+	memcpy(sw_pta_req->value, value, length);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 	status = sme_AcquireGlobalLock(&mac->sme);
 	if (HAL_STATUS_SUCCESS(status)) {
@@ -15738,4 +15768,15 @@ eHalStatus sme_sw_pta_req(tHalHandle hal,
 	sme_ReleaseGlobalLock(&mac->sme);
 	return eHAL_STATUS_SUCCESS;
 }
+<<<<<<< HEAD
+=======
+
+eHalStatus sme_sco_req(tHalHandle hal,
+		       void (*resp_callback)(uint8_t resp_status),
+		       uint8_t session_id, uint8_t req_status)
+{
+	return sme_sw_pta_req(hal, resp_callback, session_id,
+			      SCO_STATUS, sizeof(req_status), &req_status);
+}
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #endif /* FEATURE_WLAN_SW_PTA */

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2012-2018, 2021 The Linux Foundation. All rights reserved.
+=======
+ * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -2158,6 +2162,7 @@ void hdd_set_wlan_suspend_mode(bool suspend)
     vos_ssr_unprotect(__func__);
 }
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 static void hdd_ssr_timer_cb(struct timer_list *data)
 {
@@ -2172,6 +2177,19 @@ static void hdd_ssr_timer_cb(struct timer_list *data)
 }
 
 #else
+=======
+static void hdd_ssr_timer_init(void)
+{
+    init_timer(&ssr_timer);
+}
+
+static void hdd_ssr_timer_del(void)
+{
+    del_timer(&ssr_timer);
+    ssr_timer_started = false;
+}
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 static void hdd_ssr_timer_cb(unsigned long data)
 {
     hddLog(VOS_TRACE_LEVEL_FATAL, "%s: HDD SSR timer expired", __func__);
@@ -2183,6 +2201,7 @@ static void hdd_ssr_timer_cb(unsigned long data)
 
     VOS_BUG(0);
 }
+<<<<<<< HEAD
 #endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
@@ -2203,6 +2222,8 @@ static void hdd_ssr_timer_del(void)
     del_timer(&ssr_timer);
     ssr_timer_started = false;
 }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 static void hdd_ssr_timer_start(int msec)
 {
@@ -2910,7 +2931,10 @@ success:
    if (pHddCtx->cfg_ini->sap_internal_restart)
        hdd_ssr_restart_sap(pHddCtx);
 
+<<<<<<< HEAD
    wcnss_update_bt_profile();
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
    return VOS_STATUS_SUCCESS;
 }

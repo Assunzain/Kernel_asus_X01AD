@@ -1,6 +1,9 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+<<<<<<< HEAD
  * Copyright (C) 2020 XiaoMi, Inc.
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -100,7 +103,11 @@
 #include "qwlan_version.h"
 #include "wlan_logging_sock_svc.h"
 #include "wlan_hdd_misc.h"
+<<<<<<< HEAD
 #include <linux/wcnss_wlan.h>
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 #define g_mode_rates_size (12)
 #define a_mode_rates_size (8)
@@ -621,6 +628,7 @@ static const struct nla_policy wlan_hdd_tm_policy[WLAN_HDD_TM_ATTR_MAX + 1] =
 };
 #endif /* WLAN_NL80211_TESTMODE */
 
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_SW_PTA
 bool hdd_is_sw_pta_enabled(hdd_context_t *hdd_ctx)
 {
@@ -629,6 +637,8 @@ bool hdd_is_sw_pta_enabled(hdd_context_t *hdd_ctx)
 }
 #endif
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef FEATURE_WLAN_CH_AVOID
 /*
  * FUNCTION: wlan_hdd_send_avoid_freq_event
@@ -2038,10 +2048,14 @@ static v_BOOL_t put_wifi_interface_info(tpSirWifiInterfaceInfo stats,
                     WNI_CFG_COUNTRY_CODE_LEN, stats->apCountryStr) ||
             nla_put(vendor_event,
                     QCA_WLAN_VENDOR_ATTR_LL_STATS_IFACE_INFO_COUNTRY_STR,
+<<<<<<< HEAD
                     WNI_CFG_COUNTRY_CODE_LEN, stats->countryStr) ||
             nla_put_u32(vendor_event,
                     QCA_WLAN_VENDOR_ATTR_LL_STATS_IFACE_INFO_TS_DUTY_CYCLE,
                     stats->time_slice_duty_cycle)
+=======
+                    WNI_CFG_COUNTRY_CODE_LEN, stats->countryStr)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
       )
     {
         hddLog(VOS_TRACE_LEVEL_ERROR,
@@ -2060,7 +2074,10 @@ static v_BOOL_t put_wifi_iface_stats(hdd_adapter_t *pAdapter,
     hdd_station_ctx_t *pHddStaCtx = WLAN_HDD_GET_STATION_CTX_PTR(pAdapter);
     WLANTL_InterfaceStatsType *pWifiIfaceStatTL = NULL;
     tSirWifiWmmAcStat accessclassStats;
+<<<<<<< HEAD
     v_S7_t rssi_value;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     if (FALSE == put_wifi_interface_info(
                                 &pWifiIfaceStat->info,
@@ -2182,6 +2199,7 @@ static v_BOOL_t put_wifi_iface_stats(hdd_adapter_t *pAdapter,
         return FALSE;
     }
 
+<<<<<<< HEAD
     if (pWifiIfaceStat->info.state == WIFI_DISCONNECTED)
     {
    /* we are not connected or our SSID is too long
@@ -2194,6 +2212,8 @@ static v_BOOL_t put_wifi_iface_stats(hdd_adapter_t *pAdapter,
                FL("Rssi value on disconnect %d "), rssi_value);
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #ifdef FEATURE_EXT_LL_STAT
    /*
     * Ensure when EXT_LL_STAT is supported by both host and fwr,
@@ -2340,9 +2360,12 @@ static v_BOOL_t hdd_get_interface_info(hdd_adapter_t *pAdapter,
     vos_mem_copy(pInfo->apCountryStr,
         pMac->scan.countryCodeCurrent, WNI_CFG_COUNTRY_CODE_LEN);
 
+<<<<<<< HEAD
     /* Copy time slicing duty cycle */
     pInfo->time_slice_duty_cycle = 100;
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     return TRUE;
 }
 
@@ -5653,8 +5676,12 @@ static int __wlan_hdd_cfg80211_set_spoofed_mac_oui(struct wiphy *wiphy,
             pHddCtx->spoofMacAddr.isEnabled = FALSE;
     }
 
+<<<<<<< HEAD
     queue_delayed_work(system_freezable_power_efficient_wq,
                           &pHddCtx->spoof_mac_addr_work,
+=======
+    schedule_delayed_work(&pHddCtx->spoof_mac_addr_work,
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                           msecs_to_jiffies(MAC_ADDR_SPOOFING_DEFER_INTERVAL));
 
     EXIT();
@@ -9528,11 +9555,14 @@ int wlan_hdd_cfg80211_init(struct device *dev,
     {
         wlan_hdd_band_5_GHZ.ht_cap.cap &= ~IEEE80211_HT_CAP_SUP_WIDTH_20_40;
     }
+<<<<<<< HEAD
     if (pCfg->enableTxSTBC)
     {
         wlan_hdd_band_2_4_GHZ.vht_cap.cap |= IEEE80211_VHT_CAP_TXSTBC;
         wlan_hdd_band_5_GHZ.vht_cap.cap |= IEEE80211_VHT_CAP_TXSTBC;
     }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     /*
      * In case of static linked driver at the time of driver unload,
      * module exit doesn't happens. Module cleanup helps in cleaning
@@ -10022,11 +10052,14 @@ static void wlan_hdd_check_11gmode(u8 *pIe, u8* require_ht,
 {
     u8 i, num_rates = pIe[0];
 
+<<<<<<< HEAD
     if (num_rates > SIR_MAC_RATESET_EID_MAX) {
         hddLog(VOS_TRACE_LEVEL_ERROR, "Invalid supported rates %d", num_rates);
         return;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     pIe += 1;
     for ( i = 0; i < num_rates; i++)
     {
@@ -10051,6 +10084,7 @@ static void wlan_hdd_check_11gmode(u8 *pIe, u8* require_ht,
     return;
 }
 
+<<<<<<< HEAD
 /* check SAE/H2E require flag from support rate sets */
 static void wlan_hdd_check_h2e(u8 *pIe, tsap_Config_t *pConfig, u8 num_rates)
 {
@@ -10065,6 +10099,8 @@ static void wlan_hdd_check_h2e(u8 *pIe, tsap_Config_t *pConfig, u8 num_rates)
     }
 }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 static void wlan_hdd_set_sapHwmode(hdd_adapter_t *pHostapdAdapter)
 {
     tsap_Config_t *pConfig = &pHostapdAdapter->sessionCtx.ap.sapConfig;
@@ -10073,7 +10109,10 @@ static void wlan_hdd_set_sapHwmode(hdd_adapter_t *pHostapdAdapter)
     u8 checkRatesfor11g = TRUE;
     u8 require_ht = FALSE;
     u8 *pIe=NULL;
+<<<<<<< HEAD
     u8 num_rates;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     pConfig->SapHw_mode= eSAP_DOT11_MODE_11b;
 
@@ -10082,10 +10121,15 @@ static void wlan_hdd_set_sapHwmode(hdd_adapter_t *pHostapdAdapter)
     if (pIe != NULL)
     {
         pIe += 1;
+<<<<<<< HEAD
         num_rates = pIe[0];
         wlan_hdd_check_11gmode(pIe, &require_ht, &checkRatesfor11g,
                                &pConfig->SapHw_mode);
         wlan_hdd_check_h2e(pIe, pConfig, num_rates);
+=======
+        wlan_hdd_check_11gmode(pIe, &require_ht, &checkRatesfor11g,
+                               &pConfig->SapHw_mode);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     }
 
     pIe = wlan_hdd_cfg80211_get_ie_ptr(pBeacon->tail, pBeacon->tail_len,
@@ -10094,10 +10138,15 @@ static void wlan_hdd_set_sapHwmode(hdd_adapter_t *pHostapdAdapter)
     {
 
         pIe += 1;
+<<<<<<< HEAD
         num_rates = pIe[0];
         wlan_hdd_check_11gmode(pIe, &require_ht, &checkRatesfor11g,
                                &pConfig->SapHw_mode);
         wlan_hdd_check_h2e(pIe, pConfig, num_rates);
+=======
+        wlan_hdd_check_11gmode(pIe, &require_ht, &checkRatesfor11g,
+                               &pConfig->SapHw_mode);
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     }
 
     if( pConfig->channel > 14 )
@@ -10143,6 +10192,7 @@ static int wlan_hdd_add_ie(hdd_adapter_t* pHostapdAdapter, v_U8_t *genie,
     return 0;
 }
 
+<<<<<<< HEAD
 /**
  * wlan_hdd_add_extra_ie() - add extra ies in beacon
  * @adapter: Pointer to hostapd adapter
@@ -10192,6 +10242,8 @@ static void wlan_hdd_add_extra_ie(hdd_adapter_t* pHostapdAdapter,
     }
 }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 static void wlan_hdd_add_hostapd_conf_vsie(hdd_adapter_t* pHostapdAdapter,
                                            v_U8_t *genie, v_U8_t *total_ielen)
 {
@@ -10269,9 +10321,12 @@ int wlan_hdd_cfg80211_update_apies(hdd_adapter_t *pHostapdAdapter)
     }
 
     pBeacon = pHostapdAdapter->sessionCtx.ap.beacon;
+<<<<<<< HEAD
 
     wlan_hdd_add_extra_ie(pHostapdAdapter, genie, &total_ielen, WLAN_ELEMID_RSNXE);
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     if (0 != wlan_hdd_add_ie(pHostapdAdapter, genie,
                               &total_ielen, WPS_OUI_TYPE, WPS_OUI_TYPE_SIZE))
     {
@@ -11703,7 +11758,10 @@ static int wlan_hdd_cfg80211_start_bss(hdd_adapter_t *pHostapdAdapter,
     }
 
     wlan_hdd_set_sapHwmode(pHostapdAdapter);
+<<<<<<< HEAD
     pConfig->require_h2e = pHostapdAdapter->sessionCtx.ap.sapConfig.require_h2e;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 #ifdef WLAN_FEATURE_11AC
     /* Overwrite the hostapd setting for HW mode only for 11ac.
@@ -12169,8 +12227,11 @@ static int __wlan_hdd_cfg80211_stop_ap (struct wiphy *wiphy,
         return status;
     }
 
+<<<<<<< HEAD
     wlan_hdd_cfg80211_deregister_frames(pAdapter);
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     pScanInfo =  &pHddCtx->scan_info;
 
     hddLog(VOS_TRACE_LEVEL_INFO, "%s: device_mode = %s (%d)",
@@ -12603,6 +12664,10 @@ int __wlan_hdd_cfg80211_change_iface( struct wiphy *wiphy,
     hdd_adapter_t *pAdapter = WLAN_HDD_GET_PRIV_PTR( ndev );
     hdd_context_t *pHddCtx;
     tCsrRoamProfile *pRoamProfile = NULL;
+<<<<<<< HEAD
+=======
+    hdd_adapter_t  *pP2pAdapter = NULL;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     eCsrRoamBssType LastBSSType;
     hdd_config_t *pConfig = NULL;
     eMib_dot11DesiredBssType connectedBssType;
@@ -12768,6 +12833,33 @@ int __wlan_hdd_cfg80211_change_iface( struct wiphy *wiphy,
                 {
                     wlan_hdd_cancel_existing_remain_on_channel(pAdapter);
                 }
+<<<<<<< HEAD
+=======
+               if (NL80211_IFTYPE_AP == type)
+                {
+                    /*
+                     * As Loading WLAN Driver one interface being created
+                     * for p2p device address. This will take one HW STA and
+                     * the max number of clients that can connect to softAP
+                     * will be reduced by one. so while changing the interface
+                     * type to NL80211_IFTYPE_AP (SoftAP) remove p2p0 interface
+                     * as it is not required in SoftAP mode.
+                     */
+
+                     // Get P2P Adapter
+                     pP2pAdapter = hdd_get_adapter(pHddCtx,
+                                                  WLAN_HDD_P2P_DEVICE);
+                     if (pP2pAdapter)
+                     {
+                         wlan_hdd_release_intf_addr(pHddCtx,
+                                          pP2pAdapter->macAddressCurrent.bytes);
+                         hdd_stop_adapter(pHddCtx, pP2pAdapter, VOS_TRUE);
+                         hdd_deinit_adapter(pHddCtx, pP2pAdapter, TRUE);
+                         hdd_close_adapter(pHddCtx, pP2pAdapter, VOS_TRUE);
+                     }
+                }
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 //Disable IMPS & BMPS for SAP/GO
                 if(VOS_STATUS_E_FAILURE ==
                        hdd_disable_bmps_imps(pHddCtx, WLAN_HDD_P2P_GO))
@@ -12874,6 +12966,17 @@ int __wlan_hdd_cfg80211_change_iface( struct wiphy *wiphy,
 		}
                 hdd_set_conparam(1);
 
+<<<<<<< HEAD
+=======
+                status = hdd_sta_id_hash_attach(pAdapter);
+                if (VOS_STATUS_SUCCESS != status)
+                {
+                    hddLog(VOS_TRACE_LEVEL_ERROR,
+                           FL("Failed to initialize hash for AP"));
+                    return -EINVAL;
+                }
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 /*interface type changed update in wiphy structure*/
                 if(wdev)
                 {
@@ -12905,6 +13008,20 @@ int __wlan_hdd_cfg80211_change_iface( struct wiphy *wiphy,
            case NL80211_IFTYPE_P2P_CLIENT:
            case NL80211_IFTYPE_ADHOC:
 
+<<<<<<< HEAD
+=======
+                if (pAdapter->device_mode == WLAN_HDD_SOFTAP
+                        && !hdd_get_adapter(pHddCtx, WLAN_HDD_P2P_DEVICE)) {
+                    /*
+                     * The p2p interface was deleted while SoftAP mode was init,
+                     * create that interface now that the SoftAP is going down.
+                     */
+                    pP2pAdapter = hdd_open_adapter(pHddCtx, WLAN_HDD_P2P_DEVICE,
+                                       "p2p%d", wlan_hdd_get_intf_addr(pHddCtx),
+                                       VOS_TRUE);
+                }
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 hdd_stop_adapter( pHddCtx, pAdapter, VOS_TRUE );
 
 #ifdef FEATURE_WLAN_TDLS
@@ -15315,8 +15432,12 @@ allow_suspend:
         /* Generate new random mac addr for next scan */
         hddLog(VOS_TRACE_LEVEL_INFO, "scan completed - generate new spoof mac addr");
 
+<<<<<<< HEAD
         queue_delayed_work(system_freezable_power_efficient_wq,
                            &pHddCtx->spoof_mac_addr_work,
+=======
+        schedule_delayed_work(&pHddCtx->spoof_mac_addr_work,
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                            msecs_to_jiffies(MAC_ADDR_SPOOFING_DEFER_INTERVAL));
     }
 
@@ -15704,8 +15825,11 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
     bool is_p2p_scan = false;
     v_U8_t curr_session_id;
     scan_reject_states curr_reason;
+<<<<<<< HEAD
     tHalHandle hHal = NULL;
     tpAniSirGlobal pMac = NULL;
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
     struct net_device *dev = NULL;
@@ -15722,6 +15846,7 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
     pHddCtx = WLAN_HDD_GET_CTX( pAdapter );
     pwextBuf = WLAN_HDD_GET_WEXT_STATE_PTR(pAdapter);
 
+<<<<<<< HEAD
     hHal = WLAN_HDD_GET_HAL_CTX(pAdapter);
 
 
@@ -15753,6 +15878,10 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
         pMac->roam.neighborRoamInfo.isPeriodicScanEnabled = FALSE;
     }
 
+=======
+    ENTER();
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     hddLog(VOS_TRACE_LEVEL_INFO, "%s: device_mode = %s (%d)",
            __func__, hdd_device_modetoString(pAdapter->device_mode),
                                              pAdapter->device_mode);
@@ -15838,6 +15967,7 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
     }
     mutex_unlock(&pHddCtx->tmInfo.tmOperationLock);
 
+<<<<<<< HEAD
     /**
      * If sw pta is enabled, scan should not allowed.
      * Returning error makes framework to trigger scan continuously
@@ -15851,6 +15981,8 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
         return 0;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     /* Check if scan is allowed at this point of time.
      */
     if (TRUE == pHddCtx->btCoexModeSet)
@@ -15987,6 +16119,7 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
 
     if( request->n_channels )
     {
+<<<<<<< HEAD
         int len;
 	char *chList;
 
@@ -15997,13 +16130,20 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
 		status = -ENOMEM;
 	}
 
+=======
+        char chList [(request->n_channels*5)+1];
+        int len;
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         channelList = vos_mem_malloc( request->n_channels );
         if( NULL == channelList )
         {
             hddLog(VOS_TRACE_LEVEL_ERROR,
                            "%s: memory alloc failed channelList", __func__);
             status = -ENOMEM;
+<<<<<<< HEAD
 	    vos_mem_free(chList);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
             goto free_mem;
         }
 
@@ -16015,7 +16155,10 @@ int __wlan_hdd_cfg80211_scan( struct wiphy *wiphy,
 
         hddLog(VOS_TRACE_LEVEL_INFO,
                            "Channel-List:  %s ", chList);
+<<<<<<< HEAD
 	vos_mem_free(chList);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     }
 
     scanRequest.ChannelInfo.numOfChannels = request->n_channels;
@@ -16379,6 +16522,7 @@ int wlan_hdd_cfg80211_connect_start( hdd_adapter_t  *pAdapter,
         return -EINVAL;
     }
 
+<<<<<<< HEAD
     /**
      * If sw pta is enabled, new connections should not allowed.
      */
@@ -16387,6 +16531,8 @@ int wlan_hdd_cfg80211_connect_start( hdd_adapter_t  *pAdapter,
                __func__);
         return -EINVAL;
     }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     pRoamProfile = &pWextState->roamProfile;
 
@@ -16802,6 +16948,7 @@ static int wlan_hdd_cfg80211_set_cipher( hdd_adapter_t *pAdapter,
     return 0;
 }
 
+<<<<<<< HEAD
 static void framesntohs(v_U16_t *pOut,
                         v_U8_t  *pIn,
                         unsigned char fMsb)
@@ -16898,6 +17045,8 @@ wlan_hdd_mask_unsupported_rsn_caps(tANI_U8 *pBuf, tANI_S16 ielen)
 
     return;
 }
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 /*
  * FUNCTION: wlan_hdd_cfg80211_set_ie
@@ -17210,8 +17359,11 @@ int wlan_hdd_cfg80211_set_ie( hdd_adapter_t *pAdapter,
                 memcpy( pWextState->WPARSNIE, genie - 2, (eLen + 2)/*ie_len*/);
                 pWextState->roamProfile.pRSNReqIE = pWextState->WPARSNIE;
                 pWextState->roamProfile.nRSNReqIELength = eLen + 2; //ie_len;
+<<<<<<< HEAD
                 wlan_hdd_mask_unsupported_rsn_caps(pWextState->WPARSNIE + 2,
                                                    eLen);
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 break;
 
                 /* Appending extended capabilities with Interworking or
@@ -17306,6 +17458,7 @@ int wlan_hdd_cfg80211_set_ie( hdd_adapter_t *pAdapter,
                 }
                 break;
 
+<<<<<<< HEAD
 	    case WLAN_ELEMID_RSNXE:
 		{
 		    v_U16_t curAddIELen = pWextState->assocAddIE.length;
@@ -17329,6 +17482,9 @@ int wlan_hdd_cfg80211_set_ie( hdd_adapter_t *pAdapter,
 		}
 
 	    default:
+=======
+            default:
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 hddLog (VOS_TRACE_LEVEL_ERROR,
                         "%s Set UNKNOWN IE %X", __func__, elementId);
                 /* when Unknown IE is received we should break and continue
@@ -20264,6 +20420,7 @@ void hdd_cfg80211_sched_scan_done_callback(void *callbackContext,
     }
     spin_unlock(&pHddCtx->schedScan_lock);
 
+<<<<<<< HEAD
     /**
      * If sw pta is enabled, scan results should not send to framework.
      */
@@ -20273,6 +20430,8 @@ void hdd_cfg80211_sched_scan_done_callback(void *callbackContext,
         return;
     }
 
+=======
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     ret = wlan_hdd_cfg80211_update_bss(pHddCtx->wiphy, pAdapter);
 
     if (0 > ret)
@@ -20556,6 +20715,7 @@ static int __wlan_hdd_cfg80211_sched_scan_start(struct wiphy *wiphy,
     num_ch = 0;
     if (request->n_channels)
     {
+<<<<<<< HEAD
         int len;
 	char *chList;
 
@@ -20567,6 +20727,11 @@ static int __wlan_hdd_cfg80211_sched_scan_start(struct wiphy *wiphy,
 	}
 
 	for (i = 0, len = 0; i < request->n_channels; i++)
+=======
+        char chList [(request->n_channels*5)+1];
+        int len;
+        for (i = 0, len = 0; i < request->n_channels; i++)
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
             for (indx = 0; indx < num_channels_allowed; indx++)
             {
@@ -20597,10 +20762,15 @@ static int __wlan_hdd_cfg80211_sched_scan_start(struct wiphy *wiphy,
             VOS_TRACE(VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_INFO,
              "%s : All requested channels are DFS channels", __func__);
             ret = -EINVAL;
+<<<<<<< HEAD
 	    vos_mem_free(chList);
             goto error;
         }
 	vos_mem_free(chList);
+=======
+            goto error;
+        }
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
      }
 
     pnoRequest.aNetworks =
@@ -23236,3 +23406,7 @@ static struct cfg80211_ops wlan_hdd_cfg80211_ops =
       .external_auth = wlan_hdd_cfg80211_external_auth,
 #endif
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')

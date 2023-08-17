@@ -1001,7 +1001,11 @@ int oem_activate_service(void *pAdapter)
 
   \return - none
   --------------------------------------------------------------------------*/
+<<<<<<< HEAD
 void oem_deactivate_service(void)
+=======
+void oem_deactivate_service()
+>>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    /* unregister the msg handler for msgs addressed to WLAN_NL_MSG_OEM */
    nl_srv_unregister(WLAN_NL_MSG_OEM, __oem_msg_callback);
