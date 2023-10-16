@@ -1112,10 +1112,6 @@ typedef struct sAniSirGlobal
    uint32_t sta_auth_retries_for_code17;
    uint32_t sta_sap_scc_on_dfs_chan;
    bool force_scc_with_ecsa;
-<<<<<<< HEAD
-   bool require_h2e;
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tAniSirGlobal;
 
 #ifdef FEATURE_WLAN_TDLS

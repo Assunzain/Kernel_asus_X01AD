@@ -603,12 +603,6 @@ typedef struct
   /* Pointer to the root of the chain */
   vos_pkt_t*                    vosAMSDUChain;
 
-<<<<<<< HEAD
-  /* Drop any invalid amsdu */
-  bool drop_amsdu;
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   /* Used for saving/restoring frame header for 802.3/11 AMSDU sub-frames */
   v_U8_t                        aucMPDUHeader[WLANTL_MPDU_HEADER_LEN];
 

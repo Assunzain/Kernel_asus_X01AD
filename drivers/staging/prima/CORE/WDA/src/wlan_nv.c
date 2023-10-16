@@ -853,13 +853,8 @@ const sHalNv nvDefaults =
                     {NV_CHANNEL_ENABLE, 23},           //RF_CHAN_9,
                     {NV_CHANNEL_ENABLE, 22},           //RF_CHAN_10,
                     {NV_CHANNEL_ENABLE, 22},           //RF_CHAN_11,
-<<<<<<< HEAD
-                    {NV_CHANNEL_ENABLE, 30},           //RF_CHAN_12,
-                    {NV_CHANNEL_ENABLE, 30},           //RF_CHAN_13,
-=======
                     {NV_CHANNEL_DISABLE, 30},           //RF_CHAN_12,
                     {NV_CHANNEL_DISABLE, 30},           //RF_CHAN_13,
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                     {NV_CHANNEL_DISABLE, 30},           //RF_CHAN_14,
 
                     //4.9GHz Band, none CB

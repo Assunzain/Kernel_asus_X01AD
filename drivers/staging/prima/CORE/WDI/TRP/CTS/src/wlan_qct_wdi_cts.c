@@ -585,24 +585,6 @@ int WCTS_driver_state_process(void *priv, enum wcnss_driver_state state)
 	wpalPostCtrlMsg(WDI_GET_PAL_CTX(), pal_msg);
 	return 0;
 }
-<<<<<<< HEAD
-
-int WCTS_bt_profile_state_process(void *priv, struct bt_profile_state *state)
-{
-	int ret;
-
-	WPAL_TRACE(eWLAN_MODULE_DAL_CTRL, eWLAN_PAL_TRACE_LEVEL_ERROR,
-		   "%s: Received bt_profile state update %s", __func__,
-		   state->bt_enabled ? "ENABLED" : "DISABLED");
-
-	ret = vos_process_bt_profile(state->bt_enabled, state->bt_adv,
-				     state->bt_ble, state->bt_a2dp,
-				     state->bt_sco);
-
-	return ret;
-}
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #else
 void
 WCTS_NotifyCallback

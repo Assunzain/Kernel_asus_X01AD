@@ -473,11 +473,7 @@ typedef struct sap_Config {
 #endif
     eCsrBand        scanBandPreference;
     v_U16_t         acsBandSwitchThreshold;
-<<<<<<< HEAD
-    bool            require_h2e;
-=======
 
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 } tsap_Config_t;
 
 typedef enum {

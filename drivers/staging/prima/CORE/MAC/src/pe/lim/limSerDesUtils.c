@@ -754,11 +754,6 @@ limStartBssReqSerDes(tpAniSirGlobal pMac, tpSirSmeStartBssReq pStartBssReq, tANI
 
     // Extract extendedRateSet
     if ((pStartBssReq->nwType == eSIR_11G_NW_TYPE) ||
-<<<<<<< HEAD
-        (pStartBssReq->nwType == eSIR_11A_NW_TYPE) ||
-        (pStartBssReq->nwType == eSIR_11B_NW_TYPE) ||
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         (pStartBssReq->nwType == eSIR_11N_NW_TYPE ))
     {
         pStartBssReq->extendedRateSet.numRates = *pBuf++;

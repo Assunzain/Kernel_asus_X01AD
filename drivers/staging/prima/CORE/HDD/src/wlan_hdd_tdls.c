@@ -1384,11 +1384,6 @@ hddTdlsPeer_t *wlan_hdd_tdls_get_peer(hdd_adapter_t *pAdapter,
 
     vos_mem_zero(peer, sizeof(hddTdlsPeer_t));
     vos_mem_copy(peer->peerMac, mac, sizeof(peer->peerMac));
-<<<<<<< HEAD
-    if (pHddCtx->cfg_ini->fTDLSExternalControl)
-        peer->isForcedPeer = 1;
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     peer->pHddTdlsCtx = pHddTdlsCtx;
     list_add_tail(&peer->node, head);
 

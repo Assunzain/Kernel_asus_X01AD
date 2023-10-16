@@ -358,20 +358,6 @@ enum wcnss_driver_state;
  */
 int WCTS_driver_state_process(void *priv, enum wcnss_driver_state state);
 
-<<<<<<< HEAD
-struct bt_profile_state;
-/**
- * WCTS_bt_profile_state_process() - Callback to process bt state info
- *
- * @priv: The user-supplied data provided in wcnss_register_driver()
- * @state: bt state
- *
- * @return status
- */
-int WCTS_bt_profile_state_process(void *priv, struct bt_profile_state *state);
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /**
  * wcts_close_channel() - api to close the smd channel
  * @wctsHandle: transport handle

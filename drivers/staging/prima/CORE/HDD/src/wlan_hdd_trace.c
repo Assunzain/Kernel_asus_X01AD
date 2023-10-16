@@ -131,11 +131,7 @@ void hddTraceDump(void *pMac, tpvosTraceRecord pRecord, tANI_U16 recIndex)
     }
 }
 
-<<<<<<< HEAD
-void hddTraceInit(void)
-=======
 void hddTraceInit()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     vosTraceRegister(VOS_MODULE_ID_HDD, (tpvosTraceCb)&hddTraceDump);
 }
@@ -197,11 +193,7 @@ static void hdd_state_info_dump(void)
  * hdd_register_debug_callback() - registration function for hdd layer
  * to print hdd state information
  */
-<<<<<<< HEAD
-void hdd_register_debug_callback(void)
-=======
 void hdd_register_debug_callback()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     vos_register_debug_callback(VOS_MODULE_ID_HDD, &hdd_state_info_dump);
 }

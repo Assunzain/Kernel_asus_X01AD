@@ -482,35 +482,11 @@ VOS_STATUS vos_spin_lock_destroy(vos_spin_lock_t *pLock)
    return VOS_STATUS_SUCCESS;
 }
 
-<<<<<<< HEAD
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 110)) || \
-	defined(WAKEUP_SOURCE_DEV)
-VOS_STATUS vos_wake_lock_init(vos_wake_lock_t *lock, const char *name)
-{
-	vos_mem_zero(lock, sizeof(*lock));
-	lock->priv = wakeup_source_register(lock->lock.dev, name);
-	if (!(lock->priv)) {
-		VOS_BUG(0);
-		return VOS_STATUS_E_FAILURE;
-	}
-
-	lock->lock = *(lock->priv);
-
-	return VOS_STATUS_SUCCESS;
-}
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)) && \
-	defined(WLAN_OPEN_SOURCE)
-VOS_STATUS vos_wake_lock_init(vos_wake_lock_t *pLock, const char *name)
-{
-	wakeup_source_init(&pLock->lock, name);
-	pLock->priv = &(pLock->lock);
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)) && \
 	defined(WLAN_OPEN_SOURCE)
 VOS_STATUS vos_wake_lock_init(vos_wake_lock_t *pLock, const char *name)
 {
 	wakeup_source_init(pLock, name);
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	return VOS_STATUS_SUCCESS;
 }
 #else
@@ -537,13 +513,8 @@ VOS_STATUS vos_wake_lock_init(vos_wake_lock_t *pLock, const char *name)
 	defined(WLAN_OPEN_SOURCE)
 static const char *vos_wake_lock_name(vos_wake_lock_t *pLock)
 {
-<<<<<<< HEAD
-	if (pLock)
-		return pLock->lock.name;
-=======
 	if (pLock->name)
 		return pLock->name;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 	return "UNNAMED_WAKELOCK";
 }
@@ -577,11 +548,7 @@ VOS_STATUS vos_wake_lock_acquire(vos_wake_lock_t *pLock, uint32_t reason)
 	vos_log_wlock_diag(reason, vos_wake_lock_name(pLock),
 			   WIFI_POWER_EVENT_DEFAULT_WAKELOCK_TIMEOUT,
 			   WIFI_POWER_EVENT_WAKELOCK_TAKEN);
-<<<<<<< HEAD
-	__pm_stay_awake(pLock->priv);
-=======
 	__pm_stay_awake(pLock);
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	return VOS_STATUS_SUCCESS;
 }
 #else
@@ -619,11 +586,7 @@ VOS_STATUS vos_wake_lock_timeout_release(vos_wake_lock_t *pLock, v_U32_t msec,
 	 * Wakelock for Rx is frequent.
 	 * It is reported only during active debug
 	 */
-<<<<<<< HEAD
-	__pm_wakeup_event(pLock->priv, msec);
-=======
 	__pm_wakeup_event(pLock, msec);
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	return VOS_STATUS_SUCCESS;
 }
 #else
@@ -667,11 +630,7 @@ VOS_STATUS vos_wake_lock_release(vos_wake_lock_t *pLock, uint32_t reason)
 	vos_log_wlock_diag(reason, vos_wake_lock_name(pLock),
 			   WIFI_POWER_EVENT_DEFAULT_WAKELOCK_TIMEOUT,
 			   WIFI_POWER_EVENT_WAKELOCK_RELEASED);
-<<<<<<< HEAD
-	__pm_relax(pLock->priv);
-=======
 	__pm_relax(pLock);
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	return VOS_STATUS_SUCCESS;
 }
 #else
@@ -701,27 +660,11 @@ VOS_STATUS vos_wake_lock_release(vos_wake_lock_t *pLock, uint32_t reason)
 }
 #endif
 
-<<<<<<< HEAD
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 110)) || \
-	defined(WAKEUP_SOURCE_DEV)
-VOS_STATUS vos_wake_lock_destroy(vos_wake_lock_t *lock)
-{
-	wakeup_source_unregister(lock->priv);
-	return VOS_STATUS_SUCCESS;
-}
-
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)) && \
-	defined(WLAN_OPEN_SOURCE)
-VOS_STATUS vos_wake_lock_destroy(vos_wake_lock_t *pLock)
-{
-	wakeup_source_trash(pLock->priv);
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)) && \
 	defined(WLAN_OPEN_SOURCE)
 VOS_STATUS vos_wake_lock_destroy(vos_wake_lock_t *pLock)
 {
 	wakeup_source_trash(pLock);
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 	return VOS_STATUS_SUCCESS;
 }
 #else
@@ -748,11 +691,7 @@ VOS_STATUS vos_wake_lock_destroy(vos_wake_lock_t *pLock)
 	defined(WLAN_OPEN_SOURCE)
 bool vos_wake_lock_active(vos_wake_lock_t *lock)
 {
-<<<<<<< HEAD
-	return lock->priv->active;
-=======
 	return lock->active;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 }
 #else
 bool vos_wake_lock_active(vos_wake_lock_t *lock)
