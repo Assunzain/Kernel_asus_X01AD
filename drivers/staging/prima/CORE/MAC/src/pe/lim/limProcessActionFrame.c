@@ -2613,10 +2613,7 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
         case SIR_MAC_ACTION_VENDOR_SPECIFIC_CATEGORY:
             {
               tpSirMacVendorSpecificFrameHdr pVendorSpecific = (tpSirMacVendorSpecificFrameHdr) pActionHdr;
-<<<<<<< HEAD
-=======
               tANI_U8 Oui[] = { 0x00, 0x00, 0xf0 };
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 		if(frameLen < sizeof(*pVendorSpecific)) {
 			limLog(pMac, LOGE,
@@ -2624,13 +2621,6 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
 			break;
 		  }
 
-<<<<<<< HEAD
-		if ((eLIM_STA_IN_IBSS_ROLE != psessionEntry->limSystemRole) &&
-		    (VOS_TRUE == vos_mem_compare(psessionEntry->selfMacAddr,
-		    &pHdr->da[0], sizeof(tSirMacAddr)))) {
-			limLog(pMac, LOGW, FL("Received Vendor specific action frame, OUI %x %x %x"),
-			       pVendorSpecific->Oui[0], pVendorSpecific->Oui[1], pVendorSpecific->Oui[2]);
-=======
               //Check if it is a vendor specific action frame.
               if ((eLIM_STA_ROLE == psessionEntry->limSystemRole) &&
                   (VOS_TRUE == vos_mem_compare(psessionEntry->selfMacAddr,
@@ -2640,7 +2630,6 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
               {
                   PELOGE( limLog( pMac, LOGW, FL("Received Vendor specific action frame, OUI %x %x %x"),
                          pVendorSpecific->Oui[0], pVendorSpecific->Oui[1], pVendorSpecific->Oui[2]);)
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                  /* Forward to the SME to HDD to wpa_supplicant */
                  // type is ACTION
                   limSendSmeMgmtFrameInd(pMac, psessionEntry->smeSessionId,
@@ -2648,12 +2637,8 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
                                          psessionEntry, 0, RXMGMT_FLAG_NONE);
               }
 #if defined (WLAN_FEATURE_RMC)
-<<<<<<< HEAD
-		else if (((VOS_TRUE == vos_mem_compare(SIR_MAC_RMC_MCAST_ADDRESS,
-=======
               else if ((eLIM_STA_IN_IBSS_ROLE == psessionEntry->limSystemRole) &&
                   ((VOS_TRUE == vos_mem_compare(SIR_MAC_RMC_MCAST_ADDRESS,
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                     &pHdr->da[0], sizeof(tSirMacAddr))) ||
                    (VOS_TRUE == vos_mem_compare(psessionEntry->selfMacAddr,
                      &pHdr->da[0], sizeof(tSirMacAddr)))) &&
@@ -2702,8 +2687,6 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
                   }
               }
 #endif /* WLAN_FEATURE_RMC */
-<<<<<<< HEAD
-=======
               else
               {
                  limLog( pMac, LOG1,
@@ -2715,7 +2698,6 @@ limProcessActionFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,tpPESession ps
                       pVendorSpecific->Oui[2],
                       psessionEntry->limSystemRole );
               }
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
            }
            break;
 #endif /* WLAN_FEATURE_VOWIFI_11R || FEATURE_WLAN_ESE ||

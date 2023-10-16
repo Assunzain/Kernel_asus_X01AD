@@ -1728,26 +1728,9 @@ VOS_STATUS hdd_softap_rx_packet_cbk( v_VOID_t *vosContext,
          return VOS_STATUS_E_FAILURE;
       }
 
-<<<<<<< HEAD
-      if (TRUE == hdd_IsEAPOLPacket(pVosPacket)) {
-          wlan_hdd_log_eapol(skb, WIFI_EVENT_DRIVER_EAPOL_FRAME_RECEIVED);
-
-          if (vos_mem_compare2(skb->data,
-                               pAdapter->macAddressCurrent.bytes, 6) != 0) {
-              VOS_TRACE(VOS_MODULE_ID_HDD_SAP_DATA, VOS_TRACE_LEVEL_ERROR,
-                        "Packet is not destined to this address, dropping");
-	      pVosPacket->pSkb = NULL;
-              kfree_skb(skb);
-              pVosPacket = pNextVosPacket;
-              continue;
-          }
-      }
-
-=======
       if (TRUE == hdd_IsEAPOLPacket(pVosPacket))
           wlan_hdd_log_eapol(skb, WIFI_EVENT_DRIVER_EAPOL_FRAME_RECEIVED);
 
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
       pVosPacket->pSkb = NULL;
       //hdd_softap_dump_sk_buff(skb);
 

@@ -589,12 +589,6 @@ tANI_U8* macTraceGetSmeMsgString( tANI_U16 smeMsg )
         CASE_RETURN_STRING(eWNI_SME_TRIGGER_SAE);
         CASE_RETURN_STRING(eWNI_SME_SEND_MGMT_FRAME_TX);
         CASE_RETURN_STRING(eWNI_SME_SEND_SAE_MSG);
-<<<<<<< HEAD
-#ifdef FEATURE_WLAN_SW_PTA
-        CASE_RETURN_STRING(eWNI_SME_TEARDOWN_LINK_WITH_AP);
-#endif
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         default:
             return( (tANI_U8*)"UNKNOWN" );
             break;
