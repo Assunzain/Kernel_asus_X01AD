@@ -111,10 +111,5 @@ typedef struct
     tHddMacAddr    multicastAddr[HDD_MAX_NUM_MULTICAST_ADDRESS];
 } tRcvFltMcAddrList, *tpRcvFltMcAddrList;
 
-<<<<<<< HEAD
-int wlan_hdd_set_filter(hdd_adapter_t *pAdapter, tpPacketFilterCfg pRequest);
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #endif
 #endif // __WLAN_HDD_PACKET_FILTERING_H__

@@ -225,11 +225,7 @@ int btc_activate_service(void *pAdapter)
 
   \return - none
   --------------------------------------------------------------------------*/
-<<<<<<< HEAD
-void btc_deactivate_service(void)
-=======
 void btc_deactivate_service()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    //unregister the msg handler for msgs addressed to ANI_NL_MSG_BTC
    nl_srv_unregister(WLAN_NL_MSG_BTC, btc_msg_callback);

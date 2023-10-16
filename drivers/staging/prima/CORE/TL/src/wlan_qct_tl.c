@@ -8928,10 +8928,6 @@ WLANTL_STARxConn
    v_PVOID_t                aucBDHeader;
    v_U8_t                   ucTid;
    WLANTL_RxMetaInfoType    wRxMetaInfo;
-<<<<<<< HEAD
-   v_U8_t                   ucAsf; /* AMSDU sub frame */
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /*------------------------------------------------------------------------
@@ -8982,10 +8978,6 @@ WLANTL_STARxConn
   usMPDULen     = (v_U16_t)WDA_GET_RX_MPDU_LEN(aucBDHeader);
   ucMPDUHLen    = (v_U8_t)WDA_GET_RX_MPDU_HEADER_LEN(aucBDHeader);
   ucTid         = (v_U8_t)WDA_GET_RX_TID(aucBDHeader);
-<<<<<<< HEAD
-  ucAsf         = (v_U8_t)WDA_GET_RX_ASF(aucBDHeader);
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
   vos_pkt_get_packet_length( vosDataBuff, &usPktLen);
 
@@ -9003,17 +8995,6 @@ WLANTL_STARxConn
     return VOS_STATUS_SUCCESS;
   }
 
-<<<<<<< HEAD
-  if (ucAsf) {
-    vos_pkt_return_packet(vosDataBuff);
-    *pvosDataBuff = NULL;
-    VOS_TRACE(VOS_MODULE_ID_TL, VOS_TRACE_LEVEL_ERROR,
-              "WLAN TL: AMSDU frames are not allowed while authentication - dropping");
-    return VOS_STATUS_SUCCESS;
-  }
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   vosStatus = WLANTL_GetEtherType(aucBDHeader,vosDataBuff,ucMPDUHLen,&usEtherType);
   
   if( VOS_IS_STATUS_SUCCESS(vosStatus) )

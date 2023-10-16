@@ -238,10 +238,6 @@ static void lim_defer_sme_indication(tpAniSirGlobal mac_ctx,
   * lim_check_sae_pmf_cap() - check pmf capability for SAE STA
   * @session: pointer to pe session entry
   * @rsn: pointer to RSN
-<<<<<<< HEAD
-  * @akm_type: AKM type
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   *
   * This function checks if SAE STA is pmf capable when SAE SAP is pmf
   * capable. Reject with eSIR_MAC_ROBUST_MGMT_FRAMES_POLICY_VIOLATION
@@ -251,33 +247,18 @@ static void lim_defer_sme_indication(tpAniSirGlobal mac_ctx,
   */
 #ifdef WLAN_FEATURE_SAE
 static enum eSirMacStatusCodes lim_check_sae_pmf_cap(tpPESession session,
-<<<<<<< HEAD
-                                                    tDot11fIERSN *rsn,
-						    enum ani_akm_type akm_type)
-=======
                                                     tDot11fIERSN *rsn)
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     enum eSirMacStatusCodes status = eSIR_MAC_SUCCESS_STATUS;
 
     if (session->pLimStartBssReq->pmfCapable &&
-<<<<<<< HEAD
-        (rsn->RSN_Cap[0] & RSN_CAP_MFP_ENABLED) == 0 &&
-	akm_type == ANI_AKM_TYPE_SAE)
-=======
         (rsn->RSN_Cap[0] & RSN_CAP_MFP_ENABLED) == 0)
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
             status = eSIR_MAC_ROBUST_MGMT_FRAMES_POLICY_VIOLATION_STATUS;
 
     return status;
 }
 #endif
 
-<<<<<<< HEAD
-unsigned *akm_type;
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 bool lim_send_assoc_ind_to_sme(tpAniSirGlobal pMac,
                             tpPESession psessionEntry,
                             uint8_t subType,
@@ -1564,14 +1545,9 @@ limProcessAssocReqFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,
                                     Dot11fIERSN.akm_suite[0]);
 
 #ifdef WLAN_FEATURE_SAE
-<<<<<<< HEAD
-		status = lim_check_sae_pmf_cap(psessionEntry, &Dot11fIERSN, akm_type);
-                    if (eSIR_SUCCESS != status ) {
-=======
                 if (akm_type == ANI_AKM_TYPE_SAE) {
                     if (eSIR_SUCCESS != (status =
                         lim_check_sae_pmf_cap(psessionEntry, &Dot11fIERSN))) {
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                         /* Reject pmf disable SAE STA */
                         limLog(pMac, LOGW, FL("Rejecting Re/Assoc req from STA:"
                                 MAC_ADDRESS_STR), MAC_ADDR_ARRAY(pHdr->sa));
@@ -1582,10 +1558,7 @@ limProcessAssocReqFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo,
                                     pHdr->sa,
                                     subType, 0,psessionEntry, NULL);
                         goto error;
-<<<<<<< HEAD
-=======
                     }
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
                 }
 #endif
 
@@ -1700,11 +1673,7 @@ error:
 \param  pMac
 \param  *pStaDs - Station DPH hash entry
 \param  psessionEntry - PE session entry
-<<<<<<< HEAD
-\return tSirRetStatus
-=======
 \return None
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
  * ?????? How do I get 
  *  - subtype   =====> psessionEntry->parsedAssocReq.reassocRequest
@@ -1714,11 +1683,7 @@ error:
  *  - pHdr->seqControl  =====> no longer needed
  *  - pStaDs
 ------------------------------------------------------------------*/
-<<<<<<< HEAD
-tSirRetStatus limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession psessionEntry)
-=======
 void limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession psessionEntry)
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     tpLimMlmAssocInd        pMlmAssocInd = NULL;
     tpLimMlmReassocInd      pMlmReassocInd;
@@ -1757,11 +1722,7 @@ void limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession p
         {
             limReleasePeerIdx(pMac, pStaDs->assocId, psessionEntry);
             limLog(pMac, LOGP, FL("AllocateMemory failed for pMlmAssocInd"));
-<<<<<<< HEAD
-            return eSIR_MEM_ALLOC_FAILED;
-=======
             return;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         }
         vos_mem_set(pMlmAssocInd, temp ,0);
 
@@ -1815,11 +1776,7 @@ void limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession p
                 PELOGE(limLog(pMac, LOGE, FL("rsnIEdata index out of bounds %d"),
                                               pMlmAssocInd->rsnIE.length);)
                 vos_mem_free(pMlmAssocInd);
-<<<<<<< HEAD
-                return eSIR_FAILURE;
-=======
                 return;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
             }
             pMlmAssocInd->rsnIE.rsnIEdata[pMlmAssocInd->rsnIE.length] = SIR_MAC_WPA_EID;
             pMlmAssocInd->rsnIE.rsnIEdata[pMlmAssocInd->rsnIE.length + 1] = pAssocReq->wpa.length;
@@ -1939,11 +1896,7 @@ void limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession p
             limLog(pMac, LOGP, FL("call to AllocateMemory failed for "
                                   "pMlmReassocInd"));
             limReleasePeerIdx(pMac, pStaDs->assocId, psessionEntry);
-<<<<<<< HEAD
-            return eSIR_MEM_ALLOC_FAILED;
-=======
             return;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         }
         vos_mem_set(pMlmReassocInd, temp, 0);
 
@@ -2067,10 +2020,6 @@ void limSendMlmAssocInd(tpAniSirGlobal pMac, tpDphHashNode pStaDs, tpPESession p
         vos_mem_free(pMlmReassocInd);
     }
 
-<<<<<<< HEAD
-    return eSIR_SUCCESS;
-=======
     return;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 } /*** end limSendMlmAssocInd() ***/

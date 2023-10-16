@@ -844,12 +844,6 @@ WLANTL_AMSDUProcess
   v_U16_t         packetLength; 
   static v_U32_t  numAMSDUFrames;
   vos_pkt_t*      vosDataBuff;
-<<<<<<< HEAD
-  uint8_t llc_hdr[6] = {0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00};
-  uint8_t broadcast_addr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   /*------------------------------------------------------------------------
     Sanity check
@@ -928,10 +922,6 @@ WLANTL_AMSDUProcess
     pClientSTA->ucMPDUHeaderLen = ucMPDUHLen;
     vos_mem_copy(pClientSTA->aucMPDUHeader, MPDUHeaderAMSDUHeader, ucMPDUHLen);
     /* AMSDU header stored to handle garbage data within next frame */
-<<<<<<< HEAD
-    pClientSTA->drop_amsdu = false;
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   }
   else
   {
@@ -969,31 +959,6 @@ WLANTL_AMSDUProcess
     return VOS_STATUS_SUCCESS; /*Not a transport error*/ 
   }
 
-<<<<<<< HEAD
-  if (pClientSTA->drop_amsdu) {
-         vos_pkt_return_packet(vosDataBuff);
-         *ppVosDataBuff = NULL;
-         return VOS_STATUS_SUCCESS;
-  }
-
-  /**
-   * Set drop_amsdu flag and drop AMSDU subframe if
-   * 1. AMSDU subframe header's DA is equal to LLC header or
-   * 2. AMPDU header's DA is a broadcast address
-   */
-   if ((vos_mem_compare2(MPDUHeaderAMSDUHeader + ucMPDUHLen,
-        llc_hdr, 6) == 0) ||
-       (vos_mem_compare2(MPDUHeaderAMSDUHeader + 4, broadcast_addr, 6) == 0)) {
-      pClientSTA->drop_amsdu = true;
-      vos_pkt_return_packet(vosDataBuff);
-      *ppVosDataBuff = NULL;
-      VOS_TRACE(VOS_MODULE_ID_TL, VOS_TRACE_LEVEL_ERROR,
-                "WLAN TL:Invalid AMSDU frame - dropping");
-      return VOS_STATUS_SUCCESS;
-   }
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
   /* Find Padding and remove */
   vos_mem_copy(&subFrameLength, MPDUHeaderAMSDUHeader + ucMPDUHLen + WLANTL_AMSDU_SUBFRAME_LEN_OFFSET, sizeof(v_U16_t));
   subFrameLength = vos_be16_to_cpu(subFrameLength);

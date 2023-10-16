@@ -1413,11 +1413,7 @@ void WDTS_ChannelDebug(wpt_boolean displaySnapshot, wpt_uint8 debugFlags)
  * Return Value: NONE
  *
  */
-<<<<<<< HEAD
-void WDTS_ChannelKickDxe(void)
-=======
 void WDTS_ChannelKickDxe()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
    gTransportDriver.kickDxe();
    return;

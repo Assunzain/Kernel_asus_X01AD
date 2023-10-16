@@ -436,11 +436,7 @@ void vosTraceEnable(v_U32_t bitmask_of_moduleId, v_U8_t enable)
   Called immediately after vos_preopen, so that we can start recording HDD
   events ASAP.
   ----------------------------------------------------------------------------*/
-<<<<<<< HEAD
-void vosTraceInit(void)
-=======
 void vosTraceInit()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     v_U8_t i;
     gvosTraceData.head = INVALID_VOS_TRACE_ADDR;
@@ -457,11 +453,7 @@ void vosTraceInit()
     }
 }
 
-<<<<<<< HEAD
-void vos_register_debugcb_init(void)
-=======
 void vos_register_debugcb_init()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     v_U8_t i;
 
@@ -553,11 +545,7 @@ void vos_trace(v_U8_t module, v_U8_t code, v_U8_t session, v_U32_t data)
   This function will be called from vos_preOpen, we will have lock available
   to use ASAP.
   ----------------------------------------------------------------------------*/
-<<<<<<< HEAD
-VOS_STATUS vos_trace_spin_lock_init(void)
-=======
 VOS_STATUS vos_trace_spin_lock_init()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     spin_lock_init(&ltraceLock);
 
@@ -704,11 +692,7 @@ void vos_register_debug_callback(VOS_MODULE_ID moduleID,
  * its callback to print its state information.
  * @cb_context: call back context to be passed
  */
-<<<<<<< HEAD
-void vos_state_info_dump_all(void)
-=======
 void vos_state_info_dump_all()
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 {
     v_U8_t module;
 

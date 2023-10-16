@@ -391,10 +391,6 @@ tANI_U32 limSendProbeRspTemplateToHal(tpAniSirGlobal pMac,tpPESession psessionEn
     tANI_U32             addnIE1Len=0;
     tANI_U32             addnIE2Len = 0;
     tANI_U32             addnIE3Len = 0;
-<<<<<<< HEAD
-    tANI_U32             addnIE4Len = 0;
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     tANI_U32             totalAddnIeLen = 0;
     tSirRetStatus        nSirStatus;
     tANI_U8              *addIE = NULL;
@@ -455,24 +451,9 @@ tANI_U32 limSendProbeRspTemplateToHal(tpAniSirGlobal pMac,tpPESession psessionEn
                 return retCode;
             }
         }
-<<<<<<< HEAD
-
-        if((wlan_cfgGetStrLen(pMac, WNI_CFG_PROBE_RSP_BCN_ADDNIE_DATA,
-                                        &addnIE4Len)) != eSIR_SUCCESS)
-        {
-             schLog(pMac, LOGP,
-                 FL("Unable to get WNI_CFG_PROBE_RSP_BCN_ADDNIE_DATA length"));
-             return retCode;
-        }
-
-        schLog(pMac,LOG1, FL("addnIE1Len %d, addnIE2Len %d, addnIE3Len %d addnIE4Len %d"),
-               addnIE1Len, addnIE2Len, addnIE3Len, addnIE4Len);
-        totalAddnIeLen = addnIE1Len + addnIE2Len + addnIE3Len + addnIE4Len;
-=======
         schLog(pMac,LOG1, FL("addnIE1Len %d, addnIE2Len %d, addnIE3Len %d"),
                addnIE1Len, addnIE2Len, addnIE3Len);
         totalAddnIeLen = addnIE1Len + addnIE2Len + addnIE3Len;
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
         addIE = vos_mem_malloc(totalAddnIeLen);
         if (NULL == addIE)
@@ -512,11 +493,7 @@ tANI_U32 limSendProbeRspTemplateToHal(tpAniSirGlobal pMac,tpPESession psessionEn
         }
 
         if (addnIE3Len && addnIE3Len <= WNI_CFG_PROBE_RSP_ADDNIE_DATA3_LEN &&
-<<<<<<< HEAD
-                     (nBytes + addnIE1Len + addnIE2Len + addnIE3Len) <= SCH_MAX_PROBE_RESP_SIZE)
-=======
                      (nBytes + totalAddnIeLen) <= SCH_MAX_PROBE_RESP_SIZE)
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
         {
             if ( eSIR_SUCCESS != wlan_cfgGetStr(pMac,
                                      WNI_CFG_PROBE_RSP_ADDNIE_DATA3,
@@ -529,23 +506,6 @@ tANI_U32 limSendProbeRspTemplateToHal(tpAniSirGlobal pMac,tpPESession psessionEn
                 return retCode;
             }
         }
-<<<<<<< HEAD
-        if (addnIE4Len && addnIE4Len <= WNI_CFG_PROBE_RSP_BCN_ADDNIE_DATA_LEN &&
-                     (nBytes + totalAddnIeLen) <= SCH_MAX_PROBE_RESP_SIZE)
-        {
-            if ( eSIR_SUCCESS != wlan_cfgGetStr(pMac,
-                                     WNI_CFG_PROBE_RSP_BCN_ADDNIE_DATA,
-                                     &addIE[addnIE1Len + addnIE2Len + addnIE3Len],
-                                     &addnIE4Len) )
-            {
-                schLog(pMac, LOGE,
-                    FL("Unable to get WNI_CFG_PROBE_RSP_BCN_ADDNIE_DATA String"));
-                vos_mem_free(addIE);
-                return retCode;
-            }
-        }
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     }
 

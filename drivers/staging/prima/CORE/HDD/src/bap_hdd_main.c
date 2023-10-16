@@ -337,17 +337,12 @@ static void bslWriteFinish(struct work_struct *work);
 static int BSL_Open (struct hci_dev *hdev);
 static int BSL_Close (struct hci_dev *hdev);
 static int BSL_Flush(struct hci_dev *hdev);
-<<<<<<< HEAD
-static int BSL_IOControl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg);
-static int BSL_Write(struct sk_buff *skb);
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
 static int BSL_Write(struct hci_dev *hdev, struct sk_buff *skb);
 #else
 static int BSL_IOControl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg);
 static int BSL_Write(struct sk_buff *skb);
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
 static void BSL_Destruct(struct hci_dev *hdev);
 #endif
@@ -618,15 +613,10 @@ static VOS_STATUS WLANBAP_STARxCB
            break;
        }
 
-<<<<<<< HEAD
-       //JEZ100809: While an skb is being handled by the kernel, is "skb->dev" de-ref'd?
-       skb->dev = (struct net_device *) gpBslctx->hdev;
-=======
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
        //JEZ100809: While an skb is being handled by the kernel, is "skb->dev" de-ref'd?
        skb->dev = (struct net_device *) gpBslctx->hdev;
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
        bt_cb(skb)->pkt_type = HCI_ACLDATA_PKT;
        //skb->protocol = eth_type_trans(skb, skb->dev);
        //skb->ip_summed = CHECKSUM_UNNECESSARY;
@@ -635,15 +625,11 @@ static VOS_STATUS WLANBAP_STARxCB
        gpBslctx->rx_skb = skb;
 
        // This is how data and events are passed up to BlueZ
-<<<<<<< HEAD
-       hci_recv_frame(gpBslctx->rx_skb);
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
        hci_recv_frame(gpBslctx->hdev, gpBslctx->rx_skb);
 #else
        hci_recv_frame(gpBslctx->rx_skb);
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
        // now process the next packet in the chain
        pVosPacket = pNextVosPacket;
@@ -1509,15 +1495,10 @@ static VOS_STATUS WLANBAP_EventCB
     VosStatus = vos_pkt_return_packet( pVosPkt );
     VOS_ASSERT(VOS_IS_STATUS_SUCCESS( VosStatus ));
 
-<<<<<<< HEAD
-    //JEZ100809: While an skb is being handled by the kernel, is "skb->dev" de-ref'd?
-    skb->dev = (struct net_device *) gpBslctx->hdev;
-=======
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
     //JEZ100809: While an skb is being handled by the kernel, is "skb->dev" de-ref'd?
     skb->dev = (struct net_device *) gpBslctx->hdev;
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     bt_cb(skb)->pkt_type = HCI_EVENT_PKT;
     //skb->protocol = eth_type_trans(skb, skb->dev);
     //skb->ip_summed = CHECKSUM_UNNECESSARY;
@@ -1526,15 +1507,11 @@ static VOS_STATUS WLANBAP_EventCB
     gpBslctx->rx_skb = skb;
 
     // This is how data and events are passed up to BlueZ
-<<<<<<< HEAD
-    hci_recv_frame(gpBslctx->rx_skb);
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
     hci_recv_frame(gpBslctx->hdev, gpBslctx->rx_skb);
 #else
     hci_recv_frame(gpBslctx->rx_skb);
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
     return(VOS_STATUS_SUCCESS);
 } // WLANBAP_EventCB()
@@ -3643,19 +3620,6 @@ static BOOL BslProcessACLDataTx
 } // BslProcessACLDataTx()
 
 
-<<<<<<< HEAD
-static inline void *hci_get_drvdata(struct hci_dev *hdev)
-{
-    return hdev->driver_data;
-}
-
-static inline void hci_set_drvdata(struct hci_dev *hdev, void *data)
-{
-    hdev->driver_data = data;
-}
-
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 /*---------------------------------------------------------------------------
  *   Function definitions
  *-------------------------------------------------------------------------*/
@@ -3828,13 +3792,9 @@ int BSL_Init ( v_PVOID_t  pvosGCtx )
     hdev->destruct = BSL_Destruct;
     hdev->owner = THIS_MODULE;
 #endif
-<<<<<<< HEAD
-    hdev->ioctl    = BSL_IOControl;
-=======
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
     hdev->ioctl    = BSL_IOControl;
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 
     /* Timeout before it is safe to send the first HCI packet */
@@ -4056,19 +4016,13 @@ static int BSL_Close ( struct hci_dev *hdev )
   TRUE indicates success. FALSE indicates failure.
 */
 //static long BSL_IOControl(struct file *pFile, unsigned int cmd, unsigned long arg)
-<<<<<<< HEAD
-=======
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 static int BSL_IOControl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg)
 {
     VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "BSL_IOControl - not supported");
     return(TRUE);
 } // BSL_IOControl()
-<<<<<<< HEAD
-=======
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 /**
   @brief BSL_Flush() - This function flushes all pending commands on a device.
@@ -4127,11 +4081,6 @@ static void BSL_Destruct(struct hci_dev *hdev)
 */
 //static ssize_t BSL_Write(struct file *pFile, const char __user *pBuffer,
 //                         size_t Count, loff_t *pOff)
-<<<<<<< HEAD
-static int BSL_Write(struct sk_buff *skb)
-{
-    struct hci_dev *hdev;
-=======
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
 static int BSL_Write(struct hci_dev *hdev, struct sk_buff *skb)
 #else
@@ -4141,7 +4090,6 @@ static int BSL_Write(struct sk_buff *skb)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
     struct hci_dev *hdev;
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     BslClientCtxType* pctx;
     v_SIZE_t written = 0;
     BOOL status;
@@ -4334,11 +4282,7 @@ static void bslWriteFinish(struct work_struct *work)
 
 
     // Sanity check inputs
-<<<<<<< HEAD
-    if ( pctx != (BslClientCtxType *)hci_get_drvdata(hdev));
-=======
     if ( pctx != (BslClientCtxType *)hci_get_drvdata(hdev))
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
     {
         VOS_TRACE( VOS_MODULE_ID_BAP, VOS_TRACE_LEVEL_INFO_HIGH, "%s: pctx and hdev not consistent - bad i/p", __func__);
         return; // -EFAULT; /* Bad address */
@@ -4509,13 +4453,9 @@ VOS_STATUS WLANBAP_RegisterWithHCI(hdd_adapter_t *pAdapter)
     hdev->owner = THIS_MODULE;
     hdev->destruct = BSL_Destruct;
 #endif
-<<<<<<< HEAD
-    hdev->ioctl    = BSL_IOControl;
-=======
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
     hdev->ioctl    = BSL_IOControl;
 #endif
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 
     /* Timeout before it is safe to send the first HCI packet */

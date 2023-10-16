@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
-<<<<<<< HEAD
  * Copyright (c) 2017 The LineageOS Project.
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -60,17 +57,7 @@
 #define WLAN_HO_CFG_FILE           "wlan/wlan_ho_config"
 #endif // MSM_PLATFORM
 
-<<<<<<< HEAD
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
-#undef WLAN_NV_FILE
-#define WLAN_NV_FILE hdd_get_nv_bin()
-
-char* hdd_get_nv_bin(void);
-#endif
-
 #define WLAN_MAC_FILE              "wlan/prima/wlan_mac.bin"
-=======
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
 
 VOS_STATUS hdd_request_firmware(char *pfileName,v_VOID_t *pCtx,v_VOID_t **ppfw_data, v_SIZE_t *pSize);
 
@@ -92,7 +79,4 @@ VOS_STATUS hdd_read_cfg_file(v_VOID_t *pCtx, char *pFileName, v_VOID_t *pBuffer,
 tVOS_CONCURRENCY_MODE hdd_get_concurrency_mode ( void );
 
 #endif /* WLAN_HDD_MISC_H */
-<<<<<<< HEAD
-=======
 
->>>>>>> 46adf69507d0 (Add 'drivers/staging/prima/' from commit '579ed24ca929e40220cb4abe3ba8ac5a5c549287')
