@@ -232,7 +232,7 @@ static int msm_qti_pp_put_eq_band_audio_mixer(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-#if IS_ENABLED(CONFIG_QTI_PP)
+#ifdef CONFIG_QTI_PP
 void msm_qti_pp_send_eq_values(int fedai_id)
 {
 	if (eq_data[fedai_id].enable)
@@ -646,11 +646,11 @@ static int msm_qti_pp_set_sec_auxpcm_lb_vol_mixer(
 static int msm_qti_pp_get_channel_map_mixer(struct snd_kcontrol *kcontrol,
 					    struct snd_ctl_elem_value *ucontrol)
 {
-	char channel_map[PCM_FORMAT_MAX_NUM_CHANNEL_V8] = {0};
+	char channel_map[PCM_FORMAT_MAX_NUM_CHANNEL] = {0};
 	int i;
 
 	adm_get_multi_ch_map(channel_map, ADM_PATH_PLAYBACK);
-	for (i = 0; i < PCM_FORMAT_MAX_NUM_CHANNEL_V8; i++)
+	for (i = 0; i < PCM_FORMAT_MAX_NUM_CHANNEL; i++)
 		ucontrol->value.integer.value[i] =
 			(unsigned int) channel_map[i];
 	return 0;
@@ -659,10 +659,10 @@ static int msm_qti_pp_get_channel_map_mixer(struct snd_kcontrol *kcontrol,
 static int msm_qti_pp_put_channel_map_mixer(struct snd_kcontrol *kcontrol,
 					    struct snd_ctl_elem_value *ucontrol)
 {
-	char channel_map[PCM_FORMAT_MAX_NUM_CHANNEL_V8];
+	char channel_map[PCM_FORMAT_MAX_NUM_CHANNEL];
 	int i;
 
-	for (i = 0; i < PCM_FORMAT_MAX_NUM_CHANNEL_V8; i++)
+	for (i = 0; i < PCM_FORMAT_MAX_NUM_CHANNEL; i++)
 		channel_map[i] = (char)(ucontrol->value.integer.value[i]);
 	adm_set_multi_ch_map(channel_map, ADM_PATH_PLAYBACK);
 
@@ -753,7 +753,7 @@ static int msm_qti_pp_asphere_send_params(int port_id, int copp_idx, bool force)
 	return 0;
 }
 
-#if IS_ENABLED(CONFIG_QTI_PP) && IS_ENABLED(CONFIG_QTI_PP_AUDIOSPHERE)
+#if defined(CONFIG_QTI_PP) && defined(CONFIG_QTI_PP_AUDIOSPHERE)
 int msm_qti_pp_asphere_init(int port_id, int copp_idx)
 {
 	int index = adm_validate_and_get_port_index(port_id);
@@ -1084,7 +1084,7 @@ int msm_adsp_stream_callback_get(struct snd_kcontrol *kcontrol,
 	kctl_prtd = (struct dsp_stream_callback_prtd *)
 			kcontrol->private_data;
 	if (kctl_prtd == NULL) {
-		pr_err("%s: ASM Stream PP event queue is not initialized.\n",
+		pr_debug("%s: ASM Stream PP event queue is not initialized.\n",
 			__func__);
 		ret = -EINVAL;
 		goto done;
@@ -1239,8 +1239,8 @@ static const struct snd_kcontrol_new sec_auxpcm_lb_vol_mixer_controls[] = {
 };
 
 static const struct snd_kcontrol_new multi_ch_channel_map_mixer_controls[] = {
-	SOC_SINGLE_MULTI_EXT("Playback Device Channel Map", SND_SOC_NOPM, 0, 34,
-	0, PCM_FORMAT_MAX_NUM_CHANNEL_V8, msm_qti_pp_get_channel_map_mixer,
+	SOC_SINGLE_MULTI_EXT("Playback Device Channel Map", SND_SOC_NOPM, 0, 16,
+	0, 8, msm_qti_pp_get_channel_map_mixer,
 	msm_qti_pp_put_channel_map_mixer),
 };
 
@@ -1393,7 +1393,7 @@ static const struct snd_kcontrol_new asphere_mixer_controls[] = {
 	0xFFFFFFFF, 0, 2, msm_qti_pp_asphere_get, msm_qti_pp_asphere_set),
 };
 
-#if IS_ENABLED(CONFIG_QTI_PP)
+#ifdef CONFIG_QTI_PP
 void msm_qti_pp_add_controls(struct snd_soc_platform *platform)
 {
 	snd_soc_add_platform_controls(platform, int_fm_vol_mixer_controls,

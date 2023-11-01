@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2019, Linux Foundation. All rights reserved.
+ * Copyright (c) 2013-2017, 2019 Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -78,7 +78,6 @@ struct lsm_module_param_ids {
 	uint32_t param_id;
 };
 
-static DEFINE_MUTEX(session_lock);
 static struct lsm_common lsm_common;
 /*
  * mmap_handle_p can point either client->sound_model.mem_map_handle or
@@ -131,23 +130,6 @@ static void q6lsm_set_param_common(
 	}
 }
 
-static int q6lsm_get_session_id_from_lsm_client(struct lsm_client *client)
-{
-	int n;
-
-	for (n = LSM_MIN_SESSION_ID; n <= LSM_MAX_SESSION_ID; n++) {
-		if (lsm_session[n] == client)
-			return n;
-	}
-	pr_err("%s: cannot find matching lsm client.\n", __func__);
-	return LSM_INVALID_SESSION_ID;
-}
-
-static bool q6lsm_is_valid_lsm_client(struct lsm_client *client)
-{
-	return q6lsm_get_session_id_from_lsm_client(client) ? 1 : 0;
-}
-
 static int q6lsm_callback(struct apr_client_data *data, void *priv)
 {
 	struct lsm_client *client = (struct lsm_client *)priv;
@@ -166,13 +148,6 @@ static int q6lsm_callback(struct apr_client_data *data, void *priv)
 			 __func__, data->opcode, data->reset_event,
 			 data->reset_proc);
 
-		mutex_lock(&session_lock);
-		if (!client || !q6lsm_is_valid_lsm_client(client)) {
-			pr_err("%s: client already freed/invalid, return\n",
-				__func__);
-			mutex_unlock(&session_lock);
-			return 0;
-		}
 		apr_reset(client->apr);
 		client->apr = NULL;
 		atomic_set(&client->cmd_state, CMD_STATE_CLEARED);
@@ -182,7 +157,6 @@ static int q6lsm_callback(struct apr_client_data *data, void *priv)
 		mutex_lock(&lsm_common.cal_data[LSM_CUSTOM_TOP_IDX]->lock);
 		lsm_common.set_custom_topology = 1;
 		mutex_unlock(&lsm_common.cal_data[LSM_CUSTOM_TOP_IDX]->lock);
-		mutex_unlock(&session_lock);
 		return 0;
 	}
 
@@ -326,15 +300,6 @@ static int q6lsm_mmap_apr_dereg(void)
 	return 0;
 }
 
-/**
- * q6lsm_client_alloc -
- *       Allocate session for LSM client
- *
- * @cb: callback fn
- * @priv: private data
- *
- * Returns LSM client handle on success or NULL on failure
- */
 struct lsm_client *q6lsm_client_alloc(lsm_app_cb cb, void *priv)
 {
 	struct lsm_client *client;
@@ -357,11 +322,6 @@ struct lsm_client *q6lsm_client_alloc(lsm_app_cb cb, void *priv)
 		kfree(client);
 		return NULL;
 	}
-
-	init_waitqueue_head(&client->cmd_wait);
-	mutex_init(&client->cmd_lock);
-	atomic_set(&client->cmd_state, CMD_STATE_CLEARED);
-
 	pr_debug("%s: Client Session %d\n", __func__, client->session);
 	client->apr = apr_register("ADSP", "LSM", q6lsm_callback,
 				   ((client->session) << 8 | client->session),
@@ -379,21 +339,16 @@ struct lsm_client *q6lsm_client_alloc(lsm_app_cb cb, void *priv)
 		goto fail;
 	}
 
+	init_waitqueue_head(&client->cmd_wait);
+	mutex_init(&client->cmd_lock);
+	atomic_set(&client->cmd_state, CMD_STATE_CLEARED);
 	pr_debug("%s: New client allocated\n", __func__);
 	return client;
 fail:
 	q6lsm_client_free(client);
 	return NULL;
 }
-EXPORT_SYMBOL(q6lsm_client_alloc);
 
-/**
- * q6lsm_client_free -
- *       Performs LSM client free
- *
- * @client: LSM client handle
- *
- */
 void q6lsm_client_free(struct lsm_client *client)
 {
 	if (!client)
@@ -402,7 +357,6 @@ void q6lsm_client_free(struct lsm_client *client)
 		pr_err("%s: Invalid Session %d\n", __func__, client->session);
 		return;
 	}
-	mutex_lock(&session_lock);
 	apr_deregister(client->apr);
 	client->mmap_apr = NULL;
 	q6lsm_session_free(client);
@@ -410,9 +364,7 @@ void q6lsm_client_free(struct lsm_client *client)
 	mutex_destroy(&client->cmd_lock);
 	kfree(client);
 	client = NULL;
-	mutex_unlock(&session_lock);
 }
-EXPORT_SYMBOL(q6lsm_client_free);
 
 /*
  * q6lsm_apr_send_pkt : If wait == true, hold mutex to prevent from preempting
@@ -648,15 +600,6 @@ done:
 
 }
 
-/**
- * q6lsm_sm_set_param_data -
- *       Update sound model param data
- *
- * @client: LSM client handle
- * @p_info: param info
- * @offset: pointer to retrieve size
- *
- */
 void q6lsm_sm_set_param_data(struct lsm_client *client,
 		struct lsm_params_info *p_info,
 		size_t *offset)
@@ -670,17 +613,7 @@ void q6lsm_sm_set_param_data(struct lsm_client *client,
 	param->p_size.param_size = client->sound_model.size;
 	*offset = sizeof(*param);
 }
-EXPORT_SYMBOL(q6lsm_sm_set_param_data);
 
-/**
- * q6lsm_open -
- *       command to open LSM session
- *
- * @client: LSM client handle
- * @app_id: App ID for LSM
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_open(struct lsm_client *client, uint16_t app_id)
 {
 	int rc = 0;
@@ -728,7 +661,6 @@ done:
 	pr_debug("%s: leave %d\n", __func__, rc);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_open);
 
 static int q6lsm_send_confidence_levels(
 		struct lsm_client *client,
@@ -835,30 +767,16 @@ static int q6lsm_send_param_opmode(struct lsm_client *client,
 	return rc;
 }
 
-/**
- * set_lsm_port -
- *       Update LSM AFE port
- *
- */
 void set_lsm_port(int lsm_port)
 {
 	lsm_afe_port = lsm_port;
 }
-EXPORT_SYMBOL(set_lsm_port);
 
 int get_lsm_port(void)
 {
 	return lsm_afe_port;
 }
 
-/**
- * q6lsm_set_port_connected -
- *       command to set LSM port connected
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_set_port_connected(struct lsm_client *client)
 {
 	int rc;
@@ -908,8 +826,6 @@ int q6lsm_set_port_connected(struct lsm_client *client)
 
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_set_port_connected);
-
 static int q6lsm_send_param_polling_enable(struct lsm_client *client,
 		bool poll_en,
 		struct lsm_module_param_ids *poll_enable_ids,
@@ -950,15 +866,6 @@ static int q6lsm_send_param_polling_enable(struct lsm_client *client,
 	return rc;
 }
 
-/**
- * q6lsm_set_fwk_mode_cfg -
- *       command to set LSM fwk mode cfg
- *
- * @client: LSM client handle
- * @event_mode: mode for fwk cfg
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_set_fwk_mode_cfg(struct lsm_client *client,
 			   uint32_t event_mode)
 {
@@ -1006,7 +913,6 @@ int q6lsm_set_fwk_mode_cfg(struct lsm_client *client,
 		       __func__, msg_hdr->opcode, rc);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_set_fwk_mode_cfg);
 
 static int q6lsm_arrange_mch_map(struct lsm_param_media_fmt *media_fmt,
 			 int channel_count)
@@ -1042,14 +948,6 @@ static int q6lsm_arrange_mch_map(struct lsm_param_media_fmt *media_fmt,
 	return rc;
 }
 
-/**
- * q6lsm_set_media_fmt_params -
- *       command to set LSM media fmt params
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_set_media_fmt_params(struct lsm_client *client)
 {
 	int rc = 0;
@@ -1107,18 +1005,7 @@ int q6lsm_set_media_fmt_params(struct lsm_client *client)
 err_ret:
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_set_media_fmt_params);
 
-/**
- * q6lsm_set_data -
- *       Command to set LSM data
- *
- * @client: LSM client handle
- * @mode: LSM detection mode value
- * @detectfailure: flag for detect failure
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_set_data(struct lsm_client *client,
 			   enum lsm_detection_mode mode,
 			   bool detectfailure)
@@ -1181,16 +1068,7 @@ int q6lsm_set_data(struct lsm_client *client,
 err_ret:
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_set_data);
 
-/**
- * q6lsm_register_sound_model -
- *       Register LSM snd model
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_register_sound_model(struct lsm_client *client,
 			       enum lsm_detection_mode mode,
 			       bool detectfailure)
@@ -1227,16 +1105,7 @@ int q6lsm_register_sound_model(struct lsm_client *client,
 
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_register_sound_model);
 
-/**
- * q6lsm_deregister_sound_model -
- *       De-register LSM snd model
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_deregister_sound_model(struct lsm_client *client)
 {
 	int rc;
@@ -1272,7 +1141,6 @@ int q6lsm_deregister_sound_model(struct lsm_client *client)
 
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_deregister_sound_model);
 
 static void q6lsm_add_mmaphdr(struct lsm_client *client, struct apr_hdr *hdr,
 			      u32 pkt_size, u32 cmd_flg, u32 token)
@@ -1424,14 +1292,7 @@ done:
 	return rc;
 }
 
-/**
- * q6lsm_snd_model_buf_free -
- *       Free memory for LSM snd model
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
+
 int q6lsm_snd_model_buf_free(struct lsm_client *client)
 {
 	int rc;
@@ -1462,7 +1323,6 @@ int q6lsm_snd_model_buf_free(struct lsm_client *client)
 	mutex_unlock(&client->cmd_lock);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_snd_model_buf_free);
 
 static struct lsm_client *q6lsm_get_lsm_client(int session_id)
 {
@@ -1570,16 +1430,6 @@ static int q6lsm_mmapcallback(struct apr_client_data *data, void *priv)
 	return 0;
 }
 
-/**
- * q6lsm_snd_model_buf_alloc -
- *       Allocate memory for LSM snd model
- *
- * @client: LSM client handle
- * @len: size of sound model
- * @allocate_module_data: flag to allocate for set_param payload
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_snd_model_buf_alloc(struct lsm_client *client, size_t len,
 			      bool allocate_module_data)
 {
@@ -1683,7 +1533,6 @@ exit:
 	q6lsm_snd_model_buf_free(client);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_snd_model_buf_alloc);
 
 static int q6lsm_cmd(struct lsm_client *client, int opcode, bool wait)
 {
@@ -1774,17 +1623,6 @@ static int q6lsm_send_param_gain(
 	return rc;
 }
 
-/**
- * q6lsm_set_one_param -
- *       command for LSM set params
- *
- * @client: LSM client handle
- * p_info: Params info
- * data: payload based on param type
- * param_type: LSM param type
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_set_one_param(struct lsm_client *client,
 	struct lsm_params_info *p_info, void *data,
 	uint32_t param_type)
@@ -1970,60 +1808,23 @@ int q6lsm_set_one_param(struct lsm_client *client,
 
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_set_one_param);
 
 
-/**
- * q6lsm_start -
- *       command for LSM start
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_start(struct lsm_client *client, bool wait)
 {
 	return q6lsm_cmd(client, LSM_SESSION_CMD_START, wait);
 }
-EXPORT_SYMBOL(q6lsm_start);
 
-/**
- * q6lsm_stop -
- *       command for LSM stop
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_stop(struct lsm_client *client, bool wait)
 {
 	return q6lsm_cmd(client, LSM_SESSION_CMD_STOP, wait);
 }
-EXPORT_SYMBOL(q6lsm_stop);
 
-/**
- * q6lsm_close -
- *       command for LSM close
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_close(struct lsm_client *client)
 {
 	return q6lsm_cmd(client, LSM_SESSION_CMD_CLOSE_TX, true);
 }
-EXPORT_SYMBOL(q6lsm_close);
 
-/**
- * q6lsm_lab_control -
- *       command to set LSM LAB control params
- *
- * @client: LSM client handle
- * @enable: bool flag  to enable or disable LAB on DSP
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_lab_control(struct lsm_client *client, u32 enable)
 {
 	int rc = 0;
@@ -2085,16 +1886,7 @@ int q6lsm_lab_control(struct lsm_client *client, u32 enable)
 exit:
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_lab_control);
 
-/**
- * q6lsm_stop_lab -
- *       command to stop LSM LAB
- *
- * @client: LSM client handle
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_stop_lab(struct lsm_client *client)
 {
 	int rc = 0;
@@ -2108,17 +1900,7 @@ int q6lsm_stop_lab(struct lsm_client *client)
 		pr_err("%s: Lab stop failed %d\n", __func__, rc);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_stop_lab);
 
-/**
- * q6lsm_read -
- *       command for LSM read
- *
- * @client: LSM client handle
- * @lsm_cmd_read: LSM read command
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_read(struct lsm_client *client, struct lsm_cmd_read *read)
 {
 	int rc = 0;
@@ -2138,17 +1920,7 @@ int q6lsm_read(struct lsm_client *client, struct lsm_cmd_read *read)
 		pr_err("%s: read buffer call failed rc %d\n", __func__, rc);
 	return rc;
 }
-EXPORT_SYMBOL(q6lsm_read);
 
-/**
- * q6lsm_lab_buffer_alloc -
- *       Lab buffer allocation or de-alloc
- *
- * @client: LSM client handle
- * @alloc: Allocate or free ion memory
- *
- * Returns 0 on success or error on failure
- */
 int q6lsm_lab_buffer_alloc(struct lsm_client *client, bool alloc)
 {
 	int ret = 0, i = 0;
@@ -2238,7 +2010,6 @@ int q6lsm_lab_buffer_alloc(struct lsm_client *client, bool alloc)
 	}
 	return ret;
 }
-EXPORT_SYMBOL(q6lsm_lab_buffer_alloc);
 
 static int get_cal_type_index(int32_t cal_type)
 {
@@ -2394,7 +2165,7 @@ err:
 	return ret;
 }
 
-int __init q6lsm_init(void)
+static int __init q6lsm_init(void)
 {
 	int i = 0;
 
@@ -2416,7 +2187,10 @@ int __init q6lsm_init(void)
 	return 0;
 }
 
-void q6lsm_exit(void)
+static void __exit q6lsm_exit(void)
 {
 	lsm_delete_cal_data();
 }
+
+device_initcall(q6lsm_init);
+__exitcall(q6lsm_exit);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1087,8 +1087,10 @@ static int wdsp_mgr_bind(struct device *dev)
 		dev_info(dev, "%s: create_ramdump_device failed\n", __func__);
 
 	ret = component_bind_all(dev, wdsp->ops);
-	if (ret < 0)
+	if (ret < 0) {
 		WDSP_ERR(wdsp, "component_bind_all failed %d\n", ret);
+		return ret;
+	}
 
 	/* Make sure all components registered ops */
 	for (idx = 0; idx < WDSP_CMPNT_TYPE_MAX; idx++) {
@@ -1116,6 +1118,8 @@ static void wdsp_mgr_unbind(struct device *dev)
 	struct wdsp_mgr_priv *wdsp = dev_get_drvdata(dev);
 	struct wdsp_cmpnt *cmpnt;
 	int idx;
+
+	cancel_work_sync(&wdsp->load_fw_work);
 
 	component_unbind_all(dev, wdsp->ops);
 
@@ -1310,6 +1314,7 @@ static struct platform_driver wdsp_mgr_driver = {
 		.name = "wcd-dsp-mgr",
 		.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(wdsp_mgr_dt_match),
+		.suppress_bind_attrs = true,
 	},
 	.probe = wdsp_mgr_probe,
 	.remove = wdsp_mgr_remove,

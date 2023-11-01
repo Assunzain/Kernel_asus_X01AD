@@ -613,6 +613,8 @@ static struct wcd_mbhc_register
 			  WCD9335_MBHC_CTL_2, 0x03, 0, 0),
 	WCD_MBHC_REGISTER("WCD_MBHC_HS_COMP_RESULT",
 			  WCD9335_ANA_MBHC_RESULT_3, 0x08, 3, 0),
+	WCD_MBHC_REGISTER("WCD_MBHC_IN2P_CLAMP_STATE",
+			  WCD9335_ANA_MBHC_RESULT_3, 0x10, 4, 0),
 	WCD_MBHC_REGISTER("WCD_MBHC_MIC_SCHMT_RESULT",
 			  WCD9335_ANA_MBHC_RESULT_3, 0x20, 5, 0),
 	WCD_MBHC_REGISTER("WCD_MBHC_HPHL_SCHMT_RESULT",
@@ -2371,10 +2373,10 @@ static int slim_tx_mixer_put(struct snd_kcontrol *kcontrol,
 
 	mutex_lock(&tasha_p->codec_mutex);
 
-	if (tasha_p->intf_type == WCD9XXX_INTERFACE_TYPE_SLIMBUS) {
-		if (dai_id >= ARRAY_SIZE(vport_slim_check_table)) {
-			dev_err(codec->dev, "%s: dai_id: %d, out of bounds\n",
-				__func__, dai_id);
+	if (tasha_p->intf_type != WCD9XXX_INTERFACE_TYPE_SLIMBUS) {
+		if (dai_id != AIF1_CAP) {
+			dev_err(codec->dev, "%s: invalid AIF for I2C mode\n",
+				__func__);
 			mutex_unlock(&tasha_p->codec_mutex);
 			return -EINVAL;
 		}
@@ -8297,95 +8299,95 @@ static const struct soc_enum amic_pwr_lvl_enum =
 			    amic_pwr_lvl_text);
 
 static const struct snd_kcontrol_new tasha_snd_controls[] = {
-	SOC_SINGLE_SX_TLV("RX0 Digital Volume", WCD9335_CDC_RX0_RX_VOL_CTL,
-		0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX1 Digital Volume", WCD9335_CDC_RX1_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX2 Digital Volume", WCD9335_CDC_RX2_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX3 Digital Volume", WCD9335_CDC_RX3_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX4 Digital Volume", WCD9335_CDC_RX4_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX5 Digital Volume", WCD9335_CDC_RX5_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX6 Digital Volume", WCD9335_CDC_RX6_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX7 Digital Volume", WCD9335_CDC_RX7_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX8 Digital Volume", WCD9335_CDC_RX8_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX0 Digital Volume", WCD9335_CDC_RX0_RX_VOL_CTL,
+		-84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX1 Digital Volume", WCD9335_CDC_RX1_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX2 Digital Volume", WCD9335_CDC_RX2_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX3 Digital Volume", WCD9335_CDC_RX3_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX4 Digital Volume", WCD9335_CDC_RX4_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX5 Digital Volume", WCD9335_CDC_RX5_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX6 Digital Volume", WCD9335_CDC_RX6_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX7 Digital Volume", WCD9335_CDC_RX7_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX8 Digital Volume", WCD9335_CDC_RX8_RX_VOL_CTL,
+		-84, 40, digital_gain),
 
-	SOC_SINGLE_SX_TLV("RX0 Mix Digital Volume",
+	SOC_SINGLE_S8_TLV("RX0 Mix Digital Volume",
 			  WCD9335_CDC_RX0_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX1 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX1 Mix Digital Volume",
 			  WCD9335_CDC_RX1_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX2 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX2 Mix Digital Volume",
 			  WCD9335_CDC_RX2_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX3 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX3 Mix Digital Volume",
 			  WCD9335_CDC_RX3_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX4 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX4 Mix Digital Volume",
 			  WCD9335_CDC_RX4_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX5 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX5 Mix Digital Volume",
 			  WCD9335_CDC_RX5_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX6 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX6 Mix Digital Volume",
 			  WCD9335_CDC_RX6_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX7 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX7 Mix Digital Volume",
 			  WCD9335_CDC_RX7_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_SX_TLV("RX8 Mix Digital Volume",
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_S8_TLV("RX8 Mix Digital Volume",
 			  WCD9335_CDC_RX8_RX_VOL_MIX_CTL,
-			  0, -84, 40, digital_gain), /* -84dB min - 40dB max */
+			  -84, 40, digital_gain), /* -84dB min - 40dB max */
 
-	SOC_SINGLE_SX_TLV("DEC0 Volume", WCD9335_CDC_TX0_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC0 Volume", WCD9335_CDC_TX0_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC1 Volume", WCD9335_CDC_TX1_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC1 Volume", WCD9335_CDC_TX1_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC2 Volume", WCD9335_CDC_TX2_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC2 Volume", WCD9335_CDC_TX2_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC3 Volume", WCD9335_CDC_TX3_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC3 Volume", WCD9335_CDC_TX3_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC4 Volume", WCD9335_CDC_TX4_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC4 Volume", WCD9335_CDC_TX4_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC5 Volume", WCD9335_CDC_TX5_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC5 Volume", WCD9335_CDC_TX5_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC6 Volume", WCD9335_CDC_TX6_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC6 Volume", WCD9335_CDC_TX6_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC7 Volume", WCD9335_CDC_TX7_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC7 Volume", WCD9335_CDC_TX7_TX_VOL_CTL,
 					  -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("DEC8 Volume", WCD9335_CDC_TX8_TX_VOL_CTL, 0,
+	SOC_SINGLE_S8_TLV("DEC8 Volume", WCD9335_CDC_TX8_TX_VOL_CTL,
 					  -84, 40, digital_gain),
 
-	SOC_SINGLE_SX_TLV("IIR0 INP0 Volume",
-			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B1_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR0 INP0 Volume",
+			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B1_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR0 INP1 Volume",
-			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B2_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR0 INP1 Volume",
+			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B2_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR0 INP2 Volume",
-			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B3_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR0 INP2 Volume",
+			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B3_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR0 INP3 Volume",
-			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B4_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR0 INP3 Volume",
+			  WCD9335_CDC_SIDETONE_IIR0_IIR_GAIN_B4_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR1 INP0 Volume",
-			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B1_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR1 INP0 Volume",
+			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B1_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR1 INP1 Volume",
-			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B2_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR1 INP1 Volume",
+			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B2_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR1 INP2 Volume",
-			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B3_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR1 INP2 Volume",
+			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B3_CTL, -84,
 			  40, digital_gain),
-	SOC_SINGLE_SX_TLV("IIR1 INP3 Volume",
-			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B4_CTL, 0, -84,
+	SOC_SINGLE_S8_TLV("IIR1 INP3 Volume",
+			  WCD9335_CDC_SIDETONE_IIR1_IIR_GAIN_B4_CTL, -84,
 			  40, digital_gain),
 
 	SOC_SINGLE_EXT("ANC Slot", SND_SOC_NOPM, 0, 100, 0, tasha_get_anc_slot,
@@ -11923,21 +11925,6 @@ static struct snd_soc_dai_driver tasha_i2s_dai[] = {
 		},
 		.ops = &tasha_dai_ops,
 	},
-	{
-		.name = "tasha_mad1",
-		.id = AIF4_MAD_TX,
-		.capture = {
-			.stream_name = "AIF4 MAD TX",
-			.rates = SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_48000 |
-				SNDRV_PCM_RATE_192000 | SNDRV_PCM_RATE_384000,
-			.formats = TASHA_FORMATS_S16_S24_S32_LE,
-			.rate_min = 16000,
-			.rate_max = 384000,
-			.channels_min = 1,
-			.channels_max = 1,
-		},
-		.ops = &tasha_dai_ops,
-	},
 };
 
 static void tasha_codec_power_gate_digital_core(struct tasha_priv *tasha)
@@ -14332,6 +14319,7 @@ static struct platform_driver tasha_codec_driver = {
 #ifdef CONFIG_PM
 		.pm = &tasha_pm_ops,
 #endif
+		.suppress_bind_attrs = true,
 	},
 };
 

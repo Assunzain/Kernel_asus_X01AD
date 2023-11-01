@@ -1251,13 +1251,7 @@ static int msm_sdw_swrm_write(void *handle, int reg, int val)
 
 static int msm_sdw_swrm_clock(void *handle, bool enable)
 {
-	struct msm_sdw_priv *msm_sdw;
-
-	if (!handle) {
-		pr_err("%s: NULL handle\n", __func__);
-		return -EINVAL;
-	}
-	msm_sdw = (struct msm_sdw_priv *)handle;
+	struct msm_sdw_priv *msm_sdw = (struct msm_sdw_priv *) handle;
 
 	mutex_lock(&msm_sdw->sdw_clk_lock);
 
@@ -1649,10 +1643,10 @@ static const struct snd_kcontrol_new msm_sdw_snd_controls[] = {
 		msm_sdw_spkr_boost_stage_enum,
 		msm_sdw_spkr_right_boost_stage_get,
 		msm_sdw_spkr_right_boost_stage_put),
-	SOC_SINGLE_SX_TLV("RX4 Digital Volume", MSM_SDW_RX7_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
-	SOC_SINGLE_SX_TLV("RX5 Digital Volume", MSM_SDW_RX8_RX_VOL_CTL,
-		0, -84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX4 Digital Volume", MSM_SDW_RX7_RX_VOL_CTL,
+		-84, 40, digital_gain),
+	SOC_SINGLE_S8_TLV("RX5 Digital Volume", MSM_SDW_RX8_RX_VOL_CTL,
+		-84, 40, digital_gain),
 	SOC_SINGLE_EXT("COMP1 Switch", SND_SOC_NOPM, COMP1, 1, 0,
 		msm_sdw_get_compander, msm_sdw_set_compander),
 	SOC_SINGLE_EXT("COMP2 Switch", SND_SOC_NOPM, COMP2, 1, 0,
@@ -1756,12 +1750,8 @@ static int msm_sdw_notifier_service_cb(struct notifier_block *nb,
 			initial_boot = false;
 			break;
 		}
-		mutex_lock(&msm_sdw->cdc_int_mclk1_mutex);
 		msm_sdw->int_mclk1_enabled = false;
 		msm_sdw->dev_up = false;
-		mutex_unlock(&msm_sdw->cdc_int_mclk1_mutex);
-		snd_soc_card_change_online_state(
-			msm_sdw->codec->component.card, 0);
 		for (i = 0; i < msm_sdw->nr; i++)
 			swrm_wcd_notify(msm_sdw->sdw_ctrl_data[i].sdw_pdev,
 					SWR_DEVICE_DOWN, NULL);
@@ -1790,16 +1780,12 @@ static int msm_sdw_notifier_service_cb(struct notifier_block *nb,
 		}
 powerup:
 		if (adsp_ready) {
-			mutex_lock(&msm_sdw->cdc_int_mclk1_mutex);
 			msm_sdw->dev_up = true;
-			mutex_unlock(&msm_sdw->cdc_int_mclk1_mutex);
 			msm_sdw_init_reg(msm_sdw->codec);
 			regcache_mark_dirty(msm_sdw->regmap);
 			regcache_sync(msm_sdw->regmap);
 			msm_sdw_set_spkr_mode(msm_sdw->codec,
 					      msm_sdw->spkr_mode);
-			snd_soc_card_change_online_state(
-				msm_sdw->codec->component.card, 1);
 		}
 		break;
 	default:
@@ -1948,7 +1934,6 @@ static void msm_sdw_add_child_devices(struct work_struct *work)
 			msm_sdw->nr = ctrl_num;
 			msm_sdw->sdw_ctrl_data = sdw_ctrl_data;
 		}
-		msm_sdw->pdev_child_devices[msm_sdw->child_count++] = pdev;
 	}
 
 	return;
@@ -1965,8 +1950,7 @@ static int msm_sdw_probe(struct platform_device *pdev)
 	int adsp_state;
 
 	adsp_state = apr_get_subsys_state();
-	if (adsp_state != APR_SUBSYS_LOADED ||
-		!q6core_is_adsp_ready()) {
+	if (adsp_state != APR_SUBSYS_LOADED) {
 		dev_err(&pdev->dev, "Adsp is not loaded yet %d\n",
 				adsp_state);
 		return -EPROBE_DEFER;
@@ -2066,13 +2050,8 @@ err_sdw_cdc:
 static int msm_sdw_remove(struct platform_device *pdev)
 {
 	struct msm_sdw_priv *msm_sdw;
-	int count;
 
 	msm_sdw = dev_get_drvdata(&pdev->dev);
-
-	for (count = 0; count < msm_sdw->child_count &&
-				count < MSM_SDW_CHILD_DEVICES_MAX; count++)
-		platform_device_unregister(msm_sdw->pdev_child_devices[count]);
 
 	mutex_destroy(&msm_sdw->io_lock);
 	mutex_destroy(&msm_sdw->sdw_read_lock);
@@ -2080,7 +2059,6 @@ static int msm_sdw_remove(struct platform_device *pdev)
 	mutex_destroy(&msm_sdw->sdw_clk_lock);
 	mutex_destroy(&msm_sdw->codec_mutex);
 	mutex_destroy(&msm_sdw->cdc_int_mclk1_mutex);
-
 	devm_kfree(&pdev->dev, msm_sdw);
 	snd_soc_unregister_codec(&pdev->dev);
 	return 0;
@@ -2098,6 +2076,7 @@ static struct platform_driver msm_sdw_codec_driver = {
 		.name = "msm_sdw_codec",
 		.owner = THIS_MODULE,
 		.of_match_table = msm_sdw_codec_dt_match,
+		.suppress_bind_attrs = true,
 	},
 };
 module_platform_driver(msm_sdw_codec_driver);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2015-2017, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -18,11 +18,9 @@
 #include "../wcd-mbhc-v2.h"
 #include "../wcdcal-hwdep.h"
 #include "sdm660-cdc-registers.h"
-#include "msm-digital-cdc.h"
 
 #define MICBIAS_EXT_BYP_CAP 0x00
 #define MICBIAS_NO_EXT_BYP_CAP 0x01
-#define ANLG_CDC_CHILD_DEVICES_MAX 1
 
 #define MSM89XX_NUM_IRQ_REGS	2
 #define MAX_REGULATOR		7
@@ -33,7 +31,7 @@
 #define DEFAULT_MULTIPLIER 800
 #define DEFAULT_GAIN 9
 #define DEFAULT_OFFSET 100
-#define PMIC_ANOLOG_SIZE 9
+
 extern const u8 msm89xx_pmic_cdc_reg_readable[MSM89XX_PMIC_CDC_CACHE_SIZE];
 extern const u8 msm89xx_cdc_core_reg_readable[MSM89XX_CDC_CORE_CACHE_SIZE];
 extern struct regmap_config msm89xx_cdc_core_regmap_config;
@@ -219,11 +217,6 @@ struct sdm660_cdc_priv {
 	/* Entry for version info */
 	struct snd_info_entry *entry;
 	struct snd_info_entry *version_entry;
-	struct platform_device *pdev_child_devices
-		[ANLG_CDC_CHILD_DEVICES_MAX];
-	int child_count;
-	struct msm_cap_mode cap_mode;
-	char pmic_analog[PMIC_ANOLOG_SIZE];
 };
 
 struct sdm660_cdc_pdata {
@@ -231,48 +224,20 @@ struct sdm660_cdc_pdata {
 	struct sdm660_cdc_regulator regulator[MAX_REGULATOR];
 };
 
-#if IS_ENABLED(CONFIG_SND_SOC_ANALOG_CDC)
+
 extern int msm_anlg_cdc_mclk_enable(struct snd_soc_codec *codec,
 				    int mclk_enable, bool dapm);
+
 extern int msm_anlg_cdc_hs_detect(struct snd_soc_codec *codec,
 		    struct wcd_mbhc_config *mbhc_cfg);
+
 extern void msm_anlg_cdc_hs_detect_exit(struct snd_soc_codec *codec);
-extern void msm_anlg_cdc_update_int_spk_boost(bool enable);
+
+extern void sdm660_cdc_update_int_spk_boost(bool enable);
+
 extern void msm_anlg_cdc_spk_ext_pa_cb(
 		int (*codec_spk_ext_pa)(struct snd_soc_codec *codec,
 		int enable), struct snd_soc_codec *codec);
 int msm_anlg_codec_info_create_codec_entry(struct snd_info_entry *codec_root,
 					   struct snd_soc_codec *codec);
-#else /* CONFIG_SND_SOC_ANALOG_CDC */
-static inline int msm_anlg_cdc_mclk_enable(struct snd_soc_codec *codec,
-					   int mclk_enable, bool dapm)
-{
-	return 0;
-}
-static inline int msm_anlg_cdc_hs_detect(struct snd_soc_codec *codec,
-				struct wcd_mbhc_config *mbhc_cfg)
-{
-	return 0;
-}
-static inline void msm_anlg_cdc_hs_detect_exit(struct snd_soc_codec *codec)
-{
-
-}
-static inline void msm_anlg_cdc_update_int_spk_boost(bool enable)
-{
-
-}
-static inline void msm_anlg_cdc_spk_ext_pa_cb(
-		int (*codec_spk_ext_pa)(struct snd_soc_codec *codec,
-		int enable), struct snd_soc_codec *codec)
-{
-
-}
-static inline int msm_anlg_codec_info_create_codec_entry(
-					struct snd_info_entry *codec_root,
-					struct snd_soc_codec *codec)
-{
-	return 0;
-}
-#endif /* CONFIG_SND_SOC_ANALOG_CDC */
 #endif

@@ -322,9 +322,7 @@ static void wcd_enable_mbhc_supply(struct wcd_mbhc *mbhc,
 		} else if (plug_type == MBHC_PLUG_TYPE_HEADPHONE) {
 			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_CS);
 		} else {
-/* Huaqin add for headset 1234168 by zhengwu at 2018/09/18 start */
-			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_MB);
-/* Huaqin add for headset 1234168 by zhengwu at 2018/09/18 end */
+			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_NONE);
 		}
 	}
 }

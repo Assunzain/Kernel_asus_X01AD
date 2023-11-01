@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -15,7 +15,6 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/time.h>
-#include <linux/mutex.h>
 #include <linux/wait.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
@@ -601,6 +600,7 @@ static int msm_pcm_close(struct snd_pcm_substream *substream)
 	}
 
 	mutex_lock(&pdata->lock);
+
 	if (ac) {
 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
 			dir = IN;
@@ -662,22 +662,11 @@ static int msm_pcm_volume_ctl_get(struct snd_kcontrol *kcontrol,
 	struct snd_pcm_volume *vol = snd_kcontrol_chip(kcontrol);
 	struct msm_plat_data *pdata = NULL;
 	struct snd_pcm_substream *substream =
-		vol->pcm->streams[vol->stream].substream;
+		vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	struct snd_soc_pcm_runtime *soc_prtd = NULL;
 	struct msm_audio *prtd;
 
 	pr_debug("%s\n", __func__);
-	if (!vol) {
-		pr_err("%s: vol is NULL\n", __func__);
-		return -ENODEV;
-	}
-
-	if (!vol->pcm) {
-		pr_err("%s: vol->pcm is NULL\n", __func__);
-		return -ENODEV;
-	}
-
-	substream = vol->pcm->streams[vol->stream].substream;
 	if (!substream) {
 		pr_err("%s substream not found\n", __func__);
 		return -ENODEV;
@@ -696,11 +685,9 @@ static int msm_pcm_volume_ctl_get(struct snd_kcontrol *kcontrol,
 		return -ENODEV;
 	}
 	mutex_lock(&pdata->lock);
-	if (substream->ref_count > 0) {
-		prtd = substream->runtime->private_data;
-		if (prtd)
-			ucontrol->value.integer.value[0] = prtd->volume;
-	}
+	prtd = substream->runtime->private_data;
+	if (prtd)
+		ucontrol->value.integer.value[0] = prtd->volume;
 	mutex_unlock(&pdata->lock);
 	return 0;
 }
@@ -711,23 +698,12 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 	int rc = 0;
 	struct snd_pcm_volume *vol = snd_kcontrol_chip(kcontrol);
 	struct msm_plat_data *pdata = NULL;
-	struct snd_pcm_substream *substream = NULL;
+	struct snd_pcm_substream *substream =
+		vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	struct snd_soc_pcm_runtime *soc_prtd = NULL;
 	struct msm_audio *prtd;
 	int volume = ucontrol->value.integer.value[0];
 
-	pr_debug("%s\n", __func__);
-	if (!vol) {
-		pr_err("%s: vol is NULL\n", __func__);
-		return -ENODEV;
-	}
-
-	if (!vol->pcm) {
-		pr_err("%s: vol->pcm is NULL\n", __func__);
-		return -ENODEV;
-	}
-
-	substream = vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	pr_debug("%s: volume : 0x%x\n", __func__, volume);
 	if (!substream) {
 		pr_err("%s substream not found\n", __func__);
@@ -735,11 +711,10 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 	}
 	soc_prtd = substream->private_data;
 	if (!substream->runtime || !soc_prtd) {
-		pr_err("%s substream runtime or private_data not found\n",
-				 __func__);
+		 pr_debug("%s substream runtime or private_data not found\n",
+                                  __func__);
 		return 0;
 	}
-
 	pdata = (struct msm_plat_data *)
 			dev_get_drvdata(soc_prtd->platform->dev);
 	if (!pdata) {
@@ -747,27 +722,24 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 		return -ENODEV;
 	}
 	mutex_lock(&pdata->lock);
-	if (substream->ref_count > 0) {
-		prtd = substream->runtime->private_data;
-		if (prtd) {
-			rc = msm_pcm_set_volume(prtd, volume);
-			prtd->volume = volume;
-		}
+	prtd = substream->runtime->private_data;
+	if (prtd) {
+		rc = msm_pcm_set_volume(prtd, volume);
+		prtd->volume = volume;
 	}
 	mutex_unlock(&pdata->lock);
 	return rc;
 }
 
-static int msm_pcm_add_volume_control(struct snd_soc_pcm_runtime *rtd,
-				      int stream)
+static int msm_pcm_add_volume_control(struct snd_soc_pcm_runtime *rtd)
 {
 	int ret = 0;
 	struct snd_pcm *pcm = rtd->pcm;
 	struct snd_pcm_volume *volume_info;
 	struct snd_kcontrol *kctl;
 
-	dev_dbg(rtd->dev, "%s, volume control add\n", __func__);
-	ret = snd_pcm_add_volume_ctls(pcm, stream,
+	dev_dbg(rtd->dev, "%s, Volume control add\n", __func__);
+	ret = snd_pcm_add_volume_ctls(pcm, SNDRV_PCM_STREAM_PLAYBACK,
 			NULL, 1, rtd->dai_link->id,
 			&volume_info);
 	if (ret < 0) {
@@ -1223,16 +1195,12 @@ static int msm_asoc_pcm_new(struct snd_soc_pcm_runtime *rtd)
 		pr_err("%s failed to add chmap cntls\n", __func__);
 		goto exit;
 	}
-	ret = msm_pcm_add_volume_control(rtd, SNDRV_PCM_STREAM_PLAYBACK);
+	ret = msm_pcm_add_volume_control(rtd);
 	if (ret) {
-		pr_err("%s: Could not add pcm playback volume Control %d\n",
+		pr_err("%s: Could not add pcm Volume Control %d\n",
 			__func__, ret);
 	}
-	ret = msm_pcm_add_volume_control(rtd, SNDRV_PCM_STREAM_CAPTURE);
-	if (ret) {
-		pr_err("%s: Could not add pcm capture volume Control %d\n",
-			__func__, ret);
-	}
+
 	ret = msm_pcm_add_fe_topology_control(rtd);
 	if (ret) {
 		pr_err("%s: Could not add pcm topology control %d\n",
@@ -1329,31 +1297,34 @@ static int msm_pcm_remove(struct platform_device *pdev)
 	snd_soc_unregister_platform(&pdev->dev);
 	return 0;
 }
-static const struct of_device_id msm_pcm_noirq_dt_match[] = {
+static const struct of_device_id msm_pcm_dt_match[] = {
 	{.compatible = "qcom,msm-pcm-dsp-noirq"},
 	{}
 };
-MODULE_DEVICE_TABLE(of, msm_pcm_noirq_dt_match);
+MODULE_DEVICE_TABLE(of, msm_pcm_dt_match);
 
 static struct platform_driver msm_pcm_driver_noirq = {
 	.driver = {
 		.name = "msm-pcm-dsp-noirq",
 		.owner = THIS_MODULE,
-		.of_match_table = msm_pcm_noirq_dt_match,
+		.of_match_table = msm_pcm_dt_match,
+		.suppress_bind_attrs = true,
 	},
 	.probe = msm_pcm_probe,
 	.remove = msm_pcm_remove,
 };
 
-int __init msm_pcm_noirq_init(void)
+static int __init msm_soc_platform_init(void)
 {
 	return platform_driver_register(&msm_pcm_driver_noirq);
 }
+module_init(msm_soc_platform_init);
 
-void msm_pcm_noirq_exit(void)
+static void __exit msm_soc_platform_exit(void)
 {
 	platform_driver_unregister(&msm_pcm_driver_noirq);
 }
+module_exit(msm_soc_platform_exit);
 
 MODULE_DESCRIPTION("PCM NOIRQ module platform driver");
 MODULE_LICENSE("GPL v2");

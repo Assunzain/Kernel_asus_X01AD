@@ -1292,20 +1292,15 @@ static int swrm_get_logical_dev_num(struct swr_master *mstr, u64 dev_id,
 	int ret = -EINVAL;
 	struct swr_mstr_ctrl *swrm = swr_get_ctrl_data(mstr);
 	struct swr_device *swr_dev;
-	u32 num_dev = 0;
 
 	if (!swrm) {
 		pr_err("%s: Invalid handle to swr controller\n",
 			__func__);
 		return ret;
 	}
-	if (swrm->num_dev)
-		num_dev = swrm->num_dev;
-	else
-		num_dev = mstr->num_dev;
 
 	pm_runtime_get_sync(&swrm->pdev->dev);
-	for (i = 1; i < (num_dev + 1); i++) {
+	for (i = 1; i < (mstr->num_dev + 1); i++) {
 		id = ((u64)(swrm->read(swrm->handle,
 			    SWRM_ENUMERATOR_SLAVE_DEV_ID_2(i))) << 32);
 		id |= swrm->read(swrm->handle,
@@ -1481,20 +1476,8 @@ static int swrm_probe(struct platform_device *pdev)
 	mutex_init(&swrm->mlock);
 	INIT_LIST_HEAD(&swrm->mport_list);
 	mutex_init(&swrm->reslock);
+	mutex_init(&swrm->force_down_lock);
 
-	ret = of_property_read_u32(swrm->dev->of_node, "qcom,swr-num-dev",
-				   &swrm->num_dev);
-	if (ret)
-		dev_dbg(&pdev->dev, "%s: Looking up %s property failed\n",
-			__func__, "qcom,swr-num-dev");
-	else {
-		if (swrm->num_dev > SWR_MAX_SLAVE_DEVICES) {
-			dev_err(&pdev->dev, "%s: num_dev %d > max limit %d\n",
-				__func__, swrm->num_dev, SWR_MAX_SLAVE_DEVICES);
-			ret = -EINVAL;
-			goto err_pdata_fail;
-		}
-	}
 	ret = swrm->reg_irq(swrm->handle, swr_mstr_interrupt, swrm,
 			    SWR_IRQ_REGISTER);
 	if (ret) {
@@ -1557,6 +1540,9 @@ err_mstr_fail:
 	swrm->reg_irq(swrm->handle, swr_mstr_interrupt,
 			swrm, SWR_IRQ_FREE);
 err_irq_fail:
+	mutex_destroy(&swrm->mlock);
+	mutex_destroy(&swrm->reslock);
+	mutex_destroy(&swrm->force_down_lock);
 err_pdata_fail:
 	kfree(swrm);
 err_memory_fail:
@@ -1567,9 +1553,8 @@ static int swrm_remove(struct platform_device *pdev)
 {
 	struct swr_mstr_ctrl *swrm = platform_get_drvdata(pdev);
 
-	if (swrm->reg_irq)
-		swrm->reg_irq(swrm->handle, swr_mstr_interrupt,
-				swrm, SWR_IRQ_FREE);
+	swrm->reg_irq(swrm->handle, swr_mstr_interrupt,
+			swrm, SWR_IRQ_FREE);
 	if (swrm->mstr_port) {
 		kfree(swrm->mstr_port->port);
 		swrm->mstr_port->port = NULL;
@@ -1581,6 +1566,7 @@ static int swrm_remove(struct platform_device *pdev)
 	swr_unregister_master(&swrm->master);
 	mutex_destroy(&swrm->mlock);
 	mutex_destroy(&swrm->reslock);
+	mutex_destroy(&swrm->force_down_lock);
 	kfree(swrm);
 	return 0;
 }
@@ -1644,13 +1630,20 @@ static int swrm_runtime_suspend(struct device *dev)
 	int ret = 0;
 	struct swr_master *mstr = &swrm->master;
 	struct swr_device *swr_dev;
+	int current_state = 0;
 
 	dev_dbg(dev, "%s: pm_runtime: suspend state: %d\n",
 		__func__, swrm->state);
 	mutex_lock(&swrm->reslock);
-	if ((swrm->state == SWR_MSTR_RESUME) ||
-	    (swrm->state == SWR_MSTR_UP)) {
-		if (swrm_is_port_en(&swrm->master)) {
+	mutex_lock(&swrm->force_down_lock);
+	current_state = swrm->state;
+	mutex_unlock(&swrm->force_down_lock);
+	if ((current_state == SWR_MSTR_RESUME) ||
+	    (current_state == SWR_MSTR_UP) ||
+	    (current_state == SWR_MSTR_SSR)) {
+
+		if ((current_state != SWR_MSTR_SSR) &&
+			swrm_is_port_en(&swrm->master)) {
 			dev_dbg(dev, "%s ports are enabled\n", __func__);
 			ret = -EBUSY;
 			goto exit;
@@ -1679,27 +1672,16 @@ static int swrm_device_down(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct swr_mstr_ctrl *swrm = platform_get_drvdata(pdev);
 	int ret = 0;
-	struct swr_master *mstr = &swrm->master;
-	struct swr_device *swr_dev;
 
 	dev_dbg(dev, "%s: swrm state: %d\n", __func__, swrm->state);
-	mutex_lock(&swrm->reslock);
-	if ((swrm->state == SWR_MSTR_RESUME) ||
-	    (swrm->state == SWR_MSTR_UP)) {
-		list_for_each_entry(swr_dev, &mstr->devices, dev_list) {
-			ret = swr_device_down(swr_dev);
-			if (ret)
-				dev_err(dev,
-					"%s: failed to shutdown swr dev %d\n",
-					__func__, swr_dev->dev_num);
-		}
-		dev_dbg(dev, "%s: Shutting down SWRM\n", __func__);
-		pm_runtime_disable(dev);
-		pm_runtime_set_suspended(dev);
-		pm_runtime_enable(dev);
-		swrm_clk_request(swrm, false);
-	}
-	mutex_unlock(&swrm->reslock);
+
+	mutex_lock(&swrm->force_down_lock);
+	swrm->state = SWR_MSTR_SSR;
+	mutex_unlock(&swrm->force_down_lock);
+	/* Use pm runtime function to tear down */
+	ret = pm_runtime_put_sync_suspend(dev);
+	pm_runtime_get_noresume(dev);
+
 	return ret;
 }
 
@@ -1903,6 +1885,7 @@ static struct platform_driver swr_mstr_driver = {
 		.owner = THIS_MODULE,
 		.pm = &swrm_dev_pm_ops,
 		.of_match_table = swrm_dt_match,
+		.suppress_bind_attrs = true,
 	},
 };
 
@@ -1910,13 +1893,14 @@ static int __init swrm_init(void)
 {
 	return platform_driver_register(&swr_mstr_driver);
 }
-module_init(swrm_init);
+subsys_initcall(swrm_init);
 
 static void __exit swrm_exit(void)
 {
 	platform_driver_unregister(&swr_mstr_driver);
 }
 module_exit(swrm_exit);
+
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("WCD SoundWire Controller");

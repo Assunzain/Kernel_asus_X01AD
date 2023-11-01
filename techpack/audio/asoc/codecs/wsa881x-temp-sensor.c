@@ -146,7 +146,6 @@ static int wsa881x_pm_notify(struct notifier_block *nb,
 
 	switch (mode) {
 	case PM_SUSPEND_PREPARE:
-	case PM_HIBERNATION_PREPARE:
 		atomic_set(&pdata->is_suspend_spk, 1);
 		break;
 	default:

@@ -23,8 +23,6 @@
 
 #define SWR_MSTR_PORT_LEN	8 /* Number of master ports */
 
-#define SWR_MAX_SLAVE_DEVICES 11
-
 #define SWRM_VERSION_1_0 0x01010000
 #define SWRM_VERSION_1_2 0x01030000
 #define SWRM_VERSION_1_3 0x01040000
@@ -34,6 +32,7 @@ enum {
 	SWR_MSTR_RESUME,
 	SWR_MSTR_UP,
 	SWR_MSTR_DOWN,
+	SWR_MSTR_SSR,
 };
 
 enum {
@@ -96,7 +95,6 @@ struct swr_mstr_ctrl {
 			void *data), void *swr_handle, int type);
 	int irq;
 	int version;
-	u32 num_dev;
 	int num_enum_slaves;
 	int slave_status;
 	struct swr_mstr_port *mstr_port;
@@ -105,6 +103,8 @@ struct swr_mstr_ctrl {
 	struct platform_device *pdev;
 	int num_rx_chs;
 	u8 num_cfg_devs;
+	struct mutex force_down_lock;
+	int force_down_state;
 };
 
 #endif /* _SWR_WCD_CTRL_H */

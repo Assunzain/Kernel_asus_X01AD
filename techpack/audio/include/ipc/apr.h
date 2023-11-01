@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2010-2017, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -174,7 +174,6 @@ int apr_send_pkt(void *handle, uint32_t *buf);
 int apr_deregister(void *handle);
 void subsys_notif_register(char *client_name, int domain,
 			   struct notifier_block *nb);
-void subsys_notif_deregister(char *client_name);
 int apr_get_dest_id(char *dest);
 uint16_t apr_get_data_src(struct apr_hdr *hdr);
 void change_q6_state(int state);
@@ -190,6 +189,4 @@ const char *apr_get_lpass_subsys_name(void);
 uint16_t apr_get_reset_domain(uint16_t proc);
 int apr_start_rx_rt(void *handle);
 int apr_end_rx_rt(void *handle);
-int apr_dummy_init(void);
-void apr_dummy_exit(void);
 #endif

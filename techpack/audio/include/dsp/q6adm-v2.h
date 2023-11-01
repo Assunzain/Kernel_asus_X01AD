@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, 2020, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -30,9 +30,6 @@
 #define AUD_PROC_PERSIST_BLOCK_SIZE	(2 * 1024 * 1020)
 #define AUDIO_RX_CALIBRATION_SIZE	(AUD_PROC_BLOCK_SIZE + \
 						AUD_VOL_BLOCK_SIZE)
-#define SESSION_TYPE_RX 0
-#define SESSION_TYPE_TX 1
-
 enum {
 	ADM_CUSTOM_TOP_CAL = 0,
 	ADM_AUDPROC_CAL,
@@ -58,9 +55,7 @@ enum {
 };
 
 #define MAX_COPPS_PER_PORT 0x8
-#define ADM_MAX_CHANNELS 32
-
-#define ADSP_ADM_API_VERSION_V3 3
+#define ADM_MAX_CHANNELS 8
 
 /* multiple copp per stream. */
 struct route_payload {
@@ -109,7 +104,7 @@ int adm_dolby_dap_send_params(int port_id, int copp_idx, char *params,
 
 int adm_open(int port, int path, int rate, int mode, int topology,
 			   int perf_mode, uint16_t bits_per_sample,
-			   int app_type, int acdbdev_id, int session_type);
+			   int app_type, int acdbdev_id);
 
 int adm_map_rtac_block(struct rtac_cal_block_data *cal_block);
 
@@ -135,8 +130,6 @@ int adm_get_lowlatency_copp_id(int port_id);
 int adm_set_multi_ch_map(char *channel_map, int path);
 
 int adm_get_multi_ch_map(char *channel_map, int path);
-
-void adm_set_port_multi_ch_map(char *channel_map, int port_id);
 
 int adm_validate_and_get_port_index(int port_id);
 
@@ -193,9 +186,5 @@ int adm_swap_speaker_channels(int port_id, int copp_idx, int sample_rate,
 int adm_programable_channel_mixer(int port_id, int copp_idx, int session_id,
 			int session_type,
 			struct msm_pcm_channel_mixer *ch_mixer,
-			int channel_index, bool use_default_chmap,
-			char *ch_map);
-void msm_dts_srs_acquire_lock(void);
-void msm_dts_srs_release_lock(void);
-void adm_set_native_mode(int mode);
+			int channel_index);
 #endif /* __Q6_ADM_V2_H__ */
