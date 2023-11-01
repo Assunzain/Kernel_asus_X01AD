@@ -897,6 +897,7 @@ static int tavil_codec_enable_anc(struct snd_soc_dapm_widget *w,
 	struct wcd9xxx_anc_header *anc_head;
 	struct firmware_cal *hwdep_cal = NULL;
 	u32 anc_writes_size = 0;
+	u32 anc_cal_size = 0;
 	int anc_size_remaining;
 	u32 *anc_ptr;
 	u16 reg;
@@ -985,16 +986,8 @@ static int tavil_codec_enable_anc(struct snd_soc_dapm_widget *w,
 			goto err;
 		}
 
-		i = 0;
-
-		if (!strcmp(w->name, "RX INT1 DAC") ||
-		    !strcmp(w->name, "RX INT3 DAC"))
-			anc_writes_size = anc_writes_size / 2;
-		else if (!strcmp(w->name, "RX INT2 DAC") ||
-			 !strcmp(w->name, "RX INT4 DAC"))
-			i = anc_writes_size / 2;
-
-		for (; i < anc_writes_size; i++) {
+		anc_cal_size = anc_writes_size;
+		for (i = 0; i < anc_writes_size; i++) {
 			WCD934X_CODEC_UNPACK_ENTRY(anc_ptr[i], reg, mask, val);
 			snd_soc_write(codec, reg, (val & mask));
 		}
@@ -1684,7 +1677,7 @@ static int tavil_codec_set_i2s_tx_ch(struct snd_soc_dapm_widget *w,
 
 		snd_soc_update_bits(codec,
 				    WCD934X_DATA_HUB_I2S_TX0_CFG,
-				    0x0C, 0x04);
+				    0x0C, 0x01);
 
 		snd_soc_update_bits(codec,
 				    WCD934X_DATA_HUB_I2S_TX1_0_CFG,
@@ -2957,11 +2950,6 @@ static int __tavil_codec_enable_swr(struct snd_soc_dapm_widget *w, int event)
 
 	tavil = snd_soc_codec_get_drvdata(codec);
 
-	if (!tavil->swr.ctrl_data)
-		return -EINVAL;
-	if (!tavil->swr.ctrl_data[0].swr_pdev)
-		return -EINVAL;
-
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
 		if (((strnstr(w->name, "INT7_", sizeof("RX INT7_"))) ||
@@ -4140,7 +4128,7 @@ static int tavil_codec_find_amic_input(struct snd_soc_codec *codec,
 
 	if (adc_mux_n < 3) {
 		adc_mux_in_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX0_CFG1 +
-				 2 * adc_mux_n;
+				 adc_mux_n;
 		mask = 0x03;
 		shift = 0;
 		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX0_CFG0 +
@@ -4153,7 +4141,7 @@ static int tavil_codec_find_amic_input(struct snd_soc_codec *codec,
 				   2 * adc_mux_n;
 	} else if (adc_mux_n < 7) {
 		adc_mux_in_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX0_CFG1 +
-				 2 * (adc_mux_n - 4);
+				 (adc_mux_n - 4);
 		mask = 0x0C;
 		shift = 2;
 		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX4_CFG0 +
@@ -4166,25 +4154,24 @@ static int tavil_codec_find_amic_input(struct snd_soc_codec *codec,
 				   adc_mux_n - 4;
 	} else if (adc_mux_n < 12) {
 		adc_mux_in_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX0_CFG1 +
-				 2 * (((adc_mux_n == 8) ? (adc_mux_n - 8) :
-				  (adc_mux_n - 9)));
+				 ((adc_mux_n == 8) ? (adc_mux_n - 8) :
+				  (adc_mux_n - 9));
 		mask = 0x30;
 		shift = 4;
-		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX8_CFG0 +
-				   ((adc_mux_n == 8) ? (adc_mux_n - 8) :
-					(adc_mux_n - 9));
+		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX4_CFG0 +
+				   adc_mux_n - 4;
 	} else if (adc_mux_n < 13) {
 		adc_mux_in_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX3_CFG1;
 		mask = 0x30;
 		shift = 4;
 		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX4_CFG0 +
-				   adc_mux_n - 5;
+				   adc_mux_n - 4;
 	} else {
 		adc_mux_in_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX0_CFG1;
 		mask = 0xC0;
 		shift = 6;
 		amic_mux_sel_reg = WCD934X_CDC_TX_INP_MUX_ADC_MUX4_CFG0 +
-				   adc_mux_n - 5;
+				   adc_mux_n - 4;
 	}
 
 	is_amic = (((snd_soc_read(codec, adc_mux_in_reg) & mask) >> shift)
@@ -6241,8 +6228,8 @@ static const struct snd_kcontrol_new tavil_snd_controls[] = {
 	SOC_ENUM_EXT("SPKR Right Boost Max State", tavil_spkr_boost_stage_enum,
 		     tavil_spkr_right_boost_stage_get,
 		     tavil_spkr_right_boost_stage_put),
-	SOC_SINGLE_TLV("HPHL Volume", WCD934X_HPH_L_EN, 0, 24, 1, line_gain),
-	SOC_SINGLE_TLV("HPHR Volume", WCD934X_HPH_R_EN, 0, 24, 1, line_gain),
+	SOC_SINGLE_TLV("HPHL Volume", WCD934X_HPH_L_EN, 0, 20, 1, line_gain),
+	SOC_SINGLE_TLV("HPHR Volume", WCD934X_HPH_R_EN, 0, 20, 1, line_gain),
 	SOC_SINGLE_TLV("LINEOUT1 Volume", WCD934X_DIFF_LO_LO1_COMPANDER,
 		3, 16, 1, line_gain),
 	SOC_SINGLE_TLV("LINEOUT2 Volume", WCD934X_DIFF_LO_LO2_COMPANDER,
@@ -6252,77 +6239,77 @@ static const struct snd_kcontrol_new tavil_snd_controls[] = {
 	SOC_SINGLE_TLV("ADC3 Volume", WCD934X_ANA_AMIC3, 0, 20, 0, analog_gain),
 	SOC_SINGLE_TLV("ADC4 Volume", WCD934X_ANA_AMIC4, 0, 20, 0, analog_gain),
 
-	SOC_SINGLE_S8_TLV("RX0 Digital Volume", WCD934X_CDC_RX0_RX_VOL_CTL,
-		-84, 40, digital_gain), /* -84dB min - 40dB max */
-	SOC_SINGLE_S8_TLV("RX1 Digital Volume", WCD934X_CDC_RX1_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX2 Digital Volume", WCD934X_CDC_RX2_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX3 Digital Volume", WCD934X_CDC_RX3_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX4 Digital Volume", WCD934X_CDC_RX4_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX7 Digital Volume", WCD934X_CDC_RX7_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX8 Digital Volume", WCD934X_CDC_RX8_RX_VOL_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX0 Mix Digital Volume",
-		WCD934X_CDC_RX0_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX1 Mix Digital Volume",
-		WCD934X_CDC_RX1_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX2 Mix Digital Volume",
-		WCD934X_CDC_RX2_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX3 Mix Digital Volume",
-		WCD934X_CDC_RX3_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX4 Mix Digital Volume",
-		WCD934X_CDC_RX4_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX7 Mix Digital Volume",
-		WCD934X_CDC_RX7_RX_VOL_MIX_CTL, -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX8 Mix Digital Volume",
-		WCD934X_CDC_RX8_RX_VOL_MIX_CTL, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX0 Digital Volume", WCD934X_CDC_RX0_RX_VOL_CTL,
+		0, -84, 40, digital_gain), /* -84dB min - 40dB max */
+	SOC_SINGLE_SX_TLV("RX1 Digital Volume", WCD934X_CDC_RX1_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX2 Digital Volume", WCD934X_CDC_RX2_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX3 Digital Volume", WCD934X_CDC_RX3_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX4 Digital Volume", WCD934X_CDC_RX4_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX7 Digital Volume", WCD934X_CDC_RX7_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX8 Digital Volume", WCD934X_CDC_RX8_RX_VOL_CTL,
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX0 Mix Digital Volume",
+		WCD934X_CDC_RX0_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX1 Mix Digital Volume",
+		WCD934X_CDC_RX1_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX2 Mix Digital Volume",
+		WCD934X_CDC_RX2_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX3 Mix Digital Volume",
+		WCD934X_CDC_RX3_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX4 Mix Digital Volume",
+		WCD934X_CDC_RX4_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX7 Mix Digital Volume",
+		WCD934X_CDC_RX7_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX8 Mix Digital Volume",
+		WCD934X_CDC_RX8_RX_VOL_MIX_CTL, 0, -84, 40, digital_gain),
 
-	SOC_SINGLE_S8_TLV("DEC0 Volume", WCD934X_CDC_TX0_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC0 Volume", WCD934X_CDC_TX0_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC1 Volume", WCD934X_CDC_TX1_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC1 Volume", WCD934X_CDC_TX1_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC2 Volume", WCD934X_CDC_TX2_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC2 Volume", WCD934X_CDC_TX2_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC3 Volume", WCD934X_CDC_TX3_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC3 Volume", WCD934X_CDC_TX3_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC4 Volume", WCD934X_CDC_TX4_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC4 Volume", WCD934X_CDC_TX4_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC5 Volume", WCD934X_CDC_TX5_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC5 Volume", WCD934X_CDC_TX5_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC6 Volume", WCD934X_CDC_TX6_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC6 Volume", WCD934X_CDC_TX6_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC7 Volume", WCD934X_CDC_TX7_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC7 Volume", WCD934X_CDC_TX7_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC8 Volume", WCD934X_CDC_TX8_TX_VOL_CTL,
+	SOC_SINGLE_SX_TLV("DEC8 Volume", WCD934X_CDC_TX8_TX_VOL_CTL, 0,
 		-84, 40, digital_gain),
 
-	SOC_SINGLE_S8_TLV("IIR0 INP0 Volume",
-		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B1_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR0 INP0 Volume",
+		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B1_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR0 INP1 Volume",
-		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B2_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR0 INP1 Volume",
+		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B2_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR0 INP2 Volume",
-		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B3_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR0 INP2 Volume",
+		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B3_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR0 INP3 Volume",
-		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B4_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR0 INP3 Volume",
+		WCD934X_CDC_SIDETONE_IIR0_IIR_GAIN_B4_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP0 Volume",
-		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B1_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR1 INP0 Volume",
+		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B1_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP1 Volume",
-		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B2_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR1 INP1 Volume",
+		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B2_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP2 Volume",
-		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B3_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR1 INP2 Volume",
+		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B3_CTL, 0, -84, 40,
 		digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP3 Volume",
-		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B4_CTL, -84, 40,
+	SOC_SINGLE_SX_TLV("IIR1 INP3 Volume",
+		WCD934X_CDC_SIDETONE_IIR1_IIR_GAIN_B4_CTL, 0, -84, 40,
 		digital_gain),
 
 	SOC_SINGLE_EXT("ANC Slot", SND_SOC_NOPM, 0, 100, 0, tavil_get_anc_slot,
@@ -8679,13 +8666,6 @@ static int tavil_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 	return 0;
 }
 
-static int tavil_set_dai_sysclk(struct snd_soc_dai *dai,
-		int clk_id, unsigned int freq, int dir)
-{
-	pr_debug("%s\n", __func__);
-	return 0;
-}
-
 static struct snd_soc_dai_ops tavil_dai_ops = {
 	.startup = tavil_startup,
 	.shutdown = tavil_shutdown,
@@ -8700,7 +8680,6 @@ static struct snd_soc_dai_ops tavil_i2s_dai_ops = {
 	.shutdown = tavil_shutdown,
 	.hw_params = tavil_hw_params,
 	.prepare = tavil_prepare,
-	.set_sysclk = tavil_set_dai_sysclk,
 	.set_fmt = tavil_set_dai_fmt,
 };
 
@@ -8763,7 +8742,7 @@ static struct snd_soc_dai_driver tavil_slim_dai[] = {
 			.rate_min = 8000,
 			.rate_max = 192000,
 			.channels_min = 1,
-			.channels_max = 4,
+			.channels_max = 8,
 		},
 		.ops = &tavil_dai_ops,
 	},
@@ -9495,7 +9474,7 @@ static const struct tavil_reg_mask_val tavil_codec_reg_i2c_defaults[] = {
 	{WCD934X_DATA_HUB_RX2_CFG, 0x03, 0x01},
 	{WCD934X_DATA_HUB_RX3_CFG, 0x03, 0x01},
 	{WCD934X_DATA_HUB_I2S_TX0_CFG, 0x01, 0x01},
-	{WCD934X_DATA_HUB_I2S_TX0_CFG, 0x04, 0x04},
+	{WCD934X_DATA_HUB_I2S_TX0_CFG, 0x04, 0x01},
 	{WCD934X_DATA_HUB_I2S_TX1_0_CFG, 0x01, 0x01},
 	{WCD934X_DATA_HUB_I2S_TX1_1_CFG, 0x05, 0x05},
 	{WCD934X_CHIP_TIER_CTRL_ALT_FUNC_EN, 0x1, 0x1},
@@ -9671,10 +9650,9 @@ static irqreturn_t tavil_slimbus_irq(int irq, void *data)
 					 */
 				}
 			}
-			if (!cleared)
-				dev_err(tavil->dev,
-					"%s: Couldn't find slimbus %s port %d for closing\n",
-					__func__, (tx ? "TX" : "RX"), port_id);
+			WARN(!cleared,
+			     "Couldn't find slimbus %s port %d for closing\n",
+			     (tx ? "TX" : "RX"), port_id);
 		}
 		wcd9xxx_interface_reg_write(tavil->wcd9xxx,
 					    WCD934X_SLIM_PGD_PORT_INT_CLR_RX_0 +
@@ -10243,8 +10221,6 @@ static int tavil_soc_codec_probe(struct snd_soc_codec *codec)
 	snd_soc_dapm_ignore_suspend(dapm, "AIF2 Capture");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF3 Playback");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF3 Capture");
-	snd_soc_dapm_ignore_suspend(dapm, "WDMA3_OUT");
-
 	if (tavil->intf_type == WCD9XXX_INTERFACE_TYPE_SLIMBUS) {
 		snd_soc_dapm_ignore_suspend(dapm, "AIF4 Playback");
 		snd_soc_dapm_ignore_suspend(dapm, "AIF4 MAD TX");
@@ -11071,7 +11047,6 @@ static struct platform_driver tavil_codec_driver = {
 #ifdef CONFIG_PM
 		.pm = &tavil_pm_ops,
 #endif
-		.suppress_bind_attrs = true,
 	},
 };
 

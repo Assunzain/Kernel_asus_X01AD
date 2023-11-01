@@ -101,8 +101,7 @@ static int voice_get_avcs_version_per_service(uint32_t service_id);
 
 static int voice_cvs_stop_playback(struct voice_data *v);
 static int voice_cvs_start_playback(struct voice_data *v);
-static int voice_cvs_start_record(struct voice_data *v, uint32_t rec_mode,
-					uint32_t port_id);
+static int voice_cvs_start_record(struct voice_data *v, uint32_t rec_mode);
 static int voice_cvs_stop_record(struct voice_data *v);
 
 static int32_t qdsp_mvm_callback(struct apr_client_data *data, void *priv);
@@ -141,6 +140,8 @@ static int voice_send_get_sound_focus_cmd(struct voice_data *v,
 				struct sound_focus_param *soundFocusData);
 static int voice_send_get_source_tracking_cmd(struct voice_data *v,
 			struct source_tracking_param *sourceTrackingData);
+
+static void voice_vote_powerstate_to_bms(struct voice_data *v, bool state);
 
 static void voice_itr_init(struct voice_session_itr *itr,
 			   u32 session_id)
@@ -297,6 +298,14 @@ char *voc_get_session_name(u32 session_id)
 	return session_name;
 }
 
+/**
+ * voc_get_session_id -
+ *      Get session ID of given voice session name
+ *
+ * @name: voice session name
+ *
+ * Returns session id for valid session or 0 if invalid.
+ */
 uint32_t voc_get_session_id(char *name)
 {
 	u32 session_id = 0;
@@ -331,6 +340,7 @@ uint32_t voc_get_session_id(char *name)
 
 	return session_id;
 }
+EXPORT_SYMBOL(voc_get_session_id);
 
 static struct voice_data *voice_get_session(u32 session_id)
 {
@@ -758,8 +768,8 @@ static int voice_send_mvm_event_class_cmd(struct voice_data *v,
 {
 	struct vss_inotify_cmd_event_class_t mvm_event;
 	int ret = 0;
-	void *apr_mvm;
-	u16 mvm_handle;
+	void *apr_mvm = NULL;
+	u16 mvm_handle = 0;
 
 	if (v == NULL) {
 		pr_err("%s: v is NULL\n", __func__);
@@ -800,6 +810,7 @@ static int voice_send_mvm_event_class_cmd(struct voice_data *v,
 				 msecs_to_jiffies(TIMEOUT_MS));
 	if (!ret) {
 		pr_err("%s: wait_event timeout %d\n", __func__, ret);
+		ret = -ETIMEDOUT;
 		goto fail;
 	}
 	if (v->async_err > 0) {
@@ -1870,6 +1881,11 @@ static int voice_send_dtmf_rx_detection_cmd(struct voice_data *v,
 	return ret;
 }
 
+/**
+ * voc_disable_dtmf_det_on_active_sessions -
+ *       command to disable DTMF detection for voice sessions
+ *
+ */
 void voc_disable_dtmf_det_on_active_sessions(void)
 {
 	struct voice_data *v = NULL;
@@ -1886,7 +1902,17 @@ void voc_disable_dtmf_det_on_active_sessions(void)
 		}
 	}
 }
+EXPORT_SYMBOL(voc_disable_dtmf_det_on_active_sessions);
 
+/**
+ * voc_enable_dtmf_rx_detection -
+ *       command to set DTMF RX detection
+ *
+ * @session_id: voice session ID to send this command
+ * @enable: Enable or Disable detection
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_enable_dtmf_rx_detection(uint32_t session_id, uint32_t enable)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -1908,13 +1934,70 @@ int voc_enable_dtmf_rx_detection(uint32_t session_id, uint32_t enable)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_enable_dtmf_rx_detection);
 
+/**
+ * voc_set_destroy_cvd_flag -
+ *      set flag for destroy CVD session
+ *
+ * @is_destroy_cvd: bool value used to indicate
+ *                  destroy CVD session or not.
+ *
+ */
 void voc_set_destroy_cvd_flag(bool is_destroy_cvd)
 {
 	pr_debug("%s: %d\n", __func__, is_destroy_cvd);
 	common.is_destroy_cvd = is_destroy_cvd;
 }
+EXPORT_SYMBOL(voc_set_destroy_cvd_flag);
 
+/**
+ * voc_set_vote_bms_flag -
+ *      set flag for BMS voting
+ *
+ * @is_destroy_cvd: bool value used to indicate
+ *                  to vote for BMS or not in voice call.
+ *
+ */
+void voc_set_vote_bms_flag(bool is_vote_bms)
+{
+	pr_debug("%s: flag value: %d\n", __func__, is_vote_bms);
+	common.is_vote_bms = is_vote_bms;
+}
+EXPORT_SYMBOL(voc_set_vote_bms_flag);
+
+static void voice_vote_powerstate_to_bms(struct voice_data *v, bool state)
+{
+	union power_supply_propval psp_val;
+
+	if (!v->psy)
+		v->psy = power_supply_get_by_name("bms");
+
+	psp_val.intval = VMBMS_VOICE_CALL_BIT;
+	if (v->psy && !(is_voip_session(v->session_id) ||
+			is_vowlan_session(v->session_id))) {
+		if (state) {
+			pr_debug("%s : Vote High power to BMS\n",
+				__func__);
+			power_supply_set_property(v->psy,
+					POWER_SUPPLY_PROP_HI_POWER, &psp_val);
+		} else {
+			pr_debug("%s: Vote low power to BMS\n",
+				__func__);
+			power_supply_set_property(v->psy,
+					POWER_SUPPLY_PROP_LOW_POWER, &psp_val);
+		}
+	} else {
+		pr_debug("%s: No OP", __func__);
+	}
+}
+
+/**
+ * voc_alloc_cal_shared_memory -
+ *       Alloc mem map table for calibration
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_alloc_cal_shared_memory(void)
 {
 	int rc = 0;
@@ -1935,7 +2018,14 @@ int voc_alloc_cal_shared_memory(void)
 
 	return rc;
 }
+EXPORT_SYMBOL(voc_alloc_cal_shared_memory);
 
+/**
+ * voc_alloc_voip_shared_memory -
+ *       Alloc mem map table for OOB
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_alloc_voip_shared_memory(void)
 {
 	int rc = 0;
@@ -1958,6 +2048,7 @@ int voc_alloc_voip_shared_memory(void)
 
 	return rc;
 }
+EXPORT_SYMBOL(voc_alloc_voip_shared_memory);
 
 static int is_cal_memory_allocated(void)
 {
@@ -2286,6 +2377,14 @@ fail:
 	return ret;
 }
 
+/**
+ * voc_update_amr_vocoder_rate -
+ *       command to update AMR rate for voice session
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_update_amr_vocoder_rate(uint32_t session_id)
 {
 	int ret = 0;
@@ -2310,6 +2409,7 @@ int voc_update_amr_vocoder_rate(uint32_t session_id)
 done:
 	return ret;
 }
+EXPORT_SYMBOL(voc_update_amr_vocoder_rate);
 
 static int voice_send_start_voice_cmd(struct voice_data *v)
 {
@@ -2364,6 +2464,10 @@ static int voice_send_start_voice_cmd(struct voice_data *v)
 		ret = adsp_err_get_lnx_err_code(
 				v->async_err);
 		goto fail;
+	}
+	if (common.is_vote_bms) {
+		/* vote high power to BMS during call start */
+		voice_vote_powerstate_to_bms(v, true);
 	}
 	return 0;
 fail:
@@ -4272,7 +4376,7 @@ done:
 static void voice_mic_break_work_fn(struct work_struct *work)
 {
 	int ret = 0;
-	char event[25];
+	char event[25] = "";
 	struct voice_data *v = container_of(work, struct voice_data,
 						voice_mic_break_work);
 
@@ -4282,7 +4386,7 @@ static void voice_mic_break_work_fn(struct work_struct *work)
 	mutex_lock(&common.common_lock);
 	ret = q6core_send_uevent(common.uevent_data, event);
 	if (ret)
-		pr_err("%s: Send UEvent %s failed :%d", __func__, event, ret);
+		pr_err("%s: Send UEvent %s failed :%d\n", __func__, event, ret);
 	mutex_unlock(&common.common_lock);
 }
 
@@ -4373,8 +4477,7 @@ static int voice_setup_vocproc(struct voice_data *v)
 
 	/* Start in-call recording if this feature is enabled */
 	if (v->rec_info.rec_enable)
-		voice_cvs_start_record(v, v->rec_info.rec_mode,
-					v->rec_info.port_id);
+		voice_cvs_start_record(v, v->rec_info.rec_mode);
 
 	if (v->dtmf_rx_detect_en)
 		voice_send_dtmf_rx_detection_cmd(v, v->dtmf_rx_detect_en);
@@ -5070,8 +5173,7 @@ static int voice_destroy_vocproc(struct voice_data *v)
 		if (v->rec_info.rec_enable) {
 			voice_cvs_start_record(
 				&common.voice[VOC_PATH_PASSIVE],
-				v->rec_info.rec_mode,
-				v->rec_info.port_id);
+				v->rec_info.rec_mode);
 			common.srvcc_rec_flag = true;
 
 			pr_debug("%s: switch recording, srvcc_rec_flag %d\n",
@@ -5577,8 +5679,7 @@ static int voice_send_vol_step_cmd(struct voice_data *v)
 	return 0;
 }
 
-static int voice_cvs_start_record(struct voice_data *v, uint32_t rec_mode,
-					uint32_t port_id)
+static int voice_cvs_start_record(struct voice_data *v, uint32_t rec_mode)
 {
 	int ret = 0;
 	void *apr_cvs;
@@ -5629,18 +5730,6 @@ static int voice_cvs_start_record(struct voice_data *v, uint32_t rec_mode,
 					VSS_IRECORD_TAP_POINT_STREAM_END;
 			cvs_start_record.rec_mode.tx_tap_point =
 					VSS_IRECORD_TAP_POINT_STREAM_END;
-			if (common.rec_channel_count ==
-					NUM_CHANNELS_STEREO) {
-			/*
-			 * if channel count is not stereo,
-			 * then default port_id and mode
-			 * (mono) will be used
-			 */
-				cvs_start_record.rec_mode.mode =
-					VSS_IRECORD_MODE_TX_RX_STEREO;
-				cvs_start_record.rec_mode.port_id =
-					port_id;
-			}
 		} else {
 			pr_err("%s: Invalid in-call rec_mode %d\n", __func__,
 				rec_mode);
@@ -5757,6 +5846,16 @@ fail:
 	return ret;
 }
 
+/**
+ * voc_start_record -
+ *       command to set record for voice session
+ *
+ * @port_id: Pseudo Port ID for record data
+ * @set: Enable or Disable for record start/stop
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_start_record(uint32_t port_id, uint32_t set, uint32_t session_id)
 {
 	int ret = 0;
@@ -5789,7 +5888,6 @@ int voc_start_record(uint32_t port_id, uint32_t set, uint32_t session_id)
 
 		mutex_lock(&v->lock);
 		rec_mode = v->rec_info.rec_mode;
-		v->rec_info.port_id = port_id;
 		rec_set = set;
 		if (set) {
 			if ((v->rec_route_state.ul_flag != 0) &&
@@ -5866,8 +5964,7 @@ int voc_start_record(uint32_t port_id, uint32_t set, uint32_t session_id)
 
 		if (cvs_handle != 0) {
 			if (rec_set)
-				ret = voice_cvs_start_record(v, rec_mode,
-						port_id);
+				ret = voice_cvs_start_record(v, rec_mode);
 			else
 				ret = voice_cvs_stop_record(v);
 		}
@@ -5893,6 +5990,7 @@ int voc_start_record(uint32_t port_id, uint32_t set, uint32_t session_id)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_start_record);
 
 static int voice_cvs_start_playback(struct voice_data *v)
 {
@@ -6081,6 +6179,15 @@ done:
 	return ret;
 }
 
+/**
+ * voc_start_playback -
+ *       command to set playback for voice session
+ *
+ * @set: Enable or Disable for playback start/stop
+ * @port_id: Pseudo Port ID for playback data
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_start_playback(uint32_t set, uint16_t port_id)
 {
 	struct voice_data *v = NULL;
@@ -6123,7 +6230,17 @@ int voc_start_playback(uint32_t set, uint16_t port_id)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_start_playback);
 
+/**
+ * voc_disable_topology -
+ *       disable topology for voice session
+ *
+ * @session_id: voice session ID to send this command
+ * @disable: disable value
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_disable_topology(uint32_t session_id, uint32_t disable)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6143,31 +6260,7 @@ int voc_disable_topology(uint32_t session_id, uint32_t disable)
 
 	return ret;
 }
-
-/**
- * voc_set_incall_capture_channel_config -
- *		command to set channel count for record
- *
- * @channel_count: number of channels
- *
- */
-void voc_set_incall_capture_channel_config(int channel_count)
-{
-	common.rec_channel_count = channel_count;
-}
-EXPORT_SYMBOL(voc_set_incall_capture_channel_config);
-
-/**
- * voc_get_incall_capture_channel_config -
- *		command to get channel count for record
- *
- * Returns number of channels configured for record
- */
-int voc_get_incall_capture_channel_config(void)
-{
-	return common.rec_channel_count;
-}
-EXPORT_SYMBOL(voc_get_incall_capture_channel_config);
+EXPORT_SYMBOL(voc_disable_topology);
 
 static int voice_set_packet_exchange_mode_and_config(uint32_t session_id,
 						 uint32_t mode)
@@ -6201,6 +6294,17 @@ fail:
 	return -EINVAL;
 }
 
+/**
+ * voc_set_tx_mute -
+ *       command to send TX mute for voice session
+ *
+ * @session_id: voice session ID to send this command
+ * @dir: RX or TX
+ * @mute: TX mute value
+ * @ramp_duration: Ramp duration in ms
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_tx_mute(uint32_t session_id, uint32_t dir, uint32_t mute,
 		    uint32_t ramp_duration)
 {
@@ -6233,7 +6337,19 @@ int voc_set_tx_mute(uint32_t session_id, uint32_t dir, uint32_t mute,
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_tx_mute);
 
+/**
+ * voc_set_device_mute -
+ *       command to set device mute for voice session
+ *
+ * @session_id: voice session ID to send this command
+ * @dir: RX or TX
+ * @mute: mute value
+ * @ramp_duration: Ramp duration in ms
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_device_mute(uint32_t session_id, uint32_t dir, uint32_t mute,
 			uint32_t ramp_duration)
 {
@@ -6274,6 +6390,7 @@ int voc_set_device_mute(uint32_t session_id, uint32_t dir, uint32_t mute,
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_device_mute);
 
 int voc_get_rx_device_mute(uint32_t session_id)
 {
@@ -6295,6 +6412,15 @@ int voc_get_rx_device_mute(uint32_t session_id)
 	return ret;
 }
 
+/**
+ * voc_set_tty_mode -
+ *       Update tty mode for voice session
+ *
+ * @session_id: voice session ID
+ * @tty_mode: TTY mode value
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_tty_mode(uint32_t session_id, uint8_t tty_mode)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6314,7 +6440,16 @@ int voc_set_tty_mode(uint32_t session_id, uint8_t tty_mode)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_tty_mode);
 
+/**
+ * voc_get_tty_mode -
+ *       Retrieve tty mode for voice session
+ *
+ * @session_id: voice session ID
+ *
+ * Returns 0 on success or error on failure
+ */
 uint8_t voc_get_tty_mode(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6334,7 +6469,18 @@ uint8_t voc_get_tty_mode(uint32_t session_id)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_tty_mode);
 
+/**
+ * voc_set_pp_enable -
+ *       Command to set PP for voice module
+ *
+ * @session_id: voice session ID to send this command
+ * @module_id: voice module id
+ * @enable: enable/disable flag
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_pp_enable(uint32_t session_id, uint32_t module_id, uint32_t enable)
 {
 	struct voice_data *v = NULL;
@@ -6369,7 +6515,17 @@ int voc_set_pp_enable(uint32_t session_id, uint32_t module_id, uint32_t enable)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_pp_enable);
 
+/**
+ * voc_set_hd_enable -
+ *       Command to set HD for voice session
+ *
+ * @session_id: voice session ID to send this command
+ * @enable: enable/disable flag
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_hd_enable(uint32_t session_id, uint32_t enable)
 {
 	struct voice_data *v = NULL;
@@ -6396,7 +6552,17 @@ int voc_set_hd_enable(uint32_t session_id, uint32_t enable)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_hd_enable);
 
+/**
+ * voc_set_afe_sidetone -
+ *       Command to set sidetone at AFE
+ *
+ * @session_id: voice session ID to send this command
+ * @sidetone_enable: enable/disable flag for sidetone
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_afe_sidetone(uint32_t session_id, bool sidetone_enable)
 {
 	struct voice_data *v = NULL;
@@ -6430,7 +6596,14 @@ int voc_set_afe_sidetone(uint32_t session_id, bool sidetone_enable)
 	}
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_afe_sidetone);
 
+/**
+ * voc_get_afe_sidetone -
+ *       Retrieve sidetone status at AFE
+ *
+ * Returns sidetone enable status
+ */
 bool voc_get_afe_sidetone(void)
 {
 	bool ret;
@@ -6438,6 +6611,7 @@ bool voc_get_afe_sidetone(void)
 	ret = common.sidetone_enable;
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_afe_sidetone);
 
 int voc_get_pp_enable(uint32_t session_id, uint32_t module_id)
 {
@@ -6458,6 +6632,17 @@ int voc_get_pp_enable(uint32_t session_id, uint32_t module_id)
 	return ret;
 }
 
+/**
+ * voc_set_rx_vol_step -
+ *       command to send voice RX volume in step value
+ *
+ * @session_id: voice session ID
+ * @dir: direction RX or TX
+ * @vol_step: Volume step value
+ * @ramp_duration: Ramp duration in ms
+ *
+ * Returns 0 on success or -EINVAL on failure
+ */
 int voc_set_rx_vol_step(uint32_t session_id, uint32_t dir, uint32_t vol_step,
 			uint32_t ramp_duration)
 {
@@ -6488,7 +6673,18 @@ int voc_set_rx_vol_step(uint32_t session_id, uint32_t dir, uint32_t vol_step,
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_rx_vol_step);
 
+/**
+ * voc_set_device_config -
+ *       Set voice path config for RX or TX
+ *
+ * @session_id: voice session ID
+ * @path_dir: direction RX or TX
+ * @finfo: format config info
+ *
+ * Returns 0 on success or -EINVAL on failure
+ */
 int voc_set_device_config(uint32_t session_id, uint8_t path_dir,
 			  struct media_format_info *finfo)
 {
@@ -6524,7 +6720,6 @@ int voc_set_device_config(uint32_t session_id, uint8_t path_dir,
 		break;
 	default:
 		pr_err("%s: Invalid path_dir %d\n", __func__, path_dir);
-		mutex_unlock(&v->lock);
 		return -EINVAL;
 	}
 
@@ -6532,7 +6727,15 @@ int voc_set_device_config(uint32_t session_id, uint8_t path_dir,
 
 	return 0;
 }
+EXPORT_SYMBOL(voc_set_device_config);
 
+/**
+ * voc_set_ext_ec_ref_media_fmt_info -
+ *       Update voice EC media format info
+ *
+ * @finfo: media format info
+ *
+ */
 int voc_set_ext_ec_ref_media_fmt_info(struct media_format_info *finfo)
 {
 	mutex_lock(&common.common_lock);
@@ -6549,7 +6752,18 @@ int voc_set_ext_ec_ref_media_fmt_info(struct media_format_info *finfo)
 	mutex_unlock(&common.common_lock);
 	return 0;
 }
+EXPORT_SYMBOL(voc_set_ext_ec_ref_media_fmt_info);
 
+/**
+ * voc_set_route_flag -
+ *       Set voice route state for RX or TX
+ *
+ * @session_id: voice session ID
+ * @path_dir: direction RX or TX
+ * @set: Value of route state to set
+ *
+ * Returns 0 on success or -EINVAL on failure
+ */
 int voc_set_route_flag(uint32_t session_id, uint8_t path_dir, uint8_t set)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6573,7 +6787,17 @@ int voc_set_route_flag(uint32_t session_id, uint8_t path_dir, uint8_t set)
 
 	return 0;
 }
+EXPORT_SYMBOL(voc_set_route_flag);
 
+/**
+ * voc_get_route_flag -
+ *       Retrieve voice route state for RX or TX
+ *
+ * @session_id: voice session ID
+ * @path_dir: direction RX or TX
+ *
+ * Returns route state on success or 0 on failure
+ */
 uint8_t voc_get_route_flag(uint32_t session_id, uint8_t path_dir)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6596,7 +6820,14 @@ uint8_t voc_get_route_flag(uint32_t session_id, uint8_t path_dir)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_route_flag);
 
+/**
+ * voc_get_mbd_enable -
+ *       Retrieve mic break detection enable state
+ *
+ * Returns true if mic break detection is enabled or false if disabled
+ */
 bool voc_get_mbd_enable(void)
 {
 	bool enable = false;
@@ -6607,7 +6838,16 @@ bool voc_get_mbd_enable(void)
 
 	return enable;
 }
+EXPORT_SYMBOL(voc_get_mbd_enable);
 
+/**
+ * voc_set_mbd_enable -
+ *       Set mic break detection enable state
+ *
+ * @enable: mic break detection state to set
+ *
+ * Returns 0
+ */
 uint8_t voc_set_mbd_enable(bool enable)
 {
 	struct voice_data *v = NULL;
@@ -6615,7 +6855,6 @@ uint8_t voc_set_mbd_enable(bool enable)
 	bool check_and_send_event = false;
 	uint32_t event_id = VSS_INOTIFY_CMD_LISTEN_FOR_EVENT_CLASS;
 	uint32_t class_id = VSS_ICOMMON_EVENT_CLASS_VOICE_ACTIVITY_UPDATE;
-
 
 	mutex_lock(&common.common_lock);
 	if (common.mic_break_enable != enable)
@@ -6628,6 +6867,8 @@ uint8_t voc_set_mbd_enable(bool enable)
 
 	if (!enable)
 		event_id = VSS_INOTIFY_CMD_CANCEL_EVENT_CLASS;
+
+	memset(&itr, 0, sizeof(itr));
 
 	voice_itr_init(&itr, ALL_SESSION_VSID);
 	while (voice_itr_get_next_session(&itr, &v)) {
@@ -6643,7 +6884,16 @@ uint8_t voc_set_mbd_enable(bool enable)
 
 	return 0;
 }
+EXPORT_SYMBOL(voc_set_mbd_enable);
 
+/**
+ * voc_end_voice_call -
+ *       command to end voice call
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_end_voice_call(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6670,6 +6920,10 @@ int voc_end_voice_call(uint32_t session_id)
 
 		voice_destroy_mvm_cvs_session(v);
 		v->voc_state = VOC_RELEASE;
+		if (common.is_vote_bms) {
+			/* vote low power to BMS during call stop */
+			voice_vote_powerstate_to_bms(v, false);
+		}
 	} else {
 		pr_err("%s: Error: End voice called in state %d\n",
 			__func__, v->voc_state);
@@ -6680,7 +6934,16 @@ int voc_end_voice_call(uint32_t session_id)
 	mutex_unlock(&v->lock);
 	return ret;
 }
+EXPORT_SYMBOL(voc_end_voice_call);
 
+/**
+ * voc_standby_voice_call -
+ *       command to standy voice call
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_standby_voice_call(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6729,7 +6992,16 @@ int voc_standby_voice_call(uint32_t session_id)
 fail:
 	return ret;
 }
+EXPORT_SYMBOL(voc_standby_voice_call);
 
+/**
+ * voc_disable_device -
+ *       command to pause call and disable voice path
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_disable_device(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6766,7 +7038,16 @@ done:
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_disable_device);
 
+/**
+ * voc_enable_device -
+ *       command to enable voice path and start call
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_enable_device(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6854,7 +7135,17 @@ done:
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_enable_device);
 
+/**
+ * voc_set_lch -
+ *       command to set hold/unhold call state
+ *
+ * @session_id: voice session ID to send this command
+ * @lch_mode: LCH mode to set
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_lch(uint32_t session_id, enum voice_lch_mode lch_mode)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6888,7 +7179,16 @@ int voc_set_lch(uint32_t session_id, enum voice_lch_mode lch_mode)
 done:
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_lch);
 
+/**
+ * voc_resume_voice_call -
+ *       command to resume voice call
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_resume_voice_call(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -6904,7 +7204,16 @@ int voc_resume_voice_call(uint32_t session_id)
 fail:
 	return -EINVAL;
 }
+EXPORT_SYMBOL(voc_resume_voice_call);
 
+/**
+ * voc_start_voice_call -
+ *       command to start voice call
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_start_voice_call(uint32_t session_id)
 {
 	struct voice_data *v = voice_get_session(session_id);
@@ -7011,7 +7320,14 @@ fail:
 	mutex_unlock(&v->lock);
 	return ret;
 }
+EXPORT_SYMBOL(voc_start_voice_call);
 
+/**
+ * voc_set_ext_ec_ref_port_id -
+ *       Set EC ref port id
+ *
+ * Returns 0 on success or -EINVAL on failure
+ */
 int voc_set_ext_ec_ref_port_id(uint16_t port_id, bool state)
 {
 	int ret = 0;
@@ -7033,7 +7349,15 @@ exit:
 	mutex_unlock(&common.common_lock);
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_ext_ec_ref_port_id);
 
+/**
+ * voc_get_ext_ec_ref_port_id -
+ *       Retrieve EC ref port id
+ *
+ * Returns EC Ref port id if present
+ *     otherwise AFE_PORT_INVALID
+ */
 int voc_get_ext_ec_ref_port_id(void)
 {
 	if (common.ec_ref_ext)
@@ -7041,7 +7365,18 @@ int voc_get_ext_ec_ref_port_id(void)
 	else
 		return AFE_PORT_INVALID;
 }
+EXPORT_SYMBOL(voc_get_ext_ec_ref_port_id);
 
+/**
+ * voc_register_mvs_cb -
+ *       Update callback info for mvs
+ *
+ * @ul_cb: Uplink callback fn
+ * @dl_cb: downlink callback fn
+ * ssr_cb: SSR callback fn
+ * @private_data: private data of mvs
+ *
+ */
 void voc_register_mvs_cb(ul_cb_fn ul_cb,
 			   dl_cb_fn dl_cb,
 			   voip_ssr_cb ssr_cb,
@@ -7052,14 +7387,28 @@ void voc_register_mvs_cb(ul_cb_fn ul_cb,
 	common.mvs_info.ssr_cb = ssr_cb;
 	common.mvs_info.private_data = private_data;
 }
+EXPORT_SYMBOL(voc_register_mvs_cb);
 
+/**
+ * voc_register_dtmf_rx_detection_cb -
+ *       Update callback info for dtmf
+ *
+ * @dtmf_rx_ul_cb: DTMF uplink RX callback fn
+ * @private_data: private data of dtmf info
+ *
+ */
 void voc_register_dtmf_rx_detection_cb(dtmf_rx_det_cb_fn dtmf_rx_ul_cb,
 				       void *private_data)
 {
 	common.dtmf_info.dtmf_rx_ul_cb = dtmf_rx_ul_cb;
 	common.dtmf_info.private_data = private_data;
 }
+EXPORT_SYMBOL(voc_register_dtmf_rx_detection_cb);
 
+/**
+ * voc_config_vocoder -
+ *       Update config for mvs params.
+ */
 void voc_config_vocoder(uint32_t media_type,
 			uint32_t rate,
 			uint32_t network_type,
@@ -7074,6 +7423,7 @@ void voc_config_vocoder(uint32_t media_type,
 	common.mvs_info.evrc_min_rate = evrc_min_rate;
 	common.mvs_info.evrc_max_rate = evrc_max_rate;
 }
+EXPORT_SYMBOL(voc_config_vocoder);
 
 static int32_t qdsp_mvm_callback(struct apr_client_data *data, void *priv)
 {
@@ -7305,7 +7655,8 @@ static int32_t qdsp_mvm_callback(struct apr_client_data *data, void *priv)
 			wake_up(&v->mvm_wait);
 		}
 	} else if (data->opcode == VSS_ICOMMON_EVT_VOICE_ACTIVITY_UPDATE) {
-		if (data->payload_size == sizeof(struct vss_evt_voice_activity)) {
+		if (data->payload_size ==
+				sizeof(struct vss_evt_voice_activity)) {
 			voice_act_update =
 				(struct vss_evt_voice_activity *)
 				data->payload;
@@ -7672,7 +8023,7 @@ static int32_t qdsp_cvp_callback(struct apr_client_data *data, void *priv)
 	}
 
 	if (data->opcode == APR_BASIC_RSP_RESULT) {
-		if (data->payload_size) {
+		if (data->payload_size >= (2 * sizeof(uint32_t))) {
 			ptr = data->payload;
 
 			pr_debug("%x %x\n", ptr[0], ptr[1]);
@@ -7988,6 +8339,14 @@ done:
 	return rc;
 }
 
+/**
+ * voc_send_cvp_start_vocpcm -
+ *       command to start voice hpcm
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_send_cvp_start_vocpcm(uint32_t session_id,
 			      struct vss_ivpcm_tap_point *vpcm_tp,
 			      uint32_t no_of_tp)
@@ -8066,7 +8425,16 @@ int voc_send_cvp_start_vocpcm(uint32_t session_id,
 done:
 	return ret;
 }
+EXPORT_SYMBOL(voc_send_cvp_start_vocpcm);
 
+/**
+ * voc_send_cvp_stop_vocpcm -
+ *       command to stop voice hpcm
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_send_cvp_stop_vocpcm(uint32_t session_id)
 {
 	struct cvp_command vpcm_stop_cmd;
@@ -8127,7 +8495,19 @@ int voc_send_cvp_stop_vocpcm(uint32_t session_id)
 done:
 	return ret;
 }
+EXPORT_SYMBOL(voc_send_cvp_stop_vocpcm);
 
+/**
+ * voc_send_cvp_map_vocpcm_memory -
+ *       command to map memory for voice hpcm
+ *
+ * @session_id: voice session ID to send this command
+ * @tp_mem_table: tap point memory table of hpcm
+ * paddr: Physical address of hpcm memory mapped area.
+ * bufsize: Buffer size of memory mapped area
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_send_cvp_map_vocpcm_memory(uint32_t session_id,
 				   struct mem_map_table *tp_mem_table,
 				   phys_addr_t paddr, uint32_t bufsize)
@@ -8137,7 +8517,16 @@ int voc_send_cvp_map_vocpcm_memory(uint32_t session_id,
 					      (dma_addr_t) paddr, bufsize,
 					      VOC_VOICE_HOST_PCM_MAP_TOKEN);
 }
+EXPORT_SYMBOL(voc_send_cvp_map_vocpcm_memory);
 
+/**
+ * voc_send_cvp_unmap_vocpcm_memory -
+ *       command to unmap memory for voice hpcm
+ *
+ * @session_id: voice session ID to send this command
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_send_cvp_unmap_vocpcm_memory(uint32_t session_id)
 {
 	int ret = 0;
@@ -8151,7 +8540,16 @@ int voc_send_cvp_unmap_vocpcm_memory(uint32_t session_id)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_send_cvp_unmap_vocpcm_memory);
 
+/**
+ * voc_send_cvp_vocpcm_push_buf_evt - Send buf event command
+ *
+ * @session_id: voice session ID to send this command
+ * @push_buff_evt: pointer with buffer event details
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_send_cvp_vocpcm_push_buf_evt(uint32_t session_id,
 			struct vss_ivpcm_evt_push_buffer_v2_t *push_buff_evt)
 {
@@ -8214,20 +8612,41 @@ int voc_send_cvp_vocpcm_push_buf_evt(uint32_t session_id,
 done:
 	return ret;
 }
+EXPORT_SYMBOL(voc_send_cvp_vocpcm_push_buf_evt);
 
+/**
+ * voc_register_hpcm_evt_cb - Updates hostpcm info.
+ *
+ * @hostpcm_cb: callback function for hostpcm event
+ * @private_data: private data for hostpcm
+ *
+ */
 void voc_register_hpcm_evt_cb(hostpcm_cb_fn hostpcm_cb,
 			      void *private_data)
 {
 	common.hostpcm_info.hostpcm_evt_cb = hostpcm_cb;
 	common.hostpcm_info.private_data = private_data;
 }
+EXPORT_SYMBOL(voc_register_hpcm_evt_cb);
 
+/**
+ * voc_deregister_hpcm_evt_cb - resets hostpcm info.
+ *
+ */
 void voc_deregister_hpcm_evt_cb(void)
 {
 	common.hostpcm_info.hostpcm_evt_cb = NULL;
 	common.hostpcm_info.private_data = NULL;
 }
+EXPORT_SYMBOL(voc_deregister_hpcm_evt_cb);
 
+/**
+ * voc_get_cvd_version - retrieve CVD version.
+ *
+ * @cvd_version: pointer to be updated with CVD version info.
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_get_cvd_version(char *cvd_version)
 {
 	int ret = 0;
@@ -8276,6 +8695,7 @@ done:
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_cvd_version);
 
 static int voice_alloc_cal_mem_map_table(void)
 {
@@ -8838,6 +9258,13 @@ done:
 	return ret;
 }
 
+/**
+ * voc_set_sound_focus - sends sound focus data.
+ *
+ * @soundFocusData: sound focus data.
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_set_sound_focus(struct sound_focus_param soundFocusData)
 {
 	struct voice_data *v = NULL;
@@ -8869,6 +9296,7 @@ int voc_set_sound_focus(struct sound_focus_param soundFocusData)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_set_sound_focus);
 
 static int voice_send_get_sound_focus_cmd(struct voice_data *v,
 				struct sound_focus_param *soundFocusData)
@@ -8967,6 +9395,13 @@ done:
 	return ret;
 }
 
+/**
+ * voc_get_sound_focus - retrieves sound focus data.
+ *
+ * @soundFocusData: pointer to be updated with sound focus data.
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_get_sound_focus(struct sound_focus_param *soundFocusData)
 {
 	struct voice_data *v = NULL;
@@ -8998,6 +9433,7 @@ int voc_get_sound_focus(struct sound_focus_param *soundFocusData)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_sound_focus);
 
 static int is_source_tracking_shared_memomry_allocated(void)
 {
@@ -9285,6 +9721,13 @@ done:
 	return ret;
 }
 
+/**
+ * voc_get_source_tracking - retrieves source track data.
+ *
+ * @sourceTrackingData: pointer to be updated with source track data.
+ *
+ * Returns 0 on success or error on failure
+ */
 int voc_get_source_tracking(struct source_tracking_param *sourceTrackingData)
 {
 	struct voice_data *v = NULL;
@@ -9317,6 +9760,19 @@ int voc_get_source_tracking(struct source_tracking_param *sourceTrackingData)
 
 	return ret;
 }
+EXPORT_SYMBOL(voc_get_source_tracking);
+
+/**
+ * is_voc_initialized:
+ *
+ * Returns voice module init status
+ *
+ */
+int is_voc_initialized(void)
+{
+	return module_initialized;
+}
+EXPORT_SYMBOL(is_voc_initialized);
 
 static void voc_release_uevent_data(struct kobject *kobj)
 {
@@ -9326,12 +9782,7 @@ static void voc_release_uevent_data(struct kobject *kobj)
 	kfree(data);
 }
 
-int is_voc_initialized(void)
-{
-	return module_initialized;
-}
-
-static int __init voice_init(void)
+int __init voice_init(void)
 {
 	int rc = 0, i = 0;
 
@@ -9368,12 +9819,6 @@ static int __init voice_init(void)
 		sizeof(common.cvd_version));
 	/* Initialize Per-Vocoder Calibration flag */
 	common.is_per_vocoder_cal_enabled = false;
-
-	/*
-	 * Initialize in call record channel config
-	 * to mono
-	 */
-	common.rec_channel_count = NUM_CHANNELS_MONO;
 
 	mutex_init(&common.common_lock);
 
@@ -9449,13 +9894,10 @@ static int __init voice_init(void)
 	return rc;
 }
 
-device_initcall(voice_init);
 
-static void __exit voice_exit(void)
+void voice_exit(void)
 {
 	q6core_destroy_uevent_data(common.uevent_data);
 	voice_delete_cal_data();
 	free_cal_map_table();
 }
-
-__exitcall(voice_exit);

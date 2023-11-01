@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2017, 2020 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -54,6 +54,7 @@ int apr_get_dest_id(char *dest)
 	else
 		return APR_DEST_MODEM;
 }
+EXPORT_SYMBOL(apr_get_dest_id);
 
 void subsys_notif_register(char *client_name, int domain,
 			   struct notifier_block *nb)
@@ -64,6 +65,16 @@ void subsys_notif_register(char *client_name, int domain,
 	if (ret < 0)
 		pr_err("%s: Audio notifier register failed for domain %d ret = %d\n",
 			__func__, domain, ret);
+}
+
+void subsys_notif_deregister(char *client_name)
+{
+	int ret;
+
+	ret = audio_notifier_deregister(client_name);
+	if (ret < 0)
+		pr_err("%s: Audio notifier de-register failed for client %s\n",
+			__func__, client_name);
 }
 
 uint16_t apr_get_reset_domain(uint16_t proc)

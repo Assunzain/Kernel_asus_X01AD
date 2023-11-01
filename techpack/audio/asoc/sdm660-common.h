@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2017, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -34,8 +34,8 @@
 #define SAMPLING_RATE_352P8KHZ  352800
 #define SAMPLING_RATE_384KHZ    384000
 
-#define TDM_CHANNEL_MAX 8
-#define TDM_SLOT_OFFSET_MAX 8
+#define TDM_CHANNEL_MAX 16
+#define TDM_SLOT_OFFSET_MAX 32
 
 enum {
 	TDM_0 = 0,
@@ -63,6 +63,12 @@ struct tdm_port {
 	u32 channel;
 };
 
+struct dev_config {
+	u32 sample_rate;
+	u32 bit_format;
+	u32 channels;
+};
+
 enum {
 	PRIM_MI2S = 0,
 	SEC_MI2S,
@@ -87,21 +93,28 @@ struct sdm660_codec {
 
 enum {
 	INT_SND_CARD,
+	INT_DIG_SND_CARD,
+	INT_MAX_SND_CARD = INT_DIG_SND_CARD,
 	EXT_SND_CARD_TASHA,
 	EXT_SND_CARD_TAVIL,
 };
 
 struct msm_asoc_mach_data {
 	int us_euro_gpio; /* used by gpio driver API */
+	int usbc_en2_gpio; /* used by gpio driver API */
 	int hph_en1_gpio;
 	int hph_en0_gpio;
 	struct device_node *us_euro_gpio_p; /* used by pinctrl API */
+	struct pinctrl *usbc_en2_gpio_p; /* used by pinctrl API */
 	struct device_node *hph_en1_gpio_p; /* used by pinctrl API */
 	struct device_node *hph_en0_gpio_p; /* used by pinctrl API */
 	struct device_node *pdm_gpio_p; /* used by pinctrl API */
 	struct device_node *comp_gpio_p; /* used by pinctrl API */
 	struct device_node *dmic_gpio_p; /* used by pinctrl API */
 	struct device_node *ext_spk_gpio_p; /* used by pinctrl API */
+/* Huaqin add for config i2s tert dai for nxp pa by zhengwu at 2018/08/03 start */
+	struct device_node *pri_mi2s_gpio_p;
+/* Huaqin add for config i2s tert dai for nxp pa by zhengwu at 2018/08/03 end */
 	struct device_node *mi2s_gpio_p[MI2S_MAX]; /* used by pinctrl API */
 	struct snd_soc_codec *codec;
 	struct sdm660_codec sdm660_codec_fn;
@@ -118,6 +131,10 @@ struct msm_asoc_mach_data {
 	struct mutex cdc_int_mclk0_mutex;
 	struct delayed_work disable_int_mclk0_work;
 	struct afe_clk_set digital_cdc_core_clk;
+	int gpio_linein_det;
+	int gpio_lineout_det;
+	int linein_det_swh;
+	int lineout_det_swh;
 };
 
 int msm_common_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
@@ -126,6 +143,14 @@ int msm_aux_pcm_snd_startup(struct snd_pcm_substream *substream);
 void msm_aux_pcm_snd_shutdown(struct snd_pcm_substream *substream);
 int msm_mi2s_snd_startup(struct snd_pcm_substream *substream);
 void msm_mi2s_snd_shutdown(struct snd_pcm_substream *substream);
+int msm_tdm_snd_startup(struct snd_pcm_substream *substream);
+void msm_tdm_snd_shutdown(struct snd_pcm_substream *substream);
 int msm_common_snd_controls_size(void);
 void msm_set_codec_reg_done(bool done);
+int msm_tdm_snd_startup(struct snd_pcm_substream *substream);
+void msm_tdm_snd_shutdown(struct snd_pcm_substream *substream);
+int msm_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+				     struct snd_pcm_hw_params *params);
+int msm_tdm_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+				      struct snd_pcm_hw_params *params);
 #endif

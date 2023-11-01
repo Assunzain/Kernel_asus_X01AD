@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2017, 2021, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2017, 2020 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -301,9 +301,9 @@ int q6audio_get_port_index(u16 port_id)
 		return IDX_AFE_PORT_ID_INT6_MI2S_RX;
 	case AFE_PORT_ID_INT6_MI2S_TX:
 		return IDX_AFE_PORT_ID_INT6_MI2S_TX;
-	case RT_PROXY_PORT_002_RX:
+	 case RT_PROXY_PORT_002_RX:
 		return IDX_RT_PROXY_PORT_002_RX;
-	case RT_PROXY_PORT_002_TX:
+	 case RT_PROXY_PORT_002_TX:
 		return IDX_RT_PROXY_PORT_002_TX;
 	default: return -EINVAL;
 	}
@@ -592,9 +592,9 @@ int q6audio_get_port_id(u16 port_id)
 		return AFE_PORT_ID_INT6_MI2S_RX;
 	case AFE_PORT_ID_INT6_MI2S_TX:
 		return AFE_PORT_ID_INT6_MI2S_TX;
-	case RT_PROXY_PORT_002_RX:
+	 case RT_PROXY_PORT_002_RX:
 		return RT_PROXY_PORT_002_RX;
-	case RT_PROXY_PORT_002_TX:
+	 case RT_PROXY_PORT_002_TX:
 		return RT_PROXY_PORT_002_TX;
 
 	default:
@@ -759,6 +759,14 @@ int q6audio_is_digital_pcm_interface(u16 port_id)
 	return ret;
 }
 
+/**
+ * q6audio_validate_port -
+ *       validates port id
+ *
+ * @port_id: port id to validate
+ *
+ * Returns 0 on success or error on invalid port
+ */
 int q6audio_validate_port(u16 port_id)
 {
 	int ret;
@@ -925,7 +933,6 @@ int q6audio_validate_port(u16 port_id)
 	case AFE_PORT_ID_INT6_MI2S_TX:
 	case RT_PROXY_PORT_002_RX:
 	case RT_PROXY_PORT_002_TX:
-
 	{
 		ret = 0;
 		break;
@@ -937,3 +944,4 @@ int q6audio_validate_port(u16 port_id)
 
 	return ret;
 }
+EXPORT_SYMBOL(q6audio_validate_port);

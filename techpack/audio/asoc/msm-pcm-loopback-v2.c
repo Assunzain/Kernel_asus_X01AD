@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013-2017, 2019-2020 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -136,7 +136,6 @@ static int msm_loopback_session_mute_put(struct snd_kcontrol *kcontrol,
 		ret = -EINVAL;
 		goto done;
 	}
-
 	mutex_lock(&loopback_session_lock);
 	pr_debug("%s: mute=%d\n", __func__, mute);
 	hfp_tx_mute = mute;
@@ -150,7 +149,7 @@ static int msm_loopback_session_mute_put(struct snd_kcontrol *kcontrol,
 			pr_err("%s: Send mute command failed rc=%d\n",
 				__func__, ret);
 	}
-	mutex_unlock(&loopback_session_lock);
+	 mutex_unlock(&loopback_session_lock);
 done:
 	return ret;
 }
@@ -353,6 +352,7 @@ static void stop_pcm(struct msm_pcm_loopback *pcm)
 
 	if (pcm->audio_client == NULL)
 		return;
+
 	mutex_lock(&loopback_session_lock);
 	q6asm_cmd(pcm->audio_client, CMD_CLOSE);
 
@@ -489,10 +489,21 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 {
 	int rc = 0;
 	struct snd_pcm_volume *vol = kcontrol->private_data;
-	struct snd_pcm_substream *substream = vol->pcm->streams[0].substream;
+	struct snd_pcm_substream *substream = NULL;
 	struct msm_pcm_loopback *prtd;
 	int volume = ucontrol->value.integer.value[0];
 
+	if (!vol) {
+		pr_err("%s: vol is NULL\n", __func__);
+		return -ENODEV;
+	}
+
+	if (!vol->pcm) {
+		pr_err("%s: vol->pcm is NULL\n", __func__);
+		return -ENODEV;
+	}
+
+	substream = vol->pcm->streams[0].substream;
 	pr_debug("%s: volume : 0x%x\n", __func__, volume);
 	if ((!substream) || (!substream->runtime)) {
 		pr_err("%s substream or runtime not found\n", __func__);
@@ -500,13 +511,15 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 		goto exit;
 	}
 	mutex_lock(&loopback_session_lock);
-	prtd = substream->runtime->private_data;
-	if (!prtd) {
-		rc = -ENODEV;
-		mutex_unlock(&loopback_session_lock);
-		goto exit;
+	if (substream->ref_count > 0) {
+		prtd = substream->runtime->private_data;
+		if (!prtd) {
+			rc = -ENODEV;
+			mutex_unlock(&loopback_session_lock);
+			goto exit;
+		}
+		rc = pcm_loopback_set_volume(prtd, volume);
 	}
-	rc = pcm_loopback_set_volume(prtd, volume);
 	mutex_unlock(&loopback_session_lock);
 
 exit:
@@ -518,26 +531,37 @@ static int msm_pcm_volume_ctl_get(struct snd_kcontrol *kcontrol,
 {
 	int rc = 0;
 	struct snd_pcm_volume *vol = snd_kcontrol_chip(kcontrol);
-	struct snd_pcm_substream *substream =
-		vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
+	struct snd_pcm_substream *substream = NULL;
 	struct msm_pcm_loopback *prtd;
 
 	pr_debug("%s\n", __func__);
+	if (!vol) {
+		pr_err("%s: vol is NULL\n", __func__);
+		return -ENODEV;
+	}
+
+	if (!vol->pcm) {
+		pr_err("%s: vol->pcm is NULL\n", __func__);
+		return -ENODEV;
+	}
+
+	substream = vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	if ((!substream) || (!substream->runtime)) {
-		pr_debug("%s substream or runtime not found\n", __func__);
+		pr_err("%s substream or runtime not found\n", __func__);
 		rc = -ENODEV;
 		goto exit;
 	}
 	mutex_lock(&loopback_session_lock);
-	prtd = substream->runtime->private_data;
-	if (!prtd) {
-		rc = -ENODEV;
-		mutex_unlock(&loopback_session_lock);
-		goto exit;
+	if (substream->ref_count > 0) {
+		prtd = substream->runtime->private_data;
+		if (!prtd) {
+			rc = -ENODEV;
+			mutex_unlock(&loopback_session_lock);
+			goto exit;
+		}
+		ucontrol->value.integer.value[0] = prtd->volume;
 	}
-	ucontrol->value.integer.value[0] = prtd->volume;
 	mutex_unlock(&loopback_session_lock);
-
 exit:
 	return rc;
 }
@@ -790,23 +814,20 @@ static struct platform_driver msm_pcm_driver = {
 		.name = "msm-pcm-loopback",
 		.owner = THIS_MODULE,
 		.of_match_table = msm_pcm_loopback_dt_match,
-		.suppress_bind_attrs = true,
 	},
 	.probe = msm_pcm_probe,
 	.remove = msm_pcm_remove,
 };
 
-static int __init msm_soc_platform_init(void)
+int __init msm_pcm_loopback_init(void)
 {
 	return platform_driver_register(&msm_pcm_driver);
 }
-module_init(msm_soc_platform_init);
 
-static void __exit msm_soc_platform_exit(void)
+void msm_pcm_loopback_exit(void)
 {
 	platform_driver_unregister(&msm_pcm_driver);
 }
-module_exit(msm_soc_platform_exit);
 
 MODULE_DESCRIPTION("PCM loopback platform driver");
 MODULE_LICENSE("GPL v2");

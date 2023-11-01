@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2014, 2017-2018 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013-2014, 2017 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -310,7 +310,6 @@ static struct platform_driver msm_dai_stub_dev = {
 		.name = "msm-dai-stub-dev",
 		.owner = THIS_MODULE,
 		.of_match_table = msm_dai_stub_dev_dt_match,
-		.suppress_bind_attrs = true,
 	},
 };
 
@@ -352,11 +351,10 @@ static struct platform_driver msm_dai_stub_driver = {
 		.name = "msm-dai-stub",
 		.owner = THIS_MODULE,
 		.of_match_table = msm_dai_stub_dt_match,
-		.suppress_bind_attrs = true,
 	},
 };
 
-static int __init msm_dai_stub_init(void)
+int __init msm_dai_stub_init(void)
 {
 	int rc = 0;
 
@@ -380,16 +378,14 @@ dai_stub_dev_fail:
 fail:
 	return rc;
 }
-module_init(msm_dai_stub_init);
 
-static void __exit msm_dai_stub_exit(void)
+void msm_dai_stub_exit(void)
 {
 	pr_debug("%s:\n", __func__);
 
 	platform_driver_unregister(&msm_dai_stub_dev);
 	platform_driver_unregister(&msm_dai_stub_driver);
 }
-module_exit(msm_dai_stub_exit);
 
 /* Module information */
 MODULE_DESCRIPTION("MSM Stub DSP DAI driver");

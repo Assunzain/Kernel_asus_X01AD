@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2018, 2021, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2020, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -42,6 +42,7 @@
 #define AFE_CLK_VERSION_V1    1
 #define AFE_CLK_VERSION_V2    2
 #define AFE_API_VERSION_SUPPORT_SPV3	2
+#define AFE_API_VERSION_V3		3
 typedef int (*routing_cb)(int port);
 
 enum {
@@ -224,6 +225,7 @@ enum {
 	IDX_AFE_PORT_ID_QUINARY_TDM_TX_6,
 	IDX_AFE_PORT_ID_QUINARY_TDM_RX_7,
 	IDX_AFE_PORT_ID_QUINARY_TDM_TX_7,
+	IDX_AFE_LOOPBACK_TX,
 	/* IDX 161 -> 162 */
 	IDX_RT_PROXY_PORT_002_RX,
 	IDX_RT_PROXY_PORT_002_TX,
@@ -241,6 +243,11 @@ enum afe_mad_type {
 enum afe_cal_mode {
 	AFE_CAL_MODE_DEFAULT = 0x00,
 	AFE_CAL_MODE_NONE,
+};
+
+enum lpass_clk_ver {
+	LPASS_CLK_VER_1,
+	LPASS_CLK_VER_2,
 };
 
 struct afe_audio_buffer {
@@ -288,6 +295,7 @@ struct aanc_data {
 
 int afe_open(u16 port_id, union afe_port_config *afe_config, int rate);
 int afe_close(int port_id);
+enum lpass_clk_ver afe_get_lpass_clk_ver(void);
 int afe_loopback(u16 enable, u16 rx_port, u16 tx_port);
 int afe_sidetone_enable(u16 tx_port_id, u16 rx_port_id, bool enable);
 int afe_loopback_gain(u16 port_id, u16 volume);
