@@ -15,6 +15,11 @@ ccflags-y := -shared -fno-common -fno-builtin
 ccflags-y += -nostdlib -Wl,-soname=linux-vdso.so.1 \
 		$(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
 ccflags-y += $(DISABLE_LTO)
+# VDSO Flags
+VDSO_LDFLAGS += -nostdlib -shared
+VDSO_LDFLAGS += $(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
+VDSO_LDFLAGS += $(call cc-ldoption, -Wl$(comma)--build-id)
+VDSO_LDFLAGS += $(call cc-ldoption, -fuse-ld=bfd)
 
 # Disable gcov profiling for VDSO code
 GCOV_PROFILE := n
