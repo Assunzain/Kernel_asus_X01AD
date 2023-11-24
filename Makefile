@@ -804,6 +804,8 @@ KBUILD_CFLAGS += $(call cc-disable-warning, excess-initializers)
 KBUILD_CFLAGS += $(call cc-disable-warning, implicit-function-declaration)
 KBUILD_CFLAGS += $(call cc-disable-warning, undefined-internal)
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-function)
+KBUILD_CFLAGS += $(call cc-option, -fuse-ld=bfd)
+KBUILD_CFLAGS += $(call cc-ldoption, -fuse-ld=bfd)
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
 KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
