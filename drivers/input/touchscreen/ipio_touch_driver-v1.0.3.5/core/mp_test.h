@@ -152,7 +152,7 @@ struct core_mp_test_data {
 	int32_t *rx_min_buf;
 
 	int tdf;
-	bool busy_cdc;
+	unsigned int busy_cdc;
 	bool ctrl_lcm;
 };
 
