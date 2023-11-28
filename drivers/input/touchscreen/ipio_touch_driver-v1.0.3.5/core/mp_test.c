@@ -551,7 +551,7 @@ EXPORT_SYMBOL(core_mp_ctrl_lcm_status);
 static void mp_calc_nodp(bool long_v)
 {
 	uint8_t at, phase;
-	uint8_t r2d, rst, rst_back, dac_td, qsh_pw, qsh_td, dn;
+	uint8_t __maybe_unused r2d, rst, rst_back, dac_td, qsh_pw, qsh_td, dn;
 	uint16_t tshd, tsvd_to_tshd, qsh_tdf, dp2tp, twc, twcm, tp2dp;
 	uint16_t multi_term_num, tp_tsdh_wait, ddi_width;
 	uint32_t real_tx_dura, tmp, tmp1;
