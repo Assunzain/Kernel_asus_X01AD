@@ -12,7 +12,6 @@ static void erofs_readendio(struct bio *bio)
 {
 	int i;
 	struct bio_vec *bvec;
-	const blk_status_t err = bio->bi_status;
 
 	bio_for_each_segment_all(bvec, bio, i) {
 		struct page *page = bvec->bv_page;
