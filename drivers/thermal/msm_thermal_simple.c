@@ -48,7 +48,7 @@ static void update_online_cpu_policy(void)
 	get_online_cpus();
 	cpu = cpumask_first_and(cpu_lp_mask, cpu_online_mask);
 	cpufreq_update_policy(cpu);
-	cpu = cpumask_first_and(cpu_cpu_mask, cpu_online_mask);
+	cpu = cpumask_first_and(cpu_perf_mask, cpu_online_mask);
 	cpufreq_update_policy(cpu);
 	put_online_cpus();
 }
@@ -91,7 +91,7 @@ reschedule:
 
 static u32 get_throttle_freq(struct thermal_zone *zone, u32 cpu)
 {
-	if (cpumask_test_cpu(cpu, cpu_cpu_mask))
+	if (cpumask_test_cpu(cpu, cpu_lp_mask))
 		return zone->silver_khz;
 
 	return zone->gold_khz;
