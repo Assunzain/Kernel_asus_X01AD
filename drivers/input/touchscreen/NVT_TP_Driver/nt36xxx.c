@@ -1906,7 +1906,8 @@ static int fb_notifier_callback(struct notifier_block *self, unsigned long event
 
 	if (evdata && evdata->data && event == FB_EARLY_EVENT_BLANK) {
 		blank = evdata->data;
-		if (*blank == FB_BLANK_POWERDOWN) {
+		if ((*blank == FB_BLANK_POWERDOWN) || (*blank == FB_BLANK_NORMAL)
+				|| (*blank == FB_BLANK_VSYNC_SUSPEND)) {
 			nvt_ts_suspend(&ts->client->dev);
 		}
 	} else if (evdata && evdata->data && event == FB_EVENT_BLANK) {
