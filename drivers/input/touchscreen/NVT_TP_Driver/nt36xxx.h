@@ -23,7 +23,7 @@
 
 /* huaqin add for gesture by liufurong at 20180801 start */
 #include <linux/regulator/consumer.h>
-#include <linux/debugfs.h>
+/* #include <linux/debugfs.h> */
 /* huaqin add for gesture by liufurong at 20180801 end */
 #ifdef CONFIG_HAS_EARLYSUSPEND
 #include <linux/earlysuspend.h>
@@ -31,7 +31,7 @@
 
 #include "nt36xxx_mem_map.h"
 
-#define NVT_DEBUG 1
+#define NVT_DEBUG 0
 
 //---GPIO number---
 #define NVTTOUCH_RST_PIN 980
@@ -69,12 +69,14 @@
 //---Input device info.---
 #define NVT_TS_NAME "NVTCapacitiveTouchScreen"
 
+#if 0
 /* Huaqin add by liufurong for ITO test at 20180801 start */
 #define HWINFO_NAME		"tp_wake_switch"
 //-------------add ito test
 extern int32_t ito_selftest_open(void);
 extern int nvt_TestResultLen;
 /* Huaqin add by liufurong for ITO test at 20180801 end */
+#endif
 
 //---Touch info.---
 #define TOUCH_DEFAULT_MAX_WIDTH 720
@@ -92,7 +94,7 @@ extern const uint16_t touch_key_array[TOUCH_KEY_NUM];
 //---Customerized func.---
 #define NVT_TOUCH_PROC 1
 #define NVT_TOUCH_EXT_PROC 1
-#define NVT_TOUCH_MP 1
+#define NVT_TOUCH_MP 0
 #define MT_PROTOCOL_B 1
 #define WAKEUP_GESTURE 1
 #if WAKEUP_GESTURE
