@@ -695,14 +695,18 @@
 
 
 /* Huaqin add  for gesture by liufurong at 20180801 start */
-#define KEY_TP_GESTURE_DOUBLE_CLICK 	0x2ee
-#define KEY_TP_GESTURE_SWIPE_UP 	0x2ef
-#define KEY_TP_GESTURE_C 		0x2f0
-#define KEY_TP_GESTURE_E 		0x2f1
-#define KEY_TP_GESTURE_S 		0x2f2
-#define KEY_TP_GESTURE_V 		0x2f3
-#define KEY_TP_GESTURE_W 		0x2f4
-#define KEY_TP_GESTURE_Z 		0x2f5
+#define KEY_TP_GESTURE_C		748
+#define KEY_TP_GESTURE_E		749
+#define KEY_TP_GESTURE_M		750
+#define KEY_TP_GESTURE_O		751
+#define KEY_TP_GESTURE_S		752
+#define KEY_TP_GESTURE_V		753
+#define KEY_TP_GESTURE_W		754
+#define KEY_TP_GESTURE_Z		755
+#define KEY_TP_GESTURE_SWIPE_UP		756
+#define KEY_TP_GESTURE_SWIPE_DOWN	757
+#define KEY_TP_GESTURE_SWIPE_LEFT	758
+#define KEY_TP_GESTURE_SWIPE_RIGHT	759
 
 /* Huaqin add  for gesture by liufurong at 20180801 end */
 
