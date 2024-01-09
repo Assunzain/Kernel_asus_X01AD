@@ -43,7 +43,7 @@
 #include <linux/regulator/consumer.h>
 #include <linux/power_supply.h>
 #include <linux/fs.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #include <linux/cdev.h>
 #include <linux/device.h>

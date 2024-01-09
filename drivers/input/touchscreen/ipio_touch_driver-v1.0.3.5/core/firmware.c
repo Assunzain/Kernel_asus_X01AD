@@ -30,7 +30,7 @@
 #include <linux/fd.h>
 #include <linux/file.h>
 #include <linux/version.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #include "../common.h"
 #include "../platform.h"
