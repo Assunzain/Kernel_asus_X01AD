@@ -1,4 +1,4 @@
-CONFIG_LOCALVERSION="GreenLighKernel-⚡Pegasus⚡"
+CONFIG_LOCALVERSION="-GreenLight.v1.0⚡Pegasus⚡OC-BETA"
 # CONFIG_LOCALVERSION_AUTO is not set
 # CONFIG_FHANDLE is not set
 CONFIG_AUDIT=y
