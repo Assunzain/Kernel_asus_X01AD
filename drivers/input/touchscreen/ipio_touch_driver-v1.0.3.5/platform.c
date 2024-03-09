@@ -266,7 +266,8 @@ static int ilitek_platform_notifier_fb(struct notifier_block *self, unsigned lon
 			    /* Huaqin modify Bright screen speed of 1244451 for ZQL1830 by liufurong at 2018/10/09 end*/
 			}
 /* Huaqin modify for ili suspend by qimaokang at 2018/08/22 start*/
-		} else if (*blank == FB_BLANK_POWERDOWN) {
+		} else if ((*blank == FB_BLANK_POWERDOWN) || (*blank == FB_BLANK_NORMAL)
+				|| (*blank == FB_BLANK_VSYNC_SUSPEND)) {
 			ipio_info("TP Suspend\n");
 
 			if (!core_firmware->isUpgrading) {
