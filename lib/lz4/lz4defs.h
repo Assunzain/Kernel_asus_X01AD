@@ -144,6 +144,16 @@ typedef struct _U64_S { u64 v; } U64_S;
 
 #endif
 
+/*
+ * LZ4 relies on memcpy with a constant size being inlined. In freestanding
+ * environments, the compiler can't assume the implementation of memcpy() is
+ * standard compliant, so apply its specialized memcpy() inlining logic. When
+ * possible, use __builtin_memcpy() to tell the compiler to analyze memcpy()
+ * as-if it were standard compliant, so it can inline it in freestanding
+ * environments. This is needed when decompressing the Linux Kernel, for example.
+ */
+#define LZ4_memcpy(dst, src, size) __builtin_memcpy(dst, src, size)
+
 #define LZ4_WILDCOPY(s, d, e)		\
 	do {				\
 		LZ4_COPYPACKET(s, d);	\
