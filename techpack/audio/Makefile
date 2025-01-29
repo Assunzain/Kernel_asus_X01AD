@@ -43,3 +43,5 @@ obj-y += soc/
 else
 obj-y += titanium/
 endif
+
+subdir-ccflags-y := -Os -g0
