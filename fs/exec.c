@@ -1887,9 +1887,9 @@ static int compat_do_execve(struct filename *filename,
 	};
 	
 #ifdef CONFIG_KSU
-+	if (!ksu_execveat_hook)
-+		ksu_handle_execveat_sucompat((int *)AT_FDCWD, &filename, NULL, NULL, NULL); /* 32-bit su */
-+#endif
+	if (!ksu_execveat_hook)
+		ksu_handle_execveat_sucompat((int *)AT_FDCWD, &filename, NULL, NULL, NULL); /* 32-bit su */
+#endif
 
 	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
 }
